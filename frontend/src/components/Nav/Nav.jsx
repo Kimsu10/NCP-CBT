@@ -53,6 +53,20 @@ const ControllerBox = styled.div`
   gap: 1rem;
 `;
 
-const Login = styled.button``;
+const Login = styled.span`
+  cursor: pointer;
+  font-weight: 700;
 
-const Register = styled.button``;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const Register = styled.span`
+  cursor: pointer;
+  font-weight: 700;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;

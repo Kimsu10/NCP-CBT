@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { flexRowBox } from "../../styles/Variables";
 
 const Modal = ({ type, closeModal }) => {
   return (
@@ -12,6 +13,22 @@ const Modal = ({ type, closeModal }) => {
             <input type="text" placeholder="닉네임(계정)" />
             <input type="password" placeholder="비밀번호" />
             <button>로그인</button>
+            <span className="find-button"> 계정/비밀번호 찾기</span>
+            <hr
+              style={{
+                backgroundColor: "lightGray",
+                height: "1px",
+                border: "none",
+              }}
+            />
+            <GithubLogin>
+              <img src="/images/github.png" alt="github-icon" />
+              <span> GitHub Login</span>
+            </GithubLogin>
+            <KakaoLogin>
+              <span style={{ fontSize: "1.5rem" }}>N</span>
+              <span> Naver Login</span>
+            </KakaoLogin>
           </LoginForm>
         ) : (
           <RegisterForm>
@@ -61,6 +78,11 @@ const CloseModalButton = styled.button`
   font-size: 1.2rem;
   cursor: pointer;
   color: black;
+
+  &:hover {
+    color: ${props => props.theme.subColor};
+    box-shadow: none;
+  }
 `;
 
 const LoginForm = styled.div`
@@ -73,14 +95,32 @@ const LoginForm = styled.div`
     font-size: 1rem;
   }
 
-  button {
-    padding: 0.8rem;
-    background-color: ${props => props.theme.mainColor};
-    color: white;
-    border: none;
-    cursor: pointer;
-    margin-top: 2rem;
+  .find-button {
+    font-size: 0.9rem;
+    color: gray;
+    text-align: right;
   }
+`;
+
+const GithubLogin = styled.button`
+  ${flexRowBox("row", "center", "center")};
+  gap: 1rem;
+  border-radius: 0.5rem;
+  background-color: ${props => props.theme.black}!important;
+  height: 2.8rem;
+
+  img {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+`;
+
+const KakaoLogin = styled.button`
+  ${flexRowBox("row", "center", "center")};
+  gap: 1rem;
+  border-radius: 0.5rem;
+  height: 2.8rem;
+  background-color: ${props => props.theme.mainColor};
 `;
 
 const RegisterForm = styled.div`
@@ -91,13 +131,5 @@ const RegisterForm = styled.div`
   input {
     padding: 0.5rem;
     font-size: 1rem;
-  }
-
-  button {
-    padding: 0.8rem;
-    background-color: ${props => props.theme.mainColor};
-    color: white;
-    border: none;
-    cursor: pointer;
   }
 `;

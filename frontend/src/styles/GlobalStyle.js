@@ -18,15 +18,15 @@ const GlobalStyle = createGlobalStyle`
   button {
     border: none;
     border-radius: 0.5rem;
-    padding: 0.5rem;
+    padding: 0.8rem;
     font-weight: 700;
     cursor: pointer;
     color: white;
-    background-color: ${props => props.theme.mainColor};
+    background-color: ${props => props.theme.subColor};
 
     &:hover {
-    background-color: ${props => props.theme.subColor};
-    color:white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); 
+      color:white;
     }  
   }
 
