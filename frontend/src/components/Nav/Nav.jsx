@@ -1,13 +1,29 @@
+import React, { useState } from "react";
 import styled from "styled-components";
+import Modal from "../Modal/Modal";
 
 const Nav = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState("");
+
+  const openModal = type => {
+    setModalType(type);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setModalType("");
+  };
+
   return (
     <NavBody>
       <NavLogo />
       <ControllerBox>
-        <Login>로그인</Login>
-        <Register>회원가입</Register>
+        <Login onClick={() => openModal("login")}>로그인</Login>
+        <Register onClick={() => openModal("register")}>회원가입</Register>
       </ControllerBox>
+      {isModalOpen && <Modal type={modalType} closeModal={closeModal} />}
     </NavBody>
   );
 };
@@ -37,6 +53,6 @@ const ControllerBox = styled.div`
   gap: 1rem;
 `;
 
-const Login = styled.div``;
+const Login = styled.button``;
 
-const Register = styled.div``;
+const Register = styled.button``;

@@ -7,6 +7,7 @@ const theme = {
   hoverGrey: "#DBDBDB",
   gabozaColor: "#0099ff",
   mainColor: "#02C95F",
+  subColor: "#0394BA",
 };
 
 export default theme;
