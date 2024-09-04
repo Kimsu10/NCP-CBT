@@ -20,8 +20,7 @@ const Modal = ({ type, closeModal }) => {
 
   const { email, nickname, password, confirmPassword } = formData;
 
-  const isLoginValid =
-    type === "login" && nickname.trim() !== "" && password.trim() !== "";
+  const isLoginValid = type === "login" && nickname !== "" && password !== "";
 
   const isEmailValid = email.length > 0 && !email.includes("@");
   const isPasswordMatch =
@@ -75,7 +74,9 @@ const Modal = ({ type, closeModal }) => {
               <span> GitHub Login</span>
             </GithubLogin>
             <KakaoLogin>
-              <span style={{ fontSize: "1.5rem" }}>N</span>
+              <span style={{ fontSize: "1.5rem", marginRight: "0.5rem" }}>
+                N
+              </span>
               <span> Naver Login</span>
             </KakaoLogin>
           </LoginForm>
