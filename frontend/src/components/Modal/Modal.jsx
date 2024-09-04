@@ -1,8 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { flexRowBox } from "../../styles/Variables";
 
 const Modal = ({ type, closeModal }) => {
+  const [formData, setFormData] = useState({
+    email: "",
+    nickname: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const handleInputChange = e => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const { email, nickname, password, confirmPassword } = formData;
+
+  const isLoginValid =
+    type === "login" && nickname.trim() !== "" && password.trim() !== "";
+
+  const isEmailValid = email.length > 0 && !email.includes("@");
+  const isPasswordMatch =
+    password.length > 0 &&
+    confirmPassword.length > 0 &&
+    password === confirmPassword;
+  const getBorderColor = value =>
+    value.length > 0 && !isPasswordMatch ? "red" : "";
+
+  const isRegisterFormValid =
+    type === "register" &&
+    email.length > 0 &&
+    nickname.length > 0 &&
+    password.length > 0 &&
+    confirmPassword.length > 0 &&
+    isPasswordMatch &&
+    !isEmailValid;
+
   return (
     <ModalContainer>
       <ModalContent>
@@ -10,9 +47,21 @@ const Modal = ({ type, closeModal }) => {
         {type === "login" ? (
           <LoginForm>
             <h2 className="modal-title">로그인</h2>
-            <input type="text" placeholder="닉네임(계정)" />
-            <input type="password" placeholder="비밀번호" />
-            <button>로그인</button>
+            <input
+              type="text"
+              name="nickname"
+              placeholder="닉네임(계정)"
+              value={nickname}
+              onChange={handleInputChange}
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="비밀번호"
+              value={password}
+              onChange={handleInputChange}
+            />
+            <button disabled={!isLoginValid}>로그인</button>
             <span className="find-button"> 계정/비밀번호 찾기</span>
             <hr
               style={{
@@ -31,17 +80,74 @@ const Modal = ({ type, closeModal }) => {
             </KakaoLogin>
           </LoginForm>
         ) : (
-          <RegisterForm>
-            <h2 className="modal-title">회원가입</h2>
-            <input type="email" placeholder="이메일" />
-            <input type="text" placeholder="닉네임(계정)" />
-            <input type="password" placeholder="비밀번호" />
-            <input type="password" placeholder="비밀번호 재입력" />
-            <button>회원가입</button>
-          </RegisterForm>
+          <RegisterForm
+            email={email}
+            nickname={nickname}
+            password={password}
+            confirmPassword={confirmPassword}
+            handleInputChange={handleInputChange}
+            isFormValid={isRegisterFormValid}
+            getBorderColor={getBorderColor}
+            isEmailValid={isEmailValid}
+          />
         )}
       </ModalContent>
     </ModalContainer>
+  );
+};
+
+const RegisterForm = ({
+  email,
+  nickname,
+  password,
+  confirmPassword,
+  handleInputChange,
+  isFormValid,
+  getBorderColor,
+  isEmailValid,
+}) => {
+  return (
+    <RegisterFormContainer>
+      <h2 className="modal-title">회원가입</h2>
+      <input
+        type="email"
+        name="email"
+        placeholder="이메일"
+        value={email}
+        onChange={handleInputChange}
+        style={{
+          borderColor: isEmailValid ? "red" : "",
+        }}
+      />
+      <input
+        type="text"
+        name="nickname"
+        placeholder="닉네임(계정)"
+        value={nickname}
+        onChange={handleInputChange}
+      />
+      <input
+        type="password"
+        name="password"
+        placeholder="비밀번호"
+        value={password}
+        onChange={handleInputChange}
+        style={{
+          borderColor: getBorderColor(password),
+        }}
+      />
+      <input
+        type="password"
+        name="confirmPassword"
+        placeholder="비밀번호 재입력"
+        value={confirmPassword}
+        onChange={handleInputChange}
+        style={{
+          borderColor: getBorderColor(confirmPassword),
+        }}
+      />
+      <button disabled={!isFormValid}>회원가입</button>
+    </RegisterFormContainer>
   );
 };
 
@@ -95,10 +201,22 @@ const LoginForm = styled.div`
     font-size: 1rem;
   }
 
+  button {
+    &:disabled {
+      background-color: lightgray;
+      cursor: not-allowed;
+    }
+  }
+
   .find-button {
     font-size: 0.9rem;
     color: gray;
     text-align: right;
+    cursor: pointer;
+
+    &:hover {
+      text-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+    }
   }
 `;
 
@@ -123,7 +241,7 @@ const KakaoLogin = styled.button`
   background-color: ${props => props.theme.mainColor};
 `;
 
-const RegisterForm = styled.div`
+const RegisterFormContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -131,5 +249,13 @@ const RegisterForm = styled.div`
   input {
     padding: 0.5rem;
     font-size: 1rem;
+    transition: border-color 0.3s;
+  }
+
+  button {
+    &:disabled {
+      background-color: lightgray;
+      cursor: not-allowed;
+    }
   }
 `;
