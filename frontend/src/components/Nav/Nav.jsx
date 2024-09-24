@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "../Modal/Modal";
 
 const Nav = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
+  const [isListOpen, setIsListOpen] = useState(false);
 
   const openModal = type => {
     setModalType(type);
@@ -16,12 +17,39 @@ const Nav = () => {
     setModalType("");
   };
 
+  const openList = () => {
+    setIsListOpen(prev => !prev);
+  };
+
+  // resize 이벤트 감지시 조건에따라 리스트 상태 false
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 720) {
+        setIsListOpen(false);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <NavBody>
-      <NavLogo />
+      <NavLogo src="/images/logo.png" alt="logo" />
       <ControllerBox>
         <Login onClick={() => openModal("login")}>로그인</Login>
         <Register onClick={() => openModal("register")}>회원가입</Register>
+        <ListIcon className="bi bi-list" onClick={openList} />
+        {isListOpen && (
+          <MobileList>
+            <MobileLogin onClick={() => openModal("login")}>로그인</MobileLogin>
+            <MobileRegister onClick={() => openModal("register")}>
+              회원가입
+            </MobileRegister>
+          </MobileList>
+        )}
       </ControllerBox>
       {isModalOpen && <Modal type={modalType} closeModal={closeModal} />}
     </NavBody>
@@ -37,12 +65,14 @@ const NavBody = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 1rem;
+  padding: 0 2rem 0 1rem;
 `;
 
 const NavLogo = styled.img`
-  width: 3rem;
-  height: 3rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.4rem;
+  opacity: 0.9;
 `;
 
 const ControllerBox = styled.div`
@@ -60,11 +90,66 @@ const Login = styled.span`
   &:hover {
     text-decoration: underline;
   }
+
+  @media (max-width: 720px) {
+    display: none;
+  }
 `;
 
 const Register = styled.span`
   cursor: pointer;
   font-weight: 700;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 720px) {
+    display: none;
+  }
+`;
+
+const ListIcon = styled.i`
+  font-size: 1.8rem;
+  color: ${props => props.theme.white};
+  display: none;
+
+  @media (max-width: 720px) {
+    display: block;
+  }
+
+  &:hover {
+    color: ${props => props.theme.hoverColor};
+  }
+`;
+
+const MobileList = styled.div`
+  position: absolute;
+  top: 4.1rem;
+  right: 0.4rem;
+  background-color: ${props => props.theme.mainColor};
+  padding: 1rem;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  gap: 1rem;
+`;
+
+const MobileLogin = styled.span`
+  font-weight: 700;
+  cursor: pointer;
+  color: ${props => props.theme.white};
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const MobileRegister = styled.span`
+  font-weight: 700;
+  cursor: pointer;
+  color: ${props => props.theme.white};
 
   &:hover {
     text-decoration: underline;

@@ -21,8 +21,8 @@ const Modal = ({ type, closeModal }) => {
   const { email, nickname, password, confirmPassword } = formData;
 
   const isLoginValid = type === "login" && nickname !== "" && password !== "";
-
   const isEmailValid = email.length > 0 && !email.includes("@");
+
   const isPasswordMatch =
     password.length > 0 &&
     confirmPassword.length > 0 &&
