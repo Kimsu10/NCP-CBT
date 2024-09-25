@@ -10,8 +10,8 @@ const Practice = () => {
   const [data, setData] = useState(null);
   const [randomIds, setRandomIds] = useState([]);
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [isChecked, setIsChecked] = useState(false); // 채점 상태 저장
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [isChecked, setIsChecked] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,7 +35,7 @@ const Practice = () => {
   const handleNextQuestion = () => {
     if (currentIdx < randomIds.length - 1) {
       setCurrentIdx(currentIdx + 1);
-      setSelectedOption(null);
+      setSelectedOptions([]);
       setIsChecked(false);
     }
   };
@@ -43,21 +43,29 @@ const Practice = () => {
   const handlePreviousQuestion = () => {
     if (currentIdx > 0) {
       setCurrentIdx(currentIdx - 1);
-      setSelectedOption(null);
+      setSelectedOptions([]);
       setIsChecked(false);
     }
   };
 
-  const handleOptionChange = option => {
-    setSelectedOption(option);
+  const handleOptionChange = optionNum => {
+    if (Array.isArray(currentQuestion.answer)) {
+      if (selectedOptions.includes(optionNum)) {
+        setSelectedOptions(selectedOptions.filter(num => num !== optionNum));
+      } else {
+        setSelectedOptions([...selectedOptions, optionNum]);
+      }
+    } else {
+      setSelectedOptions([optionNum]);
+    }
   };
 
   const handleCheckAnswer = () => {
     setIsChecked(true);
   };
 
-  const handleResetQuestion = () => {
-    setSelectedOption(null);
+  const handleRetry = () => {
+    setSelectedOptions([]);
     setIsChecked(false);
   };
 
@@ -66,13 +74,20 @@ const Practice = () => {
     : null;
 
   const isCorrect =
-    currentQuestion && selectedOption
-      ? currentQuestion.answer === selectedOption.num
-      : false;
+    isChecked &&
+    ((Array.isArray(currentQuestion.answer) &&
+      currentQuestion.answer.every(num => selectedOptions.includes(num))) ||
+      (!Array.isArray(currentQuestion.answer) &&
+        currentQuestion.answer === selectedOptions[0]));
+
+  // const isWrong =
+  //   isChecked &&
+  //   ((Array.isArray(currentQuestion.answer) &&
+  //     selectedOptions.some(num => !currentQuestion.answer.includes(num))) ||
+  //     (!Array.isArray(currentQuestion.answer) &&
 
   return (
     <PracticeBody>
-      <h1>{subjectName} 연습</h1>
       <ExplainBox>컨트롤러</ExplainBox>
       <ProblemBox>
         {currentQuestion ? (
@@ -81,75 +96,85 @@ const Practice = () => {
               Q {currentIdx + 1}. {currentQuestion.question}
             </QuestionText>
             <OptionsContainer>
-              {currentQuestion.example.map((example, Idx) => (
-                <OptionLabel
-                  key={Idx}
-                  isSelected={selectedOption === example}
-                  isCorrect={
-                    isChecked && example.num === currentQuestion.answer
-                  }
-                  isWrong={
-                    isChecked &&
-                    selectedOption &&
-                    selectedOption.num !== currentQuestion.answer &&
-                    selectedOption.num === example.num
-                  }
-                >
-                  <RadioInput
-                    type="radio"
-                    name="options"
-                    value={example.text}
-                    checked={selectedOption === example}
-                    onChange={() => handleOptionChange(example)}
-                    disabled={isChecked} // 채점 이후에는 선택 불가
-                  />
-                  <CustomRadio
-                    isChecked={selectedOption === example}
-                    isCorrect={
-                      isChecked && example.num === currentQuestion.answer
-                    }
-                    isWrong={
-                      isChecked &&
-                      selectedOption &&
-                      selectedOption.num !== currentQuestion.answer &&
-                      selectedOption.num === example.num
-                    }
+              {currentQuestion.example.map((ex, Idx) => {
+                const isExampleCorrect =
+                  isChecked &&
+                  !Array.isArray(currentQuestion.answer) &&
+                  currentQuestion.answer === ex.num;
+
+                const isExampleWrong =
+                  isChecked &&
+                  !Array.isArray(currentQuestion.answer) &&
+                  selectedOptions.includes(ex.num) &&
+                  currentQuestion.answer !== ex.num;
+
+                const isExampleAnswerCorrect =
+                  isChecked &&
+                  Array.isArray(currentQuestion.answer) &&
+                  currentQuestion.answer.includes(ex.num);
+
+                const isExampleAnswerWrong =
+                  isChecked &&
+                  Array.isArray(currentQuestion.answer) &&
+                  selectedOptions.includes(ex.num) &&
+                  !currentQuestion.answer.includes(ex.num);
+
+                return (
+                  <OptionLabel
+                    key={Idx}
+                    isSelected={selectedOptions.includes(ex.num)}
+                    isCorrect={isExampleAnswerCorrect}
+                    isWrong={isExampleAnswerWrong}
                   >
-                    {String.fromCharCode(0x2460 + Idx)}
-                  </CustomRadio>
-                  <ExampleText
-                    isSelected={selectedOption === example}
-                    isCorrect={
-                      isChecked && example.num === currentQuestion.answer
-                    }
-                    isWrong={
-                      isChecked &&
-                      selectedOption &&
-                      selectedOption.num !== currentQuestion.answer &&
-                      selectedOption.num === example.num
-                    }
-                  >
-                    {example.text}
-                  </ExampleText>
-                </OptionLabel>
-              ))}
+                    <RadioInput
+                      type={
+                        Array.isArray(currentQuestion.answer)
+                          ? "checkbox"
+                          : "radio"
+                      }
+                      name="options"
+                      value={ex.text}
+                      checked={selectedOptions.includes(ex.num)}
+                      onChange={() => handleOptionChange(ex.num)}
+                      disabled={isChecked}
+                    />
+                    <CustomRadio
+                      isChecked={selectedOptions.includes(ex.num)}
+                      isCorrect={isExampleAnswerCorrect || isExampleCorrect}
+                      isWrong={isExampleAnswerWrong || isExampleWrong}
+                    >
+                      {String.fromCharCode(0x2460 + Idx)}
+                    </CustomRadio>
+                    <ExampleText
+                      isSelected={selectedOptions.includes(ex.num)}
+                      isCorrect={isExampleAnswerCorrect || isExampleCorrect}
+                      isWrong={isExampleAnswerWrong || isExampleWrong}
+                    >
+                      {ex.text}
+                    </ExampleText>
+                  </OptionLabel>
+                );
+              })}
             </OptionsContainer>
-            <ButtonContainer>
-              <ResetButton onClick={handleResetQuestion}>다시 풀기</ResetButton>
-              <CheckButton
-                onClick={handleCheckAnswer}
-                disabled={isChecked || !selectedOption}
-              >
-                채점하기
-              </CheckButton>
-            </ButtonContainer>
             {isChecked && (
-              <AnswerExplanation>
+              <RetryButton onClick={handleRetry}>다시 풀기</RetryButton>
+            )}
+            <CheckButton
+              onClick={handleCheckAnswer}
+              disabled={isChecked || selectedOptions.length === 0}
+            >
+              채점하기
+            </CheckButton>
+
+            {isChecked && (
+              <ExplanationBox>
                 {isCorrect
                   ? "정답입니다!"
                   : `오답입니다. 정답: ${currentQuestion.answer}`}
-                <p>{currentQuestion.explanation}</p>
-              </AnswerExplanation>
+                <ExplanationText>
+                  {currentQuestion.explanation || "설명이 없습니다."}
+                </ExplanationText>
+              </ExplanationBox>
             )}
           </div>
         ) : (
@@ -171,10 +196,8 @@ const Practice = () => {
 
 export default Practice;
 
-// 스타일링 부분
 const PracticeBody = styled.div`
   width: 100%;
-  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -194,9 +217,10 @@ const ExplainBox = styled.div`
 const ProblemBox = styled.div`
   width: 60%;
   min-height: 64vh;
+  max-height: auto;
   padding: 2rem;
   margin-top: 2rem;
-  background-color: #edfdcc;
+  background-color: ${props => props.theme.white};
 `;
 
 const QuestionText = styled.h2`
@@ -236,7 +260,6 @@ const CustomRadio = styled.span`
         : isChecked
           ? "rgb(2, 103, 255)"
           : "black"};
-  scale: ${({ isChecked }) => (isChecked ? 1.2 : 1)};
   border-radius: 50%;
   font-size: 1.5rem;
   line-height: 2rem;
@@ -282,28 +305,39 @@ const NextButton = styled.button`
   }
 `;
 
-const CheckButton = styled.button`
+const RetryButton = styled.button`
+  margin: 1rem 1rem 1rem 0;
   padding: 0.5rem 1rem;
   font-size: 1.2rem;
-  background-color: ${({ disabled }) => (disabled ? "lightgray" : "#4CAF50")};
-  color: white;
-  border: none;
-  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
-`;
-
-const ResetButton = styled.button`
-  padding: 0.5rem 1rem;
-  font-size: 1.2rem;
-  background-color: #f0ad4e;
+  background-color: orange;
   color: white;
   border: none;
   cursor: pointer;
 `;
 
-const AnswerExplanation = styled.div`
+const CheckButton = styled.button`
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  background-color: green;
+  color: white;
+  border: none;
+  cursor: pointer;
+
+  &:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+  }
+`;
+
+const ExplanationBox = styled.div`
   margin-top: 1rem;
   font-size: 1.2rem;
   background-color: #f9f9f9;
   padding: 1rem;
   border-left: 5px solid green;
+`;
+
+const ExplanationText = styled.p`
+  padding: 1rem 0;
 `;
