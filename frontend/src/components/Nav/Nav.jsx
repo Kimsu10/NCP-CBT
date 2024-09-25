@@ -6,6 +6,8 @@ const Nav = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
   const [isListOpen, setIsListOpen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const token = localStorage.getItem("token");
 
   const openModal = type => {
     setModalType(type);
@@ -21,15 +23,15 @@ const Nav = () => {
     setIsListOpen(prev => !prev);
   };
 
-  // resize 이벤트 감지시 조건에따라 리스트 상태 false
   useEffect(() => {
     const handleResize = () => {
+      setWindowWidth(window.innerWidth);
       if (window.innerWidth > 720) {
         setIsListOpen(false);
       }
     };
-    window.addEventListener("resize", handleResize);
 
+    window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
     };
@@ -39,16 +41,40 @@ const Nav = () => {
     <NavBody>
       <NavLogo src="/images/logo.png" alt="logo" />
       <ControllerBox>
-        <Login onClick={() => openModal("login")}>로그인</Login>
-        <Register onClick={() => openModal("register")}>회원가입</Register>
-        <ListIcon className="bi bi-list" onClick={openList} />
-        {isListOpen && (
-          <MobileList>
-            <MobileLogin onClick={() => openModal("login")}>로그인</MobileLogin>
-            <MobileRegister onClick={() => openModal("register")}>
-              회원가입
-            </MobileRegister>
-          </MobileList>
+        {windowWidth > 720 && (
+          <>
+            {!token ? (
+              <>
+                <Login onClick={() => openModal("login")}>로그인</Login>
+                <Register onClick={() => openModal("register")}>
+                  회원가입
+                </Register>
+              </>
+            ) : (
+              <ProfileIcon className="bi bi-person-circle"></ProfileIcon>
+            )}
+          </>
+        )}
+        {windowWidth <= 720 && (
+          <>
+            <ListIcon className="bi bi-list" onClick={openList} />
+            {isListOpen && (
+              <MobileList>
+                {token ? (
+                  <UserProfile>내 정보</UserProfile>
+                ) : (
+                  <>
+                    <MobileLogin onClick={() => openModal("login")}>
+                      로그인
+                    </MobileLogin>
+                    <MobileRegister onClick={() => openModal("register")}>
+                      회원가입
+                    </MobileRegister>
+                  </>
+                )}
+              </MobileList>
+            )}
+          </>
         )}
       </ControllerBox>
       {isModalOpen && <Modal type={modalType} closeModal={closeModal} />}
@@ -59,7 +85,7 @@ const Nav = () => {
 export default Nav;
 
 const NavBody = styled.div`
-  width: 100vw;
+  width: 100%;
   height: 4rem;
   background-color: ${props => props.theme.mainColor};
   display: flex;
@@ -109,6 +135,11 @@ const Register = styled.span`
   }
 `;
 
+const ProfileIcon = styled.i`
+  font-size: 1.8rem;
+  color: ${props => props.theme.white};
+`;
+
 const ListIcon = styled.i`
   font-size: 1.8rem;
   color: ${props => props.theme.white};
@@ -154,4 +185,9 @@ const MobileRegister = styled.span`
   &:hover {
     text-decoration: underline;
   }
+`;
+
+const UserProfile = styled.div`
+  font-weight: 700;
+  color: ${props => props.theme.white};
 `;
