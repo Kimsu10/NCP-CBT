@@ -2,13 +2,15 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import NotFound from "../NotFound/NotFound";
 
 const Practice = () => {
   const param = useParams();
   const subjectName = param.name;
   const [data, setData] = useState(null);
-  const [randomIds, setRandomIds] = useState([]); // 랜덤하게 선택된 60개의 ID를 저장
-  const [currentIndex, setCurrentIndex] = useState(0); // 현재 표시할 문제의 인덱스
+  const [randomIds, setRandomIds] = useState([]);
+  const [currentIdx, setCurrentIdx] = useState(0);
+  const [selectedOption, setSelectedOption] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,9 +18,8 @@ const Practice = () => {
         const response = await axios.get(`/data/${subjectName}.json`);
         setData(response.data);
 
-        // 랜덤하게 60개의 id를 선택 (데이터가 배열인 경우)
-        const ids = response.data.map(item => item.id); // 전체 id 추출
-        const shuffledIds = ids.sort(() => 0.5 - Math.random()).slice(0, 60); // 랜덤으로 섞고 60개 선택
+        const ids = response.data.map(item => item.id);
+        const shuffledIds = ids.sort(() => 0.5 - Math.random()).slice(0, 60);
         setRandomIds(shuffledIds);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -30,50 +31,75 @@ const Practice = () => {
     }
   }, [subjectName]);
 
-  // "다음" 버튼 클릭 시 호출될 함수
   const handleNextQuestion = () => {
-    if (currentIndex < randomIds.length - 1) {
-      setCurrentIndex(currentIndex + 1); // 인덱스를 증가시켜 다음 문제로 이동
+    if (currentIdx < randomIds.length - 1) {
+      setCurrentIdx(currentIdx + 1);
+      setSelectedOption(null);
     }
   };
 
-  // "이전" 버튼 클릭 시 호출될 함수
   const handlePreviousQuestion = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1); // 인덱스를 감소시켜 이전 문제로 이동
+    if (currentIdx > 0) {
+      setCurrentIdx(currentIdx - 1);
+      setSelectedOption(null);
     }
   };
 
-  // 현재 문제를 가져오기 위한 로직
   const currentQuestion = data
-    ? data.find(item => item.id === randomIds[currentIndex])
+    ? data.find(item => item.id === randomIds[currentIdx])
     : null;
+
+  const handleOptionChange = option => {
+    setSelectedOption(option);
+  };
 
   return (
     <PracticeBody>
       <h1>{subjectName} 연습</h1>
       <ExplainBox>컨트롤러</ExplainBox>
       <ProblemBox>
-        {/* 현재 문제를 화면에 표시 */}
         {currentQuestion ? (
-          <pre>{JSON.stringify(currentQuestion, null, 2)}</pre>
+          <div>
+            <QuestionText>
+              Q {currentIdx + 1}. {currentQuestion.question}
+            </QuestionText>
+            <OptionsContainer>
+              {currentQuestion.example.map((example, Idx) => (
+                <OptionLabel
+                  key={Idx}
+                  isSelected={selectedOption === example.text}
+                >
+                  <RadioInput
+                    type="radio"
+                    name="options"
+                    value={example.text}
+                    checked={selectedOption === example.text}
+                    onChange={() => handleOptionChange(example.text)}
+                  />
+                  <CustomRadio isChecked={selectedOption === example.text}>
+                    {String.fromCharCode(0x2460 + Idx)}
+                  </CustomRadio>
+                  <ExampleText isSelected={selectedOption === example.text}>
+                    {example.text}
+                  </ExampleText>
+                </OptionLabel>
+              ))}
+            </OptionsContainer>
+          </div>
         ) : (
-          "로딩 중..."
+          <NotFound />
         )}
       </ProblemBox>
       <ButtonContainer>
-        {/* 이전 버튼 */}
         <PrevButton
           onClick={handlePreviousQuestion}
-          disabled={currentIndex === 0} // 첫 번째 문제일 때 비활성화
+          disabled={currentIdx === 0}
         >
           이전 문제
         </PrevButton>
-
-        {/* 다음 버튼 */}
         <NextButton
           onClick={handleNextQuestion}
-          disabled={currentIndex >= randomIds.length - 1} // 마지막 문제일 때 비활성화
+          disabled={currentIdx >= randomIds.length - 1}
         >
           다음 문제
         </NextButton>
@@ -106,9 +132,53 @@ const ExplainBox = styled.div`
 
 const ProblemBox = styled.div`
   width: 60%;
+  min-height: 64vh;
   padding: 2rem;
   margin-top: 2rem;
-  background-color: bisque;
+  background-color: #edfdcc;
+`;
+
+const QuestionText = styled.h2`
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+`;
+
+const OptionsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const OptionLabel = styled.label`
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+  cursor: pointer;
+`;
+
+const RadioInput = styled.input`
+  display: none;
+`;
+
+const CustomRadio = styled.span`
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 0.5rem;
+  color: ${({ isChecked }) => (isChecked ? "rgb(2, 103, 255);" : "black")};
+  scale: ${({ isChecked }) => (isChecked ? 1.2 : 1)};
+  border-radius: 50%;
+  font-size: 1.5rem;
+  line-height: 2rem;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
+`;
+
+const ExampleText = styled.span`
+  color: ${({ isSelected }) => (isSelected ? "blue" : "black")};
 `;
 
 const ButtonContainer = styled.div`
@@ -120,12 +190,12 @@ const ButtonContainer = styled.div`
 const PrevButton = styled.button`
   padding: 0.5rem 1rem;
   font-size: 1.2rem;
-  background-color: lightblue;
+  background-color: ${props => props.theme.mainColor};
   border: none;
   cursor: pointer;
 
   &:disabled {
-    background-color: gray;
+    background-color: lightgray;
     cursor: not-allowed;
   }
 `;
@@ -133,7 +203,7 @@ const PrevButton = styled.button`
 const NextButton = styled.button`
   padding: 0.5rem 1rem;
   font-size: 1.2rem;
-  background-color: lightblue;
+  background-color: ${props => props.theme.mainColor};
   border: none;
   cursor: pointer;
 
