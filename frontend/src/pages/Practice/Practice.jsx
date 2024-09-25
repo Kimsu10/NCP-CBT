@@ -11,6 +11,7 @@ const Practice = () => {
   const [randomIds, setRandomIds] = useState([]);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
+  const [isChecked, setIsChecked] = useState(false); // 채점 상태 저장
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,6 +36,7 @@ const Practice = () => {
     if (currentIdx < randomIds.length - 1) {
       setCurrentIdx(currentIdx + 1);
       setSelectedOption(null);
+      setIsChecked(false);
     }
   };
 
@@ -42,16 +44,31 @@ const Practice = () => {
     if (currentIdx > 0) {
       setCurrentIdx(currentIdx - 1);
       setSelectedOption(null);
+      setIsChecked(false);
     }
+  };
+
+  const handleOptionChange = option => {
+    setSelectedOption(option);
+  };
+
+  const handleCheckAnswer = () => {
+    setIsChecked(true);
+  };
+
+  const handleResetQuestion = () => {
+    setSelectedOption(null);
+    setIsChecked(false);
   };
 
   const currentQuestion = data
     ? data.find(item => item.id === randomIds[currentIdx])
     : null;
 
-  const handleOptionChange = option => {
-    setSelectedOption(option);
-  };
+  const isCorrect =
+    currentQuestion && selectedOption
+      ? currentQuestion.answer === selectedOption.num
+      : false;
 
   return (
     <PracticeBody>
@@ -67,24 +84,73 @@ const Practice = () => {
               {currentQuestion.example.map((example, Idx) => (
                 <OptionLabel
                   key={Idx}
-                  isSelected={selectedOption === example.text}
+                  isSelected={selectedOption === example}
+                  isCorrect={
+                    isChecked && example.num === currentQuestion.answer
+                  }
+                  isWrong={
+                    isChecked &&
+                    selectedOption &&
+                    selectedOption.num !== currentQuestion.answer &&
+                    selectedOption.num === example.num
+                  }
                 >
                   <RadioInput
                     type="radio"
                     name="options"
                     value={example.text}
-                    checked={selectedOption === example.text}
-                    onChange={() => handleOptionChange(example.text)}
+                    checked={selectedOption === example}
+                    onChange={() => handleOptionChange(example)}
+                    disabled={isChecked} // 채점 이후에는 선택 불가
                   />
-                  <CustomRadio isChecked={selectedOption === example.text}>
+                  <CustomRadio
+                    isChecked={selectedOption === example}
+                    isCorrect={
+                      isChecked && example.num === currentQuestion.answer
+                    }
+                    isWrong={
+                      isChecked &&
+                      selectedOption &&
+                      selectedOption.num !== currentQuestion.answer &&
+                      selectedOption.num === example.num
+                    }
+                  >
                     {String.fromCharCode(0x2460 + Idx)}
                   </CustomRadio>
-                  <ExampleText isSelected={selectedOption === example.text}>
+                  <ExampleText
+                    isSelected={selectedOption === example}
+                    isCorrect={
+                      isChecked && example.num === currentQuestion.answer
+                    }
+                    isWrong={
+                      isChecked &&
+                      selectedOption &&
+                      selectedOption.num !== currentQuestion.answer &&
+                      selectedOption.num === example.num
+                    }
+                  >
                     {example.text}
                   </ExampleText>
                 </OptionLabel>
               ))}
             </OptionsContainer>
+            <ButtonContainer>
+              <ResetButton onClick={handleResetQuestion}>다시 풀기</ResetButton>
+              <CheckButton
+                onClick={handleCheckAnswer}
+                disabled={isChecked || !selectedOption}
+              >
+                채점하기
+              </CheckButton>
+            </ButtonContainer>
+            {isChecked && (
+              <AnswerExplanation>
+                {isCorrect
+                  ? "정답입니다!"
+                  : `오답입니다. 정답: ${currentQuestion.answer}`}
+                <p>{currentQuestion.explanation}</p>
+              </AnswerExplanation>
+            )}
           </div>
         ) : (
           <NotFound />
@@ -97,12 +163,7 @@ const Practice = () => {
         >
           이전 문제
         </PrevButton>
-        <NextButton
-          onClick={handleNextQuestion}
-          disabled={currentIdx >= randomIds.length - 1}
-        >
-          다음 문제
-        </NextButton>
+        <NextButton onClick={handleNextQuestion}>다음 문제</NextButton>
       </ButtonContainer>
     </PracticeBody>
   );
@@ -167,7 +228,14 @@ const CustomRadio = styled.span`
   justify-content: center;
   align-items: center;
   margin-right: 0.5rem;
-  color: ${({ isChecked }) => (isChecked ? "rgb(2, 103, 255);" : "black")};
+  color: ${({ isChecked, isCorrect, isWrong }) =>
+    isCorrect
+      ? "rgb(2, 103, 255)"
+      : isWrong
+        ? "red"
+        : isChecked
+          ? "rgb(2, 103, 255)"
+          : "black"};
   scale: ${({ isChecked }) => (isChecked ? 1.2 : 1)};
   border-radius: 50%;
   font-size: 1.5rem;
@@ -178,7 +246,8 @@ const CustomRadio = styled.span`
 `;
 
 const ExampleText = styled.span`
-  color: ${({ isSelected }) => (isSelected ? "blue" : "black")};
+  color: ${({ isSelected, isCorrect, isWrong }) =>
+    isCorrect ? "blue" : isWrong ? "red" : isSelected ? "blue" : "black"};
 `;
 
 const ButtonContainer = styled.div`
@@ -211,4 +280,30 @@ const NextButton = styled.button`
     background-color: gray;
     cursor: not-allowed;
   }
+`;
+
+const CheckButton = styled.button`
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  background-color: ${({ disabled }) => (disabled ? "lightgray" : "#4CAF50")};
+  color: white;
+  border: none;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
+`;
+
+const ResetButton = styled.button`
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  background-color: #f0ad4e;
+  color: white;
+  border: none;
+  cursor: pointer;
+`;
+
+const AnswerExplanation = styled.div`
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  background-color: #f9f9f9;
+  padding: 1rem;
+  border-left: 5px solid green;
 `;
