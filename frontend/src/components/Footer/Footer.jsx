@@ -7,6 +7,7 @@ export default Footer;
 
 const FooterBody = styled.div`
   padding: 1rem;
+  margin-top: 3rem;
   background-color: lightgray;
   text-align: center;
 `;

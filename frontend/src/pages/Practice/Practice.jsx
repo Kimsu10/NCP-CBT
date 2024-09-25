@@ -80,12 +80,6 @@ const Practice = () => {
       (!Array.isArray(currentQuestion.answer) &&
         currentQuestion.answer === selectedOptions[0]));
 
-  // const isWrong =
-  //   isChecked &&
-  //   ((Array.isArray(currentQuestion.answer) &&
-  //     selectedOptions.some(num => !currentQuestion.answer.includes(num))) ||
-  //     (!Array.isArray(currentQuestion.answer) &&
-
   return (
     <PracticeBody>
       <ExplainBox>컨트롤러</ExplainBox>
@@ -93,7 +87,7 @@ const Practice = () => {
         {currentQuestion ? (
           <div>
             <QuestionText>
-              Q {currentIdx + 1}. {currentQuestion.question}
+              Q.{currentIdx + 1} {currentQuestion.question}
             </QuestionText>
             <OptionsContainer>
               {currentQuestion.example.map((ex, Idx) => {
@@ -172,7 +166,28 @@ const Practice = () => {
                   ? "정답입니다!"
                   : `오답입니다. 정답: ${currentQuestion.answer}`}
                 <ExplanationText>
-                  {currentQuestion.explanation || "설명이 없습니다."}
+                  {currentQuestion.explanation
+                    ? currentQuestion.explanation
+                        .split(".")
+                        .reduce((acc, sentence, idx, array) => {
+                          if (
+                            sentence.trim().length <= 20 &&
+                            idx < array.length - 1
+                          ) {
+                            acc[acc.length - 1] += "." + sentence.trim();
+                          } else {
+                            acc.push(sentence.trim());
+                          }
+                          return acc;
+                        }, [])
+                        .map((sentence, idx, array) => (
+                          <span key={idx}>
+                            {sentence}
+                            {idx < array.length - 1 ? "." : ""}
+                            {idx < array.length - 1 && <br />}
+                          </span>
+                        ))
+                    : "설명이 없습니다."}
                 </ExplanationText>
               </ExplanationBox>
             )}
@@ -201,8 +216,7 @@ const PracticeBody = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: gray;
-  padding: 2rem 1rem;
+  background-color: ${props => props.theme.white};
 `;
 
 const ExplainBox = styled.div`
@@ -224,7 +238,7 @@ const ProblemBox = styled.div`
 `;
 
 const QuestionText = styled.h2`
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   margin-bottom: 1rem;
 `;
 
@@ -325,7 +339,7 @@ const CheckButton = styled.button`
   cursor: pointer;
 
   &:disabled {
-    background-color: gray;
+    background-color: #b3b3b3;
     cursor: not-allowed;
   }
 `;
@@ -340,4 +354,5 @@ const ExplanationBox = styled.div`
 
 const ExplanationText = styled.p`
   padding: 1rem 0;
+  line-height: 1.6;
 `;
