@@ -213,6 +213,7 @@ export default Practice;
 
 const PracticeBody = styled.div`
   width: 100%;
+  min-height: 80vh;
   display: flex;
   flex-direction: column;
   align-items: center;
