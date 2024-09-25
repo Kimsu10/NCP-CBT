@@ -80,6 +80,47 @@ const Practice = () => {
       (!Array.isArray(currentQuestion.answer) &&
         currentQuestion.answer === selectedOptions[0]));
 
+  // 키보드 이벤트
+  useEffect(() => {
+    const handleKeyDown = event => {
+      switch (event.key) {
+        case "1":
+          handleOptionChange(1);
+          break;
+        case "2":
+          handleOptionChange(2);
+          break;
+        case "3":
+          handleOptionChange(3);
+          break;
+        case "4":
+          handleOptionChange(4);
+          break;
+        case "Enter":
+          if (selectedOptions.length > 0) {
+            handleCheckAnswer();
+          }
+          break;
+        case "ArrowRight":
+          handleNextQuestion();
+          break;
+        case "ArrowLeft":
+          handlePreviousQuestion();
+          break;
+        case "Escape":
+          handleRetry();
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedOptions, isChecked, currentIdx, currentQuestion]);
+
   return (
     <PracticeBody>
       <ExplainBox>컨트롤러</ExplainBox>
@@ -171,7 +212,7 @@ const Practice = () => {
                         .split(".")
                         .reduce((acc, sentence, idx, array) => {
                           if (
-                            sentence.trim().length <= 20 &&
+                            sentence.trim().length <= 24 &&
                             idx < array.length - 1
                           ) {
                             acc[acc.length - 1] += "." + sentence.trim();
