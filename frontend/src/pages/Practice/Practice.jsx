@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import NotFound from "../NotFound/NotFound";
+import ControlExplain from "../../components/ControlExplain/ControlExplain";
 
 const Practice = () => {
   const param = useParams();
@@ -123,7 +124,7 @@ const Practice = () => {
 
   return (
     <PracticeBody>
-      <ExplainBox>컨트롤러</ExplainBox>
+      <ControlExplain />
       <ProblemBox>
         {currentQuestion ? (
           <div>
@@ -261,17 +262,9 @@ const PracticeBody = styled.div`
   background-color: ${props => props.theme.white};
 `;
 
-const ExplainBox = styled.div`
-  width: 16%;
-  padding: 1.4rem;
-  background-color: orange;
-  position: absolute;
-  top: 20%;
-  left: 2%;
-`;
-
 const ProblemBox = styled.div`
   width: 60%;
+  min-width: 30rem;
   min-height: 64vh;
   max-height: auto;
   padding: 2rem;
@@ -332,7 +325,6 @@ const ExampleText = styled.span`
 const ButtonContainer = styled.div`
   display: flex;
   gap: 1rem;
-  margin-top: 1rem;
 `;
 
 const PrevButton = styled.button`
