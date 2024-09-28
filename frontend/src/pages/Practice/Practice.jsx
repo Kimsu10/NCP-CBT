@@ -4,6 +4,7 @@ import axios from "axios";
 import styled from "styled-components";
 import NotFound from "../NotFound/NotFound";
 import ControlExplain from "../../components/ControlExplain/ControlExplain";
+import CorrectMark from "../../components/Marks/CorrectMark";
 
 const Practice = () => {
   const param = useParams();
@@ -131,25 +132,27 @@ const Practice = () => {
             <QuestionText>
               Q.{currentIdx + 1} {currentQuestion.question}
             </QuestionText>
+            {/* 아래 채점 표시 연습용 */}
+            <CorrectMark />
             <OptionsContainer>
               {currentQuestion.example.map((ex, Idx) => {
-                const isExampleCorrect =
+                const isAnswerCorrect =
                   isChecked &&
                   !Array.isArray(currentQuestion.answer) &&
                   currentQuestion.answer === ex.num;
 
-                const isExampleWrong =
+                const isAnswerWrong =
                   isChecked &&
                   !Array.isArray(currentQuestion.answer) &&
                   selectedOptions.includes(ex.num) &&
                   currentQuestion.answer !== ex.num;
 
-                const isExampleAnswerCorrect =
+                const isAnswersCorrect =
                   isChecked &&
                   Array.isArray(currentQuestion.answer) &&
                   currentQuestion.answer.includes(ex.num);
 
-                const isExampleAnswerWrong =
+                const isAnswersWrong =
                   isChecked &&
                   Array.isArray(currentQuestion.answer) &&
                   selectedOptions.includes(ex.num) &&
@@ -159,8 +162,8 @@ const Practice = () => {
                   <OptionLabel
                     key={Idx}
                     isSelected={selectedOptions.includes(ex.num)}
-                    isCorrect={isExampleAnswerCorrect}
-                    isWrong={isExampleAnswerWrong}
+                    isCorrect={isAnswersCorrect}
+                    isWrong={isAnswersWrong}
                   >
                     <RadioInput
                       type={
@@ -176,15 +179,15 @@ const Practice = () => {
                     />
                     <CustomRadio
                       isChecked={selectedOptions.includes(ex.num)}
-                      isCorrect={isExampleAnswerCorrect || isExampleCorrect}
-                      isWrong={isExampleAnswerWrong || isExampleWrong}
+                      isCorrect={isAnswersCorrect || isAnswerCorrect}
+                      isWrong={isAnswersWrong || isAnswerWrong}
                     >
                       {String.fromCharCode(0x2460 + Idx)}
                     </CustomRadio>
                     <ExampleText
                       isSelected={selectedOptions.includes(ex.num)}
-                      isCorrect={isExampleAnswerCorrect || isExampleCorrect}
-                      isWrong={isExampleAnswerWrong || isExampleWrong}
+                      isCorrect={isAnswersCorrect || isAnswerCorrect}
+                      isWrong={isAnswersWrong || isAnswerWrong}
                     >
                       {ex.text}
                     </ExampleText>
@@ -240,12 +243,22 @@ const Practice = () => {
       </ProblemBox>
       <ButtonContainer>
         <PrevButton
-          onClick={handlePreviousQuestion}
+          onClick={() => {
+            handlePreviousQuestion();
+            document.activeElement.blur();
+          }}
           disabled={currentIdx === 0}
         >
           이전 문제
         </PrevButton>
-        <NextButton onClick={handleNextQuestion}>다음 문제</NextButton>
+        <NextButton
+          onClick={() => {
+            handleNextQuestion();
+            document.activeElement.blur();
+          }}
+        >
+          다음 문제
+        </NextButton>
       </ButtonContainer>
     </PracticeBody>
   );
