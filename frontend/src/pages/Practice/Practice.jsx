@@ -78,14 +78,19 @@ const Practice = () => {
   const isCorrect =
     isChecked &&
     ((Array.isArray(currentQuestion.answer) &&
+      currentQuestion.answer.length === selectedOptions.length &&
       currentQuestion.answer.every(num => selectedOptions.includes(num))) ||
       (!Array.isArray(currentQuestion.answer) &&
         currentQuestion.answer === selectedOptions[0]));
 
   // 키보드 이벤트
   useEffect(() => {
-    const handleKeyDown = event => {
-      switch (event.key) {
+    const handleKeyDown = e => {
+      if (isChecked && ["1", "2", "3", "4"].includes(e.key)) {
+        return;
+      }
+
+      switch (e.key) {
         case "1":
           handleOptionChange(1);
           break;
@@ -132,8 +137,6 @@ const Practice = () => {
             <QuestionText>
               Q.{currentIdx + 1} {currentQuestion.question}
             </QuestionText>
-            {/* 아래 채점 표시 연습용 */}
-            <CorrectMark />
             <OptionsContainer>
               {currentQuestion.example.map((ex, Idx) => {
                 const isAnswerCorrect =
