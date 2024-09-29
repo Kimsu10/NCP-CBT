@@ -135,7 +135,8 @@ const Practice = () => {
         {currentQuestion ? (
           <div>
             <QuestionText>
-              Q.{currentIdx + 1} {currentQuestion.question}
+              Q.{currentIdx + 1} &nbsp;
+              {currentQuestion.question}
             </QuestionText>
             <OptionsContainer>
               {currentQuestion.example.map((ex, Idx) => {
@@ -217,22 +218,19 @@ const Practice = () => {
                   {currentQuestion.explanation
                     ? currentQuestion.explanation
                         .split(".")
-                        .reduce((acc, sentence, idx, array) => {
-                          if (
-                            sentence.trim().length <= 24 &&
-                            idx < array.length - 1
-                          ) {
-                            acc[acc.length - 1] += "." + sentence.trim();
+                        .reduce((acc, str, idx, arr) => {
+                          if (str.trim().length <= 24 && idx < arr.length - 1) {
+                            acc[acc.length - 1] += "." + str.trim();
                           } else {
-                            acc.push(sentence.trim());
+                            acc.push(str.trim());
                           }
                           return acc;
                         }, [])
-                        .map((sentence, idx, array) => (
+                        .map((str, idx, arr) => (
                           <span key={idx}>
-                            {sentence}
-                            {idx < array.length - 1 ? "." : ""}
-                            {idx < array.length - 1 && <br />}
+                            {str}
+                            {idx < arr.length - 1 ? "." : ""}
+                            {idx < arr.length - 1 && <br />}
                           </span>
                         ))
                     : "설명이 없습니다."}
@@ -281,7 +279,7 @@ const PracticeBody = styled.div`
 const ProblemBox = styled.div`
   width: 60%;
   min-width: 30rem;
-  min-height: 64vh;
+  min-height: 48vh;
   max-height: auto;
   padding: 2rem;
   margin-top: 2rem;
@@ -291,6 +289,7 @@ const ProblemBox = styled.div`
 const QuestionText = styled.h2`
   font-size: 1.3rem;
   margin-bottom: 1rem;
+  line-height: 1.6;
 `;
 
 const OptionsContainer = styled.div`
