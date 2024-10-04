@@ -71,6 +71,14 @@ const Practice = () => {
     setIsChecked(false);
   };
 
+  const handleBookmark = () => {
+    alert("북마크 클릭")
+  }
+
+  const handleReport = () => {
+    alert("신고 성공")
+  }
+
   const currentQuestion = data
     ? data.find(item => item.id === randomIds[currentIdx])
     : null;
@@ -117,6 +125,9 @@ const Practice = () => {
         case "Escape":
           handleRetry();
           break;
+        case "b":
+          handleBookmark();
+          break;
         default:
           break;
       }
@@ -132,6 +143,8 @@ const Practice = () => {
     <PracticeBody>
       <ControlExplain />
       <ProblemBox>
+        <BookmarkButton><i class="bi bi-bookmark-star-fill"></i>  북마크</BookmarkButton>
+        <ComplaintButton><i class="bi bi-bell-fill"></i> 신고</ComplaintButton>
         {currentQuestion ? (
           <div>
             <QuestionText>
@@ -286,9 +299,38 @@ const ProblemBox = styled.div`
   background-color: ${props => props.theme.white};
 `;
 
+const BookmarkButton = styled.span`
+  width: 6rem;
+  font-size: 1rem;
+  background-color: transparent;
+  color: orange;
+  padding: 0.5rem;
+  border-radius: 8px;
+
+  &:hover{
+  color:white;
+  background-color: orange;
+}
+`
+
+const ComplaintButton = styled.span`
+width: 6rem;
+font-size: 1rem;
+background-color: transparent;
+color: red;
+margin-left: 0.5rem;
+padding: 0.5rem;
+border-radius: 8px;
+
+&:hover{
+  color:white;
+  background-color: red;
+}
+`
+
 const QuestionText = styled.h2`
   font-size: 1.3rem;
-  margin-bottom: 1rem;
+  margin: 0.5rem 0;
   line-height: 1.6;
 `;
 
