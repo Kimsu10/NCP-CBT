@@ -17,22 +17,26 @@ const GlobalStyle = createGlobalStyle`
 
   button {
     border: none;
-    border-radius: 0.5em;
+    border-radius: 0.5rem;
+    padding: 0.8rem;
+    font-weight: 700;
     cursor: pointer;
     color: white;
-    background-color: ${props => props.theme.mainColor};
+    background-color: ${props => props.theme.subColor};
 
     &:hover {
-    background-color: #0073cf;
-    color:white
-  }
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); 
+      color:white;
+    }  
   }
 
   input {
     background-color: transparent;
     outline: none;
-    font-size: 1em;
+    font-size: 1rem;
     vertical-align: middle;
+    border-radius: 0.5rem;
+    border: 1px solid #d9d9d9;
   }
 
   img{
@@ -40,14 +44,10 @@ const GlobalStyle = createGlobalStyle`
     border:0;
   }
 
-  .slick-slide {
-    display: flex !important;
-    justify-content: center;
-    border-bottom-left-radius: 0.5em;
-    border-bottom-right-radius: 0.5em;
-    background-color: white;
-
+  .modal-title{
+    margin-bottom: 2rem;
   }
+
 `;
 
 export default GlobalStyle;
