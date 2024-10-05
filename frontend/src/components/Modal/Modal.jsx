@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { flexRowBox } from "../../styles/Variables";
+import axios from "axios";
 
-const Modal = ({ type, closeModal }) => {
+const Modal = ({ closeModal }) => {
+  const [showLoginForm, setShowLoginForm] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
-    nickname: "",
+    username: "",
     password: "",
     confirmPassword: "",
+    roles: "USER",
   });
 
   const handleInputChange = e => {
@@ -18,39 +21,56 @@ const Modal = ({ type, closeModal }) => {
     }));
   };
 
-  const { email, nickname, password, confirmPassword } = formData;
+  const { email, username, password, confirmPassword } = formData;
 
-  const isLoginValid = type === "login" && nickname !== "" && password !== "";
+  const isLoginValid = username !== "" && password !== "";
   const isEmailValid = email.length > 0 && !email.includes("@");
 
   const isPasswordMatch =
     password.length > 0 &&
     confirmPassword.length > 0 &&
     password === confirmPassword;
+
   const getBorderColor = value =>
     value.length > 0 && !isPasswordMatch ? "red" : "";
 
   const isRegisterFormValid =
-    type === "register" &&
     email.length > 0 &&
-    nickname.length > 0 &&
+    username.length > 0 &&
     password.length > 0 &&
     confirmPassword.length > 0 &&
     isPasswordMatch &&
     !isEmailValid;
 
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(`http://localhost:8080/form/register`, formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log(response.data);
+      setShowLoginForm(true); // 회원가입 성공 시 로그인 폼 보이기
+
+    } catch (error) {
+      console.error('regist user error:', error.response ? error.response.data : error.message);
+    }
+  };
+
   return (
     <ModalContainer>
       <ModalContent>
         <CloseModalButton onClick={closeModal}>X</CloseModalButton>
-        {type === "login" ? (
+        {showLoginForm ? ( // showLoginForm 상태에 따라 로그인 또는 회원가입 폼 표시
           <LoginForm>
             <h2 className="modal-title">로그인</h2>
             <input
               type="text"
-              name="nickname"
+              name="username"
               placeholder="닉네임(계정)"
-              value={nickname}
+              value={username}
               onChange={handleInputChange}
             />
             <input
@@ -83,13 +103,14 @@ const Modal = ({ type, closeModal }) => {
         ) : (
           <RegisterForm
             email={email}
-            nickname={nickname}
+            username={username}
             password={password}
             confirmPassword={confirmPassword}
             handleInputChange={handleInputChange}
             isFormValid={isRegisterFormValid}
             getBorderColor={getBorderColor}
             isEmailValid={isEmailValid}
+            handleRegister={handleRegister}
           />
         )}
       </ModalContent>
@@ -99,13 +120,14 @@ const Modal = ({ type, closeModal }) => {
 
 const RegisterForm = ({
   email,
-  nickname,
+  username,
   password,
   confirmPassword,
   handleInputChange,
   isFormValid,
   getBorderColor,
   isEmailValid,
+  handleRegister,
 }) => {
   return (
     <RegisterFormContainer>
@@ -122,9 +144,9 @@ const RegisterForm = ({
       />
       <input
         type="text"
-        name="nickname"
+        name="username"
         placeholder="닉네임(계정)"
-        value={nickname}
+        value={username}
         onChange={handleInputChange}
       />
       <input
@@ -147,12 +169,13 @@ const RegisterForm = ({
           borderColor: getBorderColor(confirmPassword),
         }}
       />
-      <button disabled={!isFormValid}>회원가입</button>
+      <button disabled={!isFormValid} onClick={handleRegister}>회원가입</button>
     </RegisterFormContainer>
   );
 };
 
 export default Modal;
+
 
 const ModalContainer = styled.div`
   position: fixed;
