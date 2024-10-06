@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { flexRowBox } from "../../styles/Variables";
 import axios from "axios";
 
-const Modal = ({type, closeModal }) => {
+const Modal = ({ type, closeModal }) => {
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -15,10 +15,15 @@ const Modal = ({type, closeModal }) => {
 
   const handleInputChange = e => {
     const { name, value } = e.target;
+
     setFormData(prevState => ({
       ...prevState,
       [name]: value,
     }));
+
+    if (name === "username") {
+      setIsUsernameAvailable(null);
+    }
   };
 
   const { email, username, password, confirmPassword } = formData;
@@ -42,46 +47,94 @@ const Modal = ({type, closeModal }) => {
     isPasswordMatch &&
     !isEmailValid;
 
-  const handleRegister = async (e) => {
-    e.preventDefault(); 
+  const [isUsernameAvailable, setIsUsernameAvailable] = useState(null);
+
+  // 회원가입
+  const handleRegister = async e => {
+    e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:8080/form/register`, formData, {
-        headers: {
-          "Content-Type": "application/json",
+      const response = await axios.post(
+        `http://localhost:8080/form/register`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       console.log(response.data);
-      setShowLoginForm(true); 
-
+      setShowLoginForm(true);
     } catch (err) {
-      console.error('register user error:', err.response ? err.response.data : err.message);
+      console.error(
+        "register user error:",
+        err.response ? err.response.data : err.message,
+      );
     }
   };
 
-  const handleLogin = async (e) => {
-    e.preventDefault(); 
+  // 로그인
+  const handleLogin = async e => {
+    e.preventDefault();
     try {
-        const loginData = {
-            username: formData.username,
-            password: formData.password,
-        };
+      const loginData = {
+        username: formData.username,
+        password: formData.password,
+      };
 
-        const response = await axios.post('http://localhost:8080/form/login', loginData, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+      const response = await axios.post(
+        "http://localhost:8080/form/login",
+        loginData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-        const { accessToken, refreshToken } = response.data;
+      const { accessToken, refreshToken } = response.data;
 
-        sessionStorage.setItem('accessToken', accessToken);
-        sessionStorage.setItem('refreshToken', refreshToken);
+      sessionStorage.setItem("accessToken", accessToken);
+      sessionStorage.setItem("refreshToken", refreshToken);
 
-        console.log("login success:", response.data);
-        
+      console.log("login success:", response.data);
     } catch (err) {
-        console.error('login error:', err.response ? err.response.data : err.message);
+      console.error(
+        "login error:",
+        err.response ? err.response.data : err.message,
+      );
+    }
+  };
+
+  // 닉네임 중복확인
+  const handleCheckNick = async () => {
+    if (formData.username === "") {
+      alert("사용하실 계정명을 입력해주세요.");
+    } else {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/form/checkNick`,
+          {
+            params: {
+              username: formData.username,
+            },
+          },
+        );
+
+        const isExisted = response.data;
+        if (isExisted) {
+          setIsUsernameAvailable(false);
+          alert("이미 사용 중인 닉네임입니다.");
+        } else {
+          setIsUsernameAvailable(true);
+          alert("사용 가능한 닉네임입니다.");
+        }
+      } catch (err) {
+        console.error(
+          "nickname check error:",
+          err.response ? err.response.data : err.message,
+        );
+      }
     }
   };
 
@@ -107,7 +160,9 @@ const Modal = ({type, closeModal }) => {
                 value={password}
                 onChange={handleInputChange}
               />
-              <button type="submit" disabled={!isLoginValid}>로그인</button>
+              <button type="submit" disabled={!isLoginValid}>
+                로그인
+              </button>
               <span className="find-button"> 계정/비밀번호 찾기</span>
               <hr
                 style={{
@@ -121,13 +176,15 @@ const Modal = ({type, closeModal }) => {
                 <span> GitHub Login</span>
               </GithubLogin>
               <KakaoLogin>
-                <span style={{ fontSize: "1.5rem", marginRight: "0.5rem" }}>N</span>
+                <span style={{ fontSize: "1.5rem", marginRight: "0.5rem" }}>
+                  N
+                </span>
                 <span> Naver Login</span>
               </KakaoLogin>
             </LoginForm>
           </form>
         ) : (
-          <form onSubmit={handleRegister}> 
+          <form onSubmit={handleRegister}>
             <RegisterForm
               email={email}
               username={username}
@@ -137,6 +194,8 @@ const Modal = ({type, closeModal }) => {
               isFormValid={isRegisterFormValid}
               getBorderColor={getBorderColor}
               isEmailValid={isEmailValid}
+              handleCheckNick={handleCheckNick}
+              isUsernameAvailable={isUsernameAvailable}
             />
           </form>
         )}
@@ -154,6 +213,8 @@ const RegisterForm = ({
   isFormValid,
   getBorderColor,
   isEmailValid,
+  handleCheckNick,
+  isUsernameAvailable,
 }) => {
   return (
     <RegisterFormContainer>
@@ -168,6 +229,7 @@ const RegisterForm = ({
           borderColor: isEmailValid ? "red" : "",
         }}
       />
+      <CheckEmail>인증하기</CheckEmail>
       <input
         type="text"
         name="username"
@@ -175,6 +237,16 @@ const RegisterForm = ({
         value={username}
         onChange={handleInputChange}
       />
+      <CheckNick
+        onClick={handleCheckNick}
+        style={{ color: isUsernameAvailable === true ? "green" : "red" }}
+      >
+        {isUsernameAvailable === null
+          ? "중복확인"
+          : isUsernameAvailable
+            ? "사용 가능"
+            : "사용 불가"}
+      </CheckNick>
       <input
         type="password"
         name="password"
@@ -195,13 +267,14 @@ const RegisterForm = ({
           borderColor: getBorderColor(confirmPassword),
         }}
       />
-      <button type="submit" disabled={!isFormValid}>회원가입</button> 
+      <button type="submit" disabled={!isFormValid}>
+        회원가입
+      </button>
     </RegisterFormContainer>
   );
 };
 
 export default Modal;
-
 
 const ModalContainer = styled.div`
   position: fixed;
@@ -307,5 +380,35 @@ const RegisterFormContainer = styled.div`
       background-color: lightgray;
       cursor: not-allowed;
     }
+  }
+`;
+
+const CheckEmail = styled.span`
+  color: red;
+  font-size: 0.8rem;
+  width: 4rem;
+  position: absolute;
+  top: 29%;
+  right: 9%;
+  cursor: pointer;
+  padding: 0.5rem;
+
+  &:hover {
+    color: blue;
+  }
+`;
+
+const CheckNick = styled.span`
+  color: red;
+  font-size: 0.8rem;
+  width: 4rem;
+  position: absolute;
+  top: 42%;
+  right: 9%;
+  padding: 0.5rem;
+  cursor: pointer;
+
+  &:hover {
+    color: blue;
   }
 `;
