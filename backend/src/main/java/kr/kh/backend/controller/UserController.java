@@ -50,8 +50,19 @@ public class UserController {
         boolean isExisted = userMapper.isUsernameExisted(username);
 
         log.info("username {} is existed {}" , username, isExisted );
+
         return isExisted;
 
+    }
+
+    // 이메일 중복확인
+    @GetMapping("/form/checkEmail")
+    public boolean checkEmail(@RequestParam String email) {
+        boolean isExisted = userMapper.isEmailExisted(email);
+
+        log.info("email {} is existed {}" , email, isExisted );
+
+        return isExisted;
     }
 
     // 토큰 인증 테스트를 위한 컨트롤러인데 아직 공사중...

@@ -18,4 +18,7 @@ public interface UserMapper {
 
     @Select("SELECT COUNT(*) = 1 FROM user WHERE nickname = #{username}")
     boolean isUsernameExisted(String username);
+
+    @Select("SELECT COUNT(*) = 1 FROM user WHERE email = #{email}")
+    boolean isEmailExisted(String email);
 }

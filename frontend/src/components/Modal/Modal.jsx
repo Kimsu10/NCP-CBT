@@ -1,10 +1,14 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { flexRowBox } from "../../styles/Variables";
 import axios from "axios";
 
 const Modal = ({ type, closeModal }) => {
+  const navigate = useNavigate();
   const [showLoginForm, setShowLoginForm] = useState(false);
+  const [isUsernameAvailable, setIsUsernameAvailable] = useState(null);
+  const [isEmailAvailable, setIsEmailAvailable] = useState(null);
   const [formData, setFormData] = useState({
     email: "",
     username: "",
@@ -23,13 +27,16 @@ const Modal = ({ type, closeModal }) => {
 
     if (name === "username") {
       setIsUsernameAvailable(null);
+    } else if (name === "email") {
+      setIsEmailAvailable(null);
     }
   };
 
   const { email, username, password, confirmPassword } = formData;
 
   const isLoginValid = username !== "" && password !== "";
-  const isEmailValid = email.length > 0 && !email.includes("@");
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const isEmailValid = emailRegex.test(email);
 
   const isPasswordMatch =
     password.length > 0 &&
@@ -45,9 +52,9 @@ const Modal = ({ type, closeModal }) => {
     password.length > 0 &&
     confirmPassword.length > 0 &&
     isPasswordMatch &&
-    !isEmailValid;
-
-  const [isUsernameAvailable, setIsUsernameAvailable] = useState(null);
+    isEmailValid &&
+    isEmailAvailable === true &&
+    isUsernameAvailable === true;
 
   // 회원가입
   const handleRegister = async e => {
@@ -97,7 +104,8 @@ const Modal = ({ type, closeModal }) => {
       sessionStorage.setItem("accessToken", accessToken);
       sessionStorage.setItem("refreshToken", refreshToken);
 
-      console.log("login success:", response.data);
+      navigate("/");
+      closeModal();
     } catch (err) {
       console.error(
         "login error:",
@@ -132,6 +140,38 @@ const Modal = ({ type, closeModal }) => {
       } catch (err) {
         console.error(
           "nickname check error:",
+          err.response ? err.response.data : err.message,
+        );
+      }
+    }
+  };
+
+  // email 중복확인
+  const handleCheckEmail = async () => {
+    if (email === "") {
+      alert("이메일을 입력해주세요.");
+    } else {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/form/checkEmail`,
+          {
+            params: {
+              email: email,
+            },
+          },
+        );
+
+        const isExisted = response.data;
+        if (isExisted) {
+          setIsEmailAvailable(false);
+          alert("이미 사용 중인 이메일입니다.");
+        } else {
+          setIsEmailAvailable(true);
+          alert("사용 가능한 이메일입니다.");
+        }
+      } catch (err) {
+        console.error(
+          "email check error:",
           err.response ? err.response.data : err.message,
         );
       }
@@ -196,6 +236,8 @@ const Modal = ({ type, closeModal }) => {
               isEmailValid={isEmailValid}
               handleCheckNick={handleCheckNick}
               isUsernameAvailable={isUsernameAvailable}
+              handleCheckEmail={handleCheckEmail}
+              isEmailAvailable={isEmailAvailable}
             />
           </form>
         )}
@@ -215,6 +257,8 @@ const RegisterForm = ({
   isEmailValid,
   handleCheckNick,
   isUsernameAvailable,
+  handleCheckEmail,
+  isEmailAvailable,
 }) => {
   return (
     <RegisterFormContainer>
@@ -226,10 +270,19 @@ const RegisterForm = ({
         value={email}
         onChange={handleInputChange}
         style={{
-          borderColor: isEmailValid ? "red" : "",
+          borderColor: email.length > 0 && !isEmailValid ? "red" : "",
         }}
       />
-      <CheckEmail>인증하기</CheckEmail>
+      <CheckEmail
+        onClick={handleCheckEmail}
+        style={{ color: isEmailAvailable === true ? "green" : "red" }}
+      >
+        {isEmailAvailable === null
+          ? "중복확인"
+          : isEmailAvailable
+            ? "사용 가능"
+            : "사용 불가"}
+      </CheckEmail>
       <input
         type="text"
         name="username"
@@ -407,8 +460,4 @@ const CheckNick = styled.span`
   right: 9%;
   padding: 0.5rem;
   cursor: pointer;
-
-  &:hover {
-    color: blue;
-  }
 `;
