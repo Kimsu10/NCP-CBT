@@ -28,13 +28,13 @@ public class UserService {
     public JwtToken generateJwtToken(String username, String password) {
         log.info("Generate JWT Token = username : {}", username);
 
-        // 사용자 정보를 로드
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
-
-        // 비밀번호 비교
-        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
-        }
+//        // 사용자 정보를 로드
+//        UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+//
+//        // 비밀번호 비교
+//        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+//            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+//        }
 
         // username + password 기반으로 Authentication 객체 생성
         UsernamePasswordAuthenticationToken authenticationToken =

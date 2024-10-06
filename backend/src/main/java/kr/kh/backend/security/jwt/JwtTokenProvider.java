@@ -41,26 +41,26 @@ public class JwtTokenProvider {
     public JwtToken generateToken(Authentication authentication) {
         log.info("Generate JWT token = {}", authentication);
         // 유저 권한 가져오기
-        List<String> authoritiesList = authentication.getAuthorities().stream()
+        String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+                .collect(Collectors.joining(","));
 
-        log.info("user roles = {}", authoritiesList);
+        log.info("user roles = {}", authorities);
         long now = System.currentTimeMillis();
 
-        // access token 생성 : 인증된 사용자의 권한 정보와 만료 시간을 담는다.
-        Date expiration = new Date(now + 1000 * 60 * 60 * 24);
+        // access token 생성 : 인증된 사용자의 권한 정보와 만료 시간을 담는다. (1시간)
+        Date expiration = new Date(now + 1000 * 60 * 60);
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim("auth", authoritiesList)
+                .claim("auth", authorities)
                 .setExpiration(expiration)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
         log.info("generated access Token = {}", accessToken);
 
-        // refresh token 생성 : access token 의 갱신을 위해 사용된다.
+        // refresh token 생성 : access token 의 갱신을 위해 사용된다. (1주일)
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + 1000 * 60 * 60 * 24))
+                .setExpiration(new Date(now + 1000 * 60 * 60 * 24 * 7))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
         log.info("generated refresh Token = {}", accessToken);
