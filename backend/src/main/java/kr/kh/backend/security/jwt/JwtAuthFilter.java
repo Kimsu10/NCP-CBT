@@ -25,6 +25,13 @@ public class JwtAuthFilter extends GenericFilterBean {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
+        // 회원가입 요청 예외 처리
+        if ("/form/register".equals(httpRequest.getRequestURI())) {
+            log.info("request register URI = {}", httpRequest.getRequestURI());
+            chain.doFilter(request, response);
+            return;
+        }
+
         // 로그인 요청을 예외 처리
         if ("/form/login".equals(httpRequest.getRequestURI())) {
             log.info("httpUri = {}", httpRequest.getRequestURI());
