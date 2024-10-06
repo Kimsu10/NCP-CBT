@@ -48,8 +48,8 @@ public class JwtTokenProvider {
         log.info("user roles = {}", authorities);
         long now = System.currentTimeMillis();
 
-        // access token 생성 : 인증된 사용자의 권한 정보와 만료 시간을 담는다.
-        Date expiration = new Date(now + 1000 * 60 * 60 * 24);
+        // access token 생성 : 인증된 사용자의 권한 정보와 만료 시간을 담는다. (1시간)
+        Date expiration = new Date(now + 1000 * 60 * 60);
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
@@ -58,9 +58,9 @@ public class JwtTokenProvider {
                 .compact();
         log.info("generated access Token = {}", accessToken);
 
-        // refresh token 생성 : access token 의 갱신을 위해 사용된다.
+        // refresh token 생성 : access token 의 갱신을 위해 사용된다. (1주일)
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + 1000 * 60 * 60 * 24))
+                .setExpiration(new Date(now + 1000 * 60 * 60 * 24 * 7))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
         log.info("generated refresh Token = {}", accessToken);
