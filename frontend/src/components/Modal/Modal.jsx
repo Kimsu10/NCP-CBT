@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { flexRowBox } from "../../styles/Variables";
 import axios from "axios";
 
-const Modal = ({ closeModal }) => {
+const Modal = ({type, closeModal }) => {
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -43,7 +43,7 @@ const Modal = ({ closeModal }) => {
     !isEmailValid;
 
   const handleRegister = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); 
     try {
       const response = await axios.post(`http://localhost:8080/form/register`, formData, {
         headers: {
@@ -52,10 +52,36 @@ const Modal = ({ closeModal }) => {
       });
 
       console.log(response.data);
-      setShowLoginForm(true); // 회원가입 성공 시 로그인 폼 보이기
+      setShowLoginForm(true); 
 
-    } catch (error) {
-      console.error('regist user error:', error.response ? error.response.data : error.message);
+    } catch (err) {
+      console.error('register user error:', err.response ? err.response.data : err.message);
+    }
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault(); 
+    try {
+        const loginData = {
+            username: formData.username,
+            password: formData.password,
+        };
+
+        const response = await axios.post('http://localhost:8080/form/login', loginData, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        const { accessToken, refreshToken } = response.data;
+
+        sessionStorage.setItem('accessToken', accessToken);
+        sessionStorage.setItem('refreshToken', refreshToken);
+
+        console.log("login success:", response.data);
+        
+    } catch (err) {
+        console.error('login error:', err.response ? err.response.data : err.message);
     }
   };
 
@@ -63,55 +89,56 @@ const Modal = ({ closeModal }) => {
     <ModalContainer>
       <ModalContent>
         <CloseModalButton onClick={closeModal}>X</CloseModalButton>
-        {showLoginForm ? ( // showLoginForm 상태에 따라 로그인 또는 회원가입 폼 표시
-          <LoginForm>
-            <h2 className="modal-title">로그인</h2>
-            <input
-              type="text"
-              name="username"
-              placeholder="닉네임(계정)"
-              value={username}
-              onChange={handleInputChange}
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder="비밀번호"
-              value={password}
-              onChange={handleInputChange}
-            />
-            <button disabled={!isLoginValid}>로그인</button>
-            <span className="find-button"> 계정/비밀번호 찾기</span>
-            <hr
-              style={{
-                backgroundColor: "lightGray",
-                height: "1px",
-                border: "none",
-              }}
-            />
-            <GithubLogin>
-              <img src="/images/github.png" alt="github-icon" />
-              <span> GitHub Login</span>
-            </GithubLogin>
-            <KakaoLogin>
-              <span style={{ fontSize: "1.5rem", marginRight: "0.5rem" }}>
-                N
-              </span>
-              <span> Naver Login</span>
-            </KakaoLogin>
-          </LoginForm>
+        {showLoginForm || type === "login" ? (
+          <form onSubmit={handleLogin}>
+            <LoginForm>
+              <h2 className="modal-title">로그인</h2>
+              <input
+                type="text"
+                name="username"
+                placeholder="닉네임(계정)"
+                value={username}
+                onChange={handleInputChange}
+              />
+              <input
+                type="password"
+                name="password"
+                placeholder="비밀번호"
+                value={password}
+                onChange={handleInputChange}
+              />
+              <button type="submit" disabled={!isLoginValid}>로그인</button>
+              <span className="find-button"> 계정/비밀번호 찾기</span>
+              <hr
+                style={{
+                  backgroundColor: "lightGray",
+                  height: "1px",
+                  border: "none",
+                }}
+              />
+              <GithubLogin>
+                <img src="/images/github.png" alt="github-icon" />
+                <span> GitHub Login</span>
+              </GithubLogin>
+              <KakaoLogin>
+                <span style={{ fontSize: "1.5rem", marginRight: "0.5rem" }}>N</span>
+                <span> Naver Login</span>
+              </KakaoLogin>
+            </LoginForm>
+          </form>
         ) : (
-          <RegisterForm
-            email={email}
-            username={username}
-            password={password}
-            confirmPassword={confirmPassword}
-            handleInputChange={handleInputChange}
-            isFormValid={isRegisterFormValid}
-            getBorderColor={getBorderColor}
-            isEmailValid={isEmailValid}
-            handleRegister={handleRegister}
-          />
+          <form onSubmit={handleRegister}> 
+            <RegisterForm
+              email={email}
+              username={username}
+              password={password}
+              confirmPassword={confirmPassword}
+              handleInputChange={handleInputChange}
+              isFormValid={isRegisterFormValid}
+              getBorderColor={getBorderColor}
+              isEmailValid={isEmailValid}
+            />
+          </form>
         )}
       </ModalContent>
     </ModalContainer>
@@ -127,7 +154,6 @@ const RegisterForm = ({
   isFormValid,
   getBorderColor,
   isEmailValid,
-  handleRegister,
 }) => {
   return (
     <RegisterFormContainer>
@@ -169,7 +195,7 @@ const RegisterForm = ({
           borderColor: getBorderColor(confirmPassword),
         }}
       />
-      <button disabled={!isFormValid} onClick={handleRegister}>회원가입</button>
+      <button type="submit" disabled={!isFormValid}>회원가입</button> 
     </RegisterFormContainer>
   );
 };

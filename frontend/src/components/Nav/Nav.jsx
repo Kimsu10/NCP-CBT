@@ -77,7 +77,7 @@ const Nav = () => {
           </>
         )}
       </ControllerBox>
-      {isModalOpen && <Modal type={modalType} closeModal={closeModal} />}
+      {isModalOpen && <Modal type={modalType} closeModal={closeModal} openModal={openModal} />}
     </NavBody>
   );
 };
