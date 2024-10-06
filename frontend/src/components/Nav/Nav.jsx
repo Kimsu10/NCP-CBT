@@ -6,6 +6,7 @@ const Nav = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
   const [isListOpen, setIsListOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false); 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const token = sessionStorage.getItem("accessToken");
 
@@ -21,6 +22,15 @@ const Nav = () => {
 
   const openList = () => {
     setIsListOpen(prev => !prev);
+  };
+
+  const openProfile = () => {
+    setIsProfileOpen(prev => !prev); 
+  };
+
+  const logout = () => {
+    sessionStorage.removeItem("accessToken"); 
+    window.location.reload(); 
   };
 
   useEffect(() => {
@@ -51,7 +61,18 @@ const Nav = () => {
                 </Register>
               </>
             ) : (
-              <ProfileIcon className="bi bi-person-circle"></ProfileIcon>
+              <>
+                <ProfileIcon
+                  className="bi bi-person-circle"
+                  onClick={openProfile}
+                ></ProfileIcon>
+                {isProfileOpen && (
+                  <ProfileMenu>
+                    <UserProfile>내 정보</UserProfile>
+                    <LogoutButton onClick={logout}>로그아웃</LogoutButton>
+                  </ProfileMenu>
+                )}
+              </>
             )}
           </>
         )}
@@ -61,7 +82,10 @@ const Nav = () => {
             {isListOpen && (
               <MobileList>
                 {token ? (
-                  <UserProfile>내 정보</UserProfile>
+                  <>
+                    <UserProfile>내 정보</UserProfile>
+                    <MobileLogout onClick={logout}>로그아웃</MobileLogout>
+                  </>
                 ) : (
                   <>
                     <MobileLogin onClick={() => openModal("login")}>
@@ -77,7 +101,9 @@ const Nav = () => {
           </>
         )}
       </ControllerBox>
-      {isModalOpen && <Modal type={modalType} closeModal={closeModal} openModal={openModal} />}
+      {isModalOpen && (
+        <Modal type={modalType} closeModal={closeModal} openModal={openModal} />
+      )}
     </NavBody>
   );
 };
@@ -138,6 +164,7 @@ const Register = styled.span`
 const ProfileIcon = styled.i`
   font-size: 1.8rem;
   color: ${props => props.theme.white};
+  cursor: pointer;
 `;
 
 const ListIcon = styled.i`
@@ -151,6 +178,29 @@ const ListIcon = styled.i`
 
   &:hover {
     color: ${props => props.theme.hoverColor};
+  }
+`;
+
+const ProfileMenu = styled.div`
+  position: absolute;
+  top: 4.1rem;
+  right: 1rem;
+  background-color: ${props => props.theme.mainColor};
+  padding: 1rem;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+`;
+
+const LogoutButton = styled.span`
+  font-weight: 700;
+  cursor: pointer;
+  color: ${props => props.theme.white};
+
+  &:hover {
+    text-decoration: underline;
   }
 `;
 
@@ -178,6 +228,16 @@ const MobileLogin = styled.span`
 `;
 
 const MobileRegister = styled.span`
+  font-weight: 700;
+  cursor: pointer;
+  color: ${props => props.theme.white};
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+const MobileLogout = styled.span`
   font-weight: 700;
   cursor: pointer;
   color: ${props => props.theme.white};
