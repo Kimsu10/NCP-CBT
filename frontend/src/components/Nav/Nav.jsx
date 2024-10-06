@@ -7,7 +7,7 @@ const Nav = () => {
   const [modalType, setModalType] = useState("");
   const [isListOpen, setIsListOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("accessToken");
 
   const openModal = type => {
     setModalType(type);
