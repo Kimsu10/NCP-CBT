@@ -111,6 +111,7 @@ const Modal = ({ type, closeModal }) => {
         "login error:",
         err.response ? err.response.data : err.message,
       );
+      alert("계정 또는 비밀번호가 다릅니다.");
     }
   };
 
