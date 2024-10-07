@@ -72,12 +72,12 @@ const Practice = () => {
   };
 
   const handleBookmark = () => {
-    alert("북마크 클릭")
-  }
+    alert("북마크 클릭");
+  };
 
   const handleReport = () => {
-    alert("신고 성공")
-  }
+    alert("신고 성공");
+  };
 
   const currentQuestion = data
     ? data.find(item => item.id === randomIds[currentIdx])
@@ -143,8 +143,12 @@ const Practice = () => {
     <PracticeBody>
       <ControlExplain />
       <ProblemBox>
-        <BookmarkButton><i class="bi bi-bookmark-star-fill"></i>  북마크</BookmarkButton>
-        <ComplaintButton><i class="bi bi-bell-fill"></i> 신고</ComplaintButton>
+        <BookmarkButton>
+          <i className="bi bi-bookmark-star-fill"></i> 북마크
+        </BookmarkButton>
+        <ComplaintButton>
+          <i className="bi bi-bell-fill"></i> 신고
+        </ComplaintButton>
         {currentQuestion ? (
           <div>
             <QuestionText>
@@ -287,12 +291,13 @@ const PracticeBody = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: ${props => props.theme.white};
+  justify-content: center;
 `;
 
 const ProblemBox = styled.div`
   width: 60%;
   min-width: 30rem;
-  min-height: 48vh;
+  min-height: 36vh;
   max-height: auto;
   padding: 2rem;
   margin-top: 2rem;
@@ -307,26 +312,26 @@ const BookmarkButton = styled.span`
   padding: 0.5rem;
   border-radius: 8px;
 
-  &:hover{
-  color:white;
-  background-color: orange;
-}
-`
+  &:hover {
+    color: white;
+    background-color: orange;
+  }
+`;
 
 const ComplaintButton = styled.span`
-width: 6rem;
-font-size: 1rem;
-background-color: transparent;
-color: red;
-margin-left: 0.5rem;
-padding: 0.5rem;
-border-radius: 8px;
+  width: 6rem;
+  font-size: 1rem;
+  background-color: transparent;
+  color: red;
+  margin-left: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 8px;
 
-&:hover{
-  color:white;
-  background-color: red;
-}
-`
+  &:hover {
+    color: white;
+    background-color: red;
+  }
+`;
 
 const QuestionText = styled.h2`
   font-size: 1.3rem;
