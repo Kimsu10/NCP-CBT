@@ -7,9 +7,7 @@ import kr.kh.backend.service.security.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Slf4j
@@ -20,6 +18,7 @@ public class UserController {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
+    // 회원가입
     @PostMapping("/form/register")
     public void register(@RequestBody LoginDTO loginDTO) {
         log.info("register : {}", loginDTO.toString());
@@ -29,6 +28,7 @@ public class UserController {
         userMapper.insertUser(loginDTO);
     }
 
+    // 로그인
     @PostMapping("/form/login")
     public JwtToken login(@RequestBody LoginDTO loginDTO) {
         log.info("login : {}", loginDTO.toString());
@@ -41,6 +41,28 @@ public class UserController {
         log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
         return jwtToken;
+    }
+
+    // 닉네임 중복확인
+    @GetMapping("/form/checkNick")
+    public boolean checkUsername(@RequestParam String username) {
+
+        boolean isExisted = userMapper.isUsernameExisted(username);
+
+        log.info("username {} is existed {}" , username, isExisted );
+
+        return isExisted;
+
+    }
+
+    // 이메일 중복확인
+    @GetMapping("/form/checkEmail")
+    public boolean checkEmail(@RequestParam String email) {
+        boolean isExisted = userMapper.isEmailExisted(email);
+
+        log.info("email {} is existed {}" , email, isExisted );
+
+        return isExisted;
     }
 
     // 토큰 인증 테스트를 위한 컨트롤러인데 아직 공사중...
