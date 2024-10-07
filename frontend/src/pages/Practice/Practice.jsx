@@ -143,18 +143,21 @@ const Practice = () => {
     <PracticeBody>
       <ControlExplain />
       <ProblemBox>
-        <BookmarkButton>
+        <BookmarkButton onClick={handleBookmark}>
           <i className="bi bi-bookmark-star-fill"></i> 북마크
         </BookmarkButton>
-        <ComplaintButton>
+        <ComplaintButton onClick={handleReport}>
           <i className="bi bi-bell-fill"></i> 신고
         </ComplaintButton>
         {currentQuestion ? (
           <div>
-            <QuestionText>
-              Q.{currentIdx + 1} &nbsp;
-              {currentQuestion.question}
-            </QuestionText>
+            <QuestionWrapper>
+              <QuestionText>
+                Q.{currentIdx + 1} &nbsp;
+                {currentQuestion.question}
+              </QuestionText>
+              {isCorrect ? <CorrectMark /> : ""}
+            </QuestionWrapper>
             <OptionsContainer>
               {currentQuestion.example.map((ex, Idx) => {
                 const isAnswerCorrect =
@@ -225,7 +228,6 @@ const Practice = () => {
             >
               채점하기
             </CheckButton>
-
             {isChecked && (
               <ExplanationBox>
                 {isCorrect
@@ -311,6 +313,7 @@ const BookmarkButton = styled.span`
   color: orange;
   padding: 0.5rem;
   border-radius: 8px;
+  cursor: pointer;
 
   &:hover {
     color: white;
@@ -326,6 +329,7 @@ const ComplaintButton = styled.span`
   margin-left: 0.5rem;
   padding: 0.5rem;
   border-radius: 8px;
+  cursor: pointer;
 
   &:hover {
     color: white;
@@ -333,9 +337,13 @@ const ComplaintButton = styled.span`
   }
 `;
 
+const QuestionWrapper = styled.div`
+  position: relative;
+  margin: 1rem 0;
+`;
+
 const QuestionText = styled.h2`
   font-size: 1.3rem;
-  margin: 0.5rem 0;
   line-height: 1.6;
 `;
 

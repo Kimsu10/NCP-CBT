@@ -22,7 +22,7 @@ const ControlBox = styled.div`
   padding: 1.4rem;
   background-color: #ffa6004d;
   position: absolute;
-  top: 20%;
+  top: 30%;
   left: 4%;
   display: flex;
   flex-direction: column;

@@ -3,8 +3,8 @@ import styled from "styled-components";
 const CorrectMark = () => {
   return (
     <SVGContainer>
-      <svg viewBox="0 0 100 100">
-        <ellipse cx="50" cy="50" rx="45" ry="25" />
+      <svg viewBox="16 1 70 110">
+        <ellipse cx="50" cy="30" rx="45" ry="30" />
       </svg>
     </SVGContainer>
   );
@@ -13,13 +13,16 @@ const CorrectMark = () => {
 export default CorrectMark;
 
 const SVGContainer = styled.div`
-  width: 14rem;
-  height: 16rem;
+  width: 4.5rem;
+  height: 5rem;
+  position: absolute;
+  top: -1.9rem;
+  left: -2.5rem;
+  transform: rotate(130deg);
 
   svg {
     width: 100%;
     height: 100%;
-    transform: rotate(140deg);
   }
 
   ellipse {
@@ -28,7 +31,7 @@ const SVGContainer = styled.div`
     stroke-width: 4;
     stroke-dasharray: 283;
     stroke-dashoffset: 283;
-    animation: drawEllipse 2s ease-in-out forwards;
+    animation: drawEllipse 1s ease-in-out forwards;
   }
 
   @keyframes drawEllipse {

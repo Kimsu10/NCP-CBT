@@ -3308,7 +3308,7 @@
         "text": "디스크 추가를 할 수 없다."
       }
     ],
-    "answer": [1, 2],
+    "answer": 1,
     "explanation": "Micro 서버의 사양은 1vCPU, 1G RAM, 30GB HDD이며, Classic 환경과 VPC 환경 모두에서 이용 가능합니다. Windows OS는 지원하며, 디스크 추가는 가능합니다."
   },
   {
