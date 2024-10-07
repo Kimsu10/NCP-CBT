@@ -185,9 +185,9 @@ const Practice = () => {
                 return (
                   <OptionLabel
                     key={Idx}
-                    isSelected={selectedOptions.includes(ex.num)}
-                    isCorrect={isAnswersCorrect}
-                    isWrong={isAnswersWrong}
+                    $isSelected={selectedOptions.includes(ex.num)}
+                    $isCorrect={isAnswersCorrect}
+                    $isWrong={isAnswersWrong}
                   >
                     <RadioInput
                       type={
@@ -202,16 +202,16 @@ const Practice = () => {
                       disabled={isChecked}
                     />
                     <CustomRadio
-                      isChecked={selectedOptions.includes(ex.num)}
-                      isCorrect={isAnswersCorrect || isAnswerCorrect}
-                      isWrong={isAnswersWrong || isAnswerWrong}
+                      $isChecked={selectedOptions.includes(ex.num)}
+                      $isCorrect={isAnswersCorrect || isAnswerCorrect}
+                      $isWrong={isAnswersWrong || isAnswerWrong}
                     >
                       {String.fromCharCode(0x2460 + Idx)}
                     </CustomRadio>
                     <ExampleText
-                      isSelected={selectedOptions.includes(ex.num)}
-                      isCorrect={isAnswersCorrect || isAnswerCorrect}
-                      isWrong={isAnswersWrong || isAnswerWrong}
+                      $isSelected={selectedOptions.includes(ex.num)}
+                      $isCorrect={isAnswersCorrect || isAnswerCorrect}
+                      $isWrong={isAnswersWrong || isAnswerWrong}
                     >
                       {ex.text}
                     </ExampleText>
@@ -371,12 +371,12 @@ const CustomRadio = styled.span`
   justify-content: center;
   align-items: center;
   margin-right: 0.5rem;
-  color: ${({ isChecked, isCorrect, isWrong }) =>
-    isCorrect
+  color: ${({ $isChecked, $isCorrect, $isWrong }) =>
+    $isCorrect
       ? "rgb(2, 103, 255)"
-      : isWrong
+      : $isWrong
         ? "red"
-        : isChecked
+        : $isChecked
           ? "rgb(2, 103, 255)"
           : "black"};
   border-radius: 50%;
@@ -388,8 +388,8 @@ const CustomRadio = styled.span`
 `;
 
 const ExampleText = styled.span`
-  color: ${({ isSelected, isCorrect, isWrong }) =>
-    isCorrect ? "blue" : isWrong ? "red" : isSelected ? "blue" : "black"};
+  color: ${({ $isSelected, $isCorrect, $isWrong }) =>
+    $isCorrect ? "blue" : $isWrong ? "red" : $isSelected ? "blue" : "black"};
 `;
 
 const ButtonContainer = styled.div`
