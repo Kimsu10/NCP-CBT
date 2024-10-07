@@ -39,6 +39,12 @@ const Modal = ({ type, closeModal }) => {
     isPasswordMatch &&
     !isEmailValid;
 
+  // 네이버 로그인
+  const doNaverLogin = () => {
+    const url = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=uYa2_2OY_IxfsaJulv3W&redirect_uri=http://localhost:8080/oauth/naver&state=1234`;
+    window.location.href = url;
+  };
+
   return (
     <ModalContainer>
       <ModalContent>
@@ -73,7 +79,7 @@ const Modal = ({ type, closeModal }) => {
               <img src="/images/github.png" alt="github-icon" />
               <span> GitHub Login</span>
             </GithubLogin>
-            <KakaoLogin>
+            <KakaoLogin onClick={() => doNaverLogin()}>
               <span style={{ fontSize: "1.5rem", marginRight: "0.5rem" }}>
                 N
               </span>

@@ -37,7 +37,7 @@ public class UserController {
         String password = loginDTO.getPassword();
         JwtToken jwtToken = userService.generateJwtToken(username, password);
 
-        log.info("request username = {}, password = {}", username, password);
+        log.info("request username = {}", username);
         log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
         return jwtToken;
