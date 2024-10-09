@@ -261,7 +261,7 @@
       }
     ],
     "answer": 2,
-    "explanation": "Kubernetes Service는 노드 생성 개수에 대한 제한이 20개보다 클 수 있습니다."
+    "explanation": "Kubernetes Service는 노드 생성 개수에 대한 제한이 20개보다 클 수 있습니다. Kubernetes 공식 문서에 따르면 기본 설정으로 노드 당 최대 110개의 파드를 생성할 수 있습니다."
   },
   {
     "id": 12,
@@ -1077,7 +1077,7 @@
       }
     ],
     "answer": 4,
-    "explanation": "SSD 타입의 Block Storage는 1GB 당 40 MAX IOPS를 보장합니다. HDD 타입의 Block Storage는 1GB 당 30 MAX IOPS를 보장합니다."
+    "explanation": "SSD 타입의 Block Storage는 1GB 당 40 MAX IOPS를 보장합니다. HDD 타입의 Block Storage는 1GB 당 30 MAX IOPS를 보장합니다. NCP에서 Block Storage는 저렴하게 서버 데이터를 저장하기 위해 HDD 타입의 스토리지를, 빠른 데이터 처리를 위한 고성능 I/O가 필요한 서비스를 위해 SSD 타입의 스토리지를 제공합니다. 고성능 SSD 타입의 스토리지는 기본적으로 1GB 당 40 IOPS의 성능을 제공하며, 스토리지 할당량에 비례하여 IOPS 수치를 높일 수 있어 최대 2만 IOPS까지 제공됩니다. "
   },
   {
     "id": 46,
@@ -1556,8 +1556,8 @@
         "text": "Live Migration 기능을 활성화하기 위해서는 서비스 신청이 필요하다."
       }
     ],
-    "answer": 3,
-    "explanation": "Live Migration은 서버 중단 없이 호스트 서버가 변경되는 과정을 의미합니다."
+    "answer": 2,
+    "explanation": "BareMetal 서버는 물리적인 특성 때문에 Live Migration이 가능하긴 하지만, 일반 서버보다 시간이 더 걸릴 수 있습니다."
   },
   {
     "id": 66,
@@ -1821,7 +1821,7 @@
       }
     ],
     "answer": 4,
-    "explanation": "Master Node에 접근하기 위해서는 pem key가 아닌 다른 인증 방법이 필요합니다."
+    "explanation": "Master Node에 접근하기 위해서는 pem key가 아닌 Kubernetes API 서버를 통해 인증이 이루어집니다."
   },
   {
     "id": 77,
@@ -2757,7 +2757,7 @@
       }
     ],
     "answer": 3,
-    "explanation": "NCR은 네이버 클라우드 플랫폼의 제품이 아니며, Ingress는 URL Path 기반 라우팅 규칙을 사용할 수 있지만 호스트 기반 라우팅은 지원하지 않습니다."
+    "explanation": "NCR은 Host기반 및 URL Path기반 라우팅에 대한 규칙 사용합니다. 하지만 NCR은 네이버 클라우드 플랫폼에서 제공하는 네트워크 관련 서비스인 'Naver Cloud Router'로, 쿠버네티스의 Ingress와 직접적인 관련이 없습니다. Ingress는 네이버 클라우드 쿠버네티스에서 외부 트래픽을 클러스터 내부 서비스로 라우팅하는 규칙을 정의하는 자원입니다. Ingress는 URL Path 기반 라우팅 규칙을 사용할 수 있지만 호스트 기반 라우팅은 지원하지 않습니다."
   },
   {
     "id": 116,
@@ -3454,5 +3454,29 @@
     ],
     "answer": 3,
     "explanation": "베어메탈 서버는 정해진 스펙에서 제공되며, CPU 종류와 코어 수를 자유롭게 커스터마이징할 수는 없습니다."
+  },
+  {
+    "id": 145,
+    "question": "VPC 환경/Classic 2세대 서버의 High CPU 서버 스펙 중 생성 가능한 서버 스펙은 무엇인가요?",
+    "example": [
+      {
+        "num": 1,
+        "text": "vCPU 2개, RAM 8GB"
+      },
+      {
+        "num": 2,
+        "text": "vCPU 4개, RAM 8GB"
+      },
+      {
+        "num": 3,
+        "text": "vCPU 8개, RAM 8GB"
+      },
+      {
+        "num": 4,
+        "text": "vCPU 16개, RAM 128GB"
+      }
+    ],
+    "answer": 2,
+    "explanation": ""
   }
 ]
