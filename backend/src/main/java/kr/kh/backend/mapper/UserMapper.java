@@ -16,4 +16,13 @@ public interface UserMapper {
             "VALUES (#{email}, #{username}, #{password}, #{roles})")
     void insertUser(LoginDTO loginDTO);
 
+    @Select("SELECT COUNT(*) = 1 FROM user WHERE nickname = #{username}")
+    boolean isUsernameExisted(String username);
+
+    @Select("SELECT COUNT(*) = 1 FROM user WHERE email = #{email}")
+    boolean isEmailExisted(String email);
+
+//    트큰의 username으로 user_id 죄회
+    @Select("SELECT id FROM user WHERE nickname = #{username}")
+    Long findUserIdByUsername(String username);
 }
