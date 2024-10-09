@@ -15,6 +15,11 @@ const Practice = () => {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
 
+  const totalPage = data?.length;
+
+  const progressBar = totalPage ? Math.ceil((currentIdx / totalPage) * 100) : 0;
+  // 올림을 해도 99가 최고. 다음문제를 눌렀을때 다른 컴포넌트를 만들어볼까?
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -22,7 +27,7 @@ const Practice = () => {
         setData(response.data);
 
         const ids = response.data.map(item => item.id);
-        const shuffledIds = ids.sort(() => 0.5 - Math.random()).slice(0, 60);
+        const shuffledIds = ids.sort(() => 0.5 - Math.random());
         setRandomIds(shuffledIds);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -141,6 +146,13 @@ const Practice = () => {
 
   return (
     <PracticeBody>
+      <SubjectTitle>{subjectName}</SubjectTitle>
+      <ProgressBarContainer>
+        <Progress width={progressBar} />
+        <CurrentPage>
+          {currentIdx} / {totalPage}
+        </CurrentPage>
+      </ProgressBarContainer>
       <ControlExplain />
       <ProblemBox>
         <BookmarkButton onClick={handleBookmark}>
@@ -288,12 +300,21 @@ export default Practice;
 
 const PracticeBody = styled.div`
   width: 100%;
-  min-height: 80vh;
+  min-height: 91vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: ${props => props.theme.white};
   justify-content: center;
+  position: relative; //
+`;
+
+const SubjectTitle = styled.span`
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  position: fixed;
+  top: 1.3rem;
 `;
 
 const ProblemBox = styled.div`
@@ -304,6 +325,8 @@ const ProblemBox = styled.div`
   padding: 2rem;
   margin-top: 2rem;
   background-color: ${props => props.theme.white};
+  border-radius: 12px;
+  box-shadow: 2px 2px 2px 2px lightgray;
 `;
 
 const BookmarkButton = styled.span`
@@ -394,6 +417,7 @@ const ExampleText = styled.span`
 
 const ButtonContainer = styled.div`
   display: flex;
+  margin: 2rem 0;
   gap: 1rem;
 `;
 
@@ -434,7 +458,7 @@ const RetryButton = styled.button`
 `;
 
 const CheckButton = styled.button`
-  margin: 1rem 0;
+  margin-top: 2rem;
   padding: 0.5rem 1rem;
   font-size: 1.2rem;
   background-color: green;
@@ -459,4 +483,29 @@ const ExplanationBox = styled.div`
 const ExplanationText = styled.p`
   padding: 1rem 0;
   line-height: 1.6;
+`;
+
+// 프로그래스 바
+const ProgressBarContainer = styled.div`
+  width: 100%;
+  height: 3.3rem;
+  background-color: #e0e0e0;
+  position: absolute;
+  bottom: 0;
+`;
+
+const Progress = styled.div`
+  height: 100%;
+  width: ${props => props.width}%;
+  background-color: #4b9a8f;
+  transition: width 0.1s ease-in-out;
+`;
+
+const CurrentPage = styled.span`
+  font-size: 1.2rem;
+  color: white;
+  z-index: 40;
+  position: absolute;
+  top: 30%;
+  left: 49%;
 `;

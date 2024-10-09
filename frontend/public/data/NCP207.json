@@ -2062,5 +2062,77 @@
     ],
     "answer": 4,
     "explanation": "lsof(List Open Files)는 프로세스가 열어놓은 파일들의 목록을 보여주는 유닉스 계열 운영체제의 명령어입니다. 이 명령어는 시스템에서 열린 파일들에 대한 정보를 제공하며, 어떤 프로세스가 어떤 파일을 사용하고 있는지 확인할 수 있습니다. 네트워크 소켓, 파이프 등도 파일로 취급되어 표시됩니다. 'ps'는 프로세스 목록을, 'top'은 시스템 사용량을 실시간으로 보여주는 명령어이며, 'psof'는 존재하지 않는 명령어입니다."
+  },
+  {
+    "id": 587,
+    "question": " PS명령어 실행 시 STAT 필드에 대한 설명 중 잘못된 것은?",
+    "example": [
+      {
+        "num": 1,
+        "text": "R : running or runnable"
+      },
+      {
+        "num": 2,
+        "text": "Z: defunct('zomble') process"
+      },
+      {
+        "num": 3,
+        "text": "W : paging"
+      },
+      {
+        "num": 4,
+        "text": "S: Stopped, either by a job control signal or because it is being traced"
+      }
+    ],
+    "answer": 4,
+    "explanation": ""
+  },
+  {
+    "id": 588,
+    "question": "HTTP 상태 코드 중 연결이 잘못 된 것은?",
+    "example": [
+      {
+        "num": 1,
+        "text": "200 - 서버가 요청을 제대로 처리"
+      },
+      {
+        "num": 2,
+        "text": "300 - 서버가 GET 요정의 일부만 성공적으로 처리했다."
+      },
+      {
+        "num": 3,
+        "text": "404- 서버가 요정한 페이지(Resource)를 찾을 수 없다."
+      },
+      {
+        "num": 4,
+        "text": "500 - 서버에 오류가 발생하여 요청을 수행할 수 없다."
+      }
+    ],
+    "answer": 2,
+    "explanation": "서버가 GET요청의 일부만 성공적으로 처리했을때 반환하는 코드는 206 입니다. 300번대 상태 코드는 리다이렉션을 의미하며, 서버가 요청된 리소스를 찾았지만 클라이언트를 다른 위치로 이동시키는 경우에 사용됩니다. "
+  },
+  {
+    "id": 589,
+    "question": "VPC 플랫폼에서 Application Load Balancer를 이용중입니다. ALB 에 들어오는 액세스 로그정보를 수집하고자 할 때 가장 올바른 액션은?",
+    "example": [
+      {
+        "num": 1,
+        "text": "Load Balancer에서 액세스 로그 수집설정을 활성화 한다."
+      },
+      {
+        "num": 2,
+        "text": "서버에서 Application Load Balancer 로그를 수집하도록 설정을 변경 한다."
+      },
+      {
+        "num": 3,
+        "text": "ALB의 액세스 로그는 수집이불가능하다."
+      },
+      {
+        "num": 4,
+        "text": "Target Group에서 액세스 로그수집 설정을 활성화 한다."
+      }
+    ],
+    "answer": 1,
+    "explanation": "- 서버가 아닌, ALB에서 로그를 직접 수집합니다. - ALB의 액세스 로그는 수집 가능합니다. - Target Group이 아닌 Load Balancer에서 로그 수집 설정을 진행합니다. "
   }
 ]

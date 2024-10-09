@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "../Modal/Modal";
+import { useParams } from "react-router-dom";
 
 const Nav = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
   const [isListOpen, setIsListOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false); 
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const subjectName = useParams.name;
   const token = sessionStorage.getItem("accessToken");
 
   const openModal = type => {
@@ -25,12 +27,12 @@ const Nav = () => {
   };
 
   const openProfile = () => {
-    setIsProfileOpen(prev => !prev); 
+    setIsProfileOpen(prev => !prev);
   };
 
   const logout = () => {
-    sessionStorage.removeItem("accessToken"); 
-    window.location.reload(); 
+    sessionStorage.removeItem("accessToken");
+    window.location.reload();
   };
 
   useEffect(() => {
