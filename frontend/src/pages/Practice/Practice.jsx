@@ -15,10 +15,17 @@ const Practice = () => {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
 
+  const questionId = randomIds[currentIdx];
   const totalPage = data?.length;
-
   const progressBar = totalPage ? Math.ceil((currentIdx / totalPage) * 100) : 0;
-  // 올림을 해도 99가 최고. 다음문제를 눌렀을때 다른 컴포넌트를 만들어볼까?
+  // 올림을 해도 99가 최고. 다음문제를 눌렀을때 나올 완료 컴포넌트 만들어서 넣자
+
+  const subjects = [{ NCA: 1 }, { NCP200: 2 }, { NCP202: 3 }, { NCP207: 4 }];
+
+  const getSubjectId = subjectName => {
+    const subject = subjects.find(el => Object.keys(el)[0] === subjectName);
+    return subject ? subject[subjectName] : null;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,7 +33,7 @@ const Practice = () => {
         const response = await axios.get(`/data/${subjectName}.json`);
         setData(response.data);
 
-        const ids = response.data.map(item => item.id);
+        const ids = response.data.map(el => el.id);
         const shuffledIds = ids.sort(() => 0.5 - Math.random());
         setRandomIds(shuffledIds);
       } catch (error) {
@@ -76,10 +83,41 @@ const Practice = () => {
     setIsChecked(false);
   };
 
-  const handleBookmark = () => {
-    alert("북마크 클릭");
+  // 북마크 요청
+  const handleBookmark = async () => {
+    try {
+      const token = sessionStorage.getItem("accessToken");
+
+      const bookmarkDTO = {
+        subjectId: getSubjectId(param.name),
+        questionId: questionId,
+      };
+
+      if (!token) {
+        alert("로그인이 필요합니다.");
+      } else {
+        const res = await axios.post("/bookmarks", bookmarkDTO, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (res.status === 200) {
+          const message = res.data;
+          if (message.includes("삭제")) {
+            alert("북마크가 삭제되었습니다.");
+          } else if (message.includes("추가")) {
+            alert("북마크가 추가되었습니다.");
+          }
+        }
+      }
+    } catch (err) {
+      console.error("북마크 추가 중 오류 발생:", err);
+      alert("북마크 실패. 개발자에게 문의하세요");
+    }
   };
 
+  // 신고 요청
   const handleReport = () => {
     alert("신고 성공");
   };
