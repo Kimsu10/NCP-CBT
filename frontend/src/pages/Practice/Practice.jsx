@@ -5,6 +5,8 @@ import styled from "styled-components";
 import NotFound from "../NotFound/NotFound";
 import ControlExplain from "../../components/ControlExplain/ControlExplain";
 import CorrectMark from "../../components/Marks/CorrectMark";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const Practice = () => {
   const param = useParams();
@@ -14,6 +16,19 @@ const Practice = () => {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
+
+  const [animation, setAnimation] = useState("fade-right");
+
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+    });
+
+    AOS.refresh();
+  }, [currentIdx]);
+
+  console.log(currentIdx);
+  console.log(animation);
 
   const questionId = randomIds[currentIdx];
   const totalPage = data?.length;
@@ -48,6 +63,7 @@ const Practice = () => {
 
   const handleNextQuestion = () => {
     if (currentIdx < randomIds.length - 1) {
+      setAnimation("fade-left");
       setCurrentIdx(currentIdx + 1);
       setSelectedOptions([]);
       setIsChecked(false);
@@ -56,6 +72,7 @@ const Practice = () => {
 
   const handlePreviousQuestion = () => {
     if (currentIdx > 0) {
+      setAnimation("fade-right");
       setCurrentIdx(currentIdx - 1);
       setSelectedOptions([]);
       setIsChecked(false);
@@ -192,7 +209,7 @@ const Practice = () => {
         </CurrentPage>
       </ProgressBarContainer>
       <ControlExplain />
-      <ProblemBox>
+      <ProblemBox key={currentIdx} data-aos={animation}>
         <BookmarkButton onClick={handleBookmark}>
           <i className="bi bi-bookmark-star-fill"></i> 북마크
         </BookmarkButton>
