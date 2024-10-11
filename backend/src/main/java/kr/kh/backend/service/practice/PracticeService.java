@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import static org.springframework.web.servlet.function.ServerResponse.status;
+
 
 @Service
 @AllArgsConstructor
@@ -20,13 +22,14 @@ public class PracticeService {
     private final UserMapper userMapper;
     private final JwtTokenProvider jwtTokenProvider;
 
+    // 상태 코드와 함께 응답 메시지를 반환
     public ResponseEntity<String> addBookmark(BookmarkDTO bookmarkDTO, String token) {
 //        log.info("추가하는 북마크 값 ############################: {}", bookmarkDTO);
 
         String username = jwtTokenProvider.getUsernameFromToken(token);
 //        log.info("JWT username 출력#########################: {}", username);
         if (username == null) {
-            return ResponseEntity.badRequest().body("유효한 사용자 이름이 없습니다.");
+            return ResponseEntity.badRequest().body("사용자 정보가 없습니다.");
         }
 
         Long userId = userMapper.findUserIdByUsername(username);
@@ -58,4 +61,31 @@ public class PracticeService {
         }
 
     }
+
+    // 상태 코드만 반환
+    public ResponseEntity<Long> getBookmark(Long questionId, String token) {
+        String username = jwtTokenProvider.getUsernameFromToken(token);
+
+        if (username == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Long userId = userMapper.findUserIdByUsername(username);
+
+        try {
+            BookmarkDTO existingBookmark = practiceMapper.findBookmarkByUserIdAndQuestionId(userId, questionId);
+
+            if (existingBookmark != null) {
+                return ResponseEntity.ok(questionId);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+
+
 }
