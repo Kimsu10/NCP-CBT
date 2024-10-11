@@ -8,7 +8,7 @@ const ControlExplain = () => {
         <p> 다음 문제 : → </p>
         <p> 이전 문제 : ← </p>
         <p> 채점 하기 : Enter </p>
-        <p> 다시 풀기 : ESC </p>
+        <p> 다시 풀기 : R </p>
         <p> 보기 선택 : 1 2 3 4 </p>
       </ControlText>
     </ControlBox>

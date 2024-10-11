@@ -9,7 +9,6 @@ const Nav = () => {
   const [isListOpen, setIsListOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const subjectName = useParams.name;
   const token = sessionStorage.getItem("accessToken");
 
   const openModal = type => {
@@ -28,6 +27,7 @@ const Nav = () => {
 
   const openProfile = () => {
     setIsProfileOpen(prev => !prev);
+    console.log("Profile Icon clicked, isProfileOpen:", !isProfileOpen);
   };
 
   const logout = () => {
@@ -167,6 +167,7 @@ const ProfileIcon = styled.i`
   font-size: 1.8rem;
   color: ${props => props.theme.white};
   cursor: pointer;
+  z-index: 99;
 `;
 
 const ListIcon = styled.i`
@@ -194,6 +195,7 @@ const ProfileMenu = styled.div`
   flex-direction: column;
   gap: 0.5rem;
   text-align: center;
+  z-index: 99;
 `;
 
 const LogoutButton = styled.span`
@@ -252,4 +254,9 @@ const MobileLogout = styled.span`
 const UserProfile = styled.div`
   font-weight: 700;
   color: ${props => props.theme.white};
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;

@@ -27,9 +27,6 @@ const Practice = () => {
     AOS.refresh();
   }, [currentIdx]);
 
-  console.log(currentIdx);
-  console.log(animation);
-
   const questionId = randomIds[currentIdx];
   const totalPage = data?.length;
   const progressBar = totalPage ? Math.ceil((currentIdx / totalPage) * 100) : 0;
@@ -182,10 +179,12 @@ const Practice = () => {
         case "ArrowLeft":
           handlePreviousQuestion();
           break;
-        case "Escape":
+        case "r":
+        case "ㄱ":
           handleRetry();
           break;
         case "b":
+        case "ㅠ":
           handleBookmark();
           break;
         default:
@@ -205,7 +204,7 @@ const Practice = () => {
       <ProgressBarContainer>
         <Progress width={progressBar} />
         <CurrentPage>
-          {currentIdx} / {totalPage}
+          {currentIdx + 1} / {totalPage}
         </CurrentPage>
       </ProgressBarContainer>
       <ControlExplain />
@@ -214,7 +213,7 @@ const Practice = () => {
           <i className="bi bi-bookmark-star-fill"></i> 북마크
         </BookmarkButton>
         <ComplaintButton onClick={handleReport}>
-          <i className="bi bi-bell-fill"></i> 신고
+          <i className="bi bi-bell-fill"></i> 오류신고
         </ComplaintButton>
         {currentQuestion ? (
           <div>
