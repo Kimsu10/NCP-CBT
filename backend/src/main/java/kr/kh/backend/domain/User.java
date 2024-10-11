@@ -13,8 +13,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Builder
-@Getter @Setter
+@Data
 @ToString(exclude = "password")
+@AllArgsConstructor
 public class User implements UserDetails, OAuth2User {
 
     private int id;
@@ -23,10 +24,17 @@ public class User implements UserDetails, OAuth2User {
     private String password;
     private String platform;
     private String roles;
-
-    // oauth2 관련하여 추가 (naver, github 에서 제공하는 정보가 저장된다)
     private Map<String, Object> attributes;
 
+    public User() {
+    }
+
+    // FormLogin용 생성자
+    public User(String nickname, String password) {
+        this.nickname = nickname;
+        this.password = password;
+        this.attributes = null;
+    }
 
     @Override
     public String getUsername() {
@@ -42,7 +50,6 @@ public class User implements UserDetails, OAuth2User {
                 new ArrayList<>();
     }
 
-    // 이하 메서드는 UsersDetails 를 상속받아 구현할 경우 반드시 Override 해야하는 메서드들로, 전부 true 를 반환하게 함.
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -63,7 +70,6 @@ public class User implements UserDetails, OAuth2User {
         return true;
     }
 
-    // oauth2 관련 추가
     @Override
     public Map<String, Object> getAttributes() {
         return attributes;
