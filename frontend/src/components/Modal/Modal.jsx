@@ -181,8 +181,8 @@ const Modal = ({ type, closeModal }) => {
 
   // 네이버 로그인
   const doNaverLogin = () => {
-    const url = `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=uYa2_2OY_IxfsaJulv3W&redirect_uri=http://localhost:8080/oauth/naver&state=1234`;
-    window.location.href = url;
+    console.log("Naver login function called.");
+    window.location.href = "http://localhost:8080";
   };
 
   return (
@@ -222,12 +222,12 @@ const Modal = ({ type, closeModal }) => {
                 <img src="/images/github.png" alt="github-icon" />
                 <span> GitHub Login</span>
               </GithubLogin>
-              <KakaoLogin>
+              <NaverLogin type="button" onClick={() => doNaverLogin()}>
                 <span style={{ fontSize: "1.5rem", marginRight: "0.5rem" }}>
                   N
                 </span>
                 <span> Naver Login</span>
-              </KakaoLogin>
+              </NaverLogin>
             </LoginForm>
           </form>
         ) : (
@@ -416,7 +416,7 @@ const GithubLogin = styled.button`
   }
 `;
 
-const KakaoLogin = styled.button`
+const NaverLogin = styled.button`
   ${flexRowBox("row", "center", "center")};
   gap: 1rem;
   border-radius: 0.5rem;

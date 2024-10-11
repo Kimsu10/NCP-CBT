@@ -27,7 +27,7 @@ public class JwtAuthFilter extends GenericFilterBean {
         String path = ((HttpServletRequest) request).getRequestURI();
 
         // 모든 로그인 요청에 대해 예외 처리 (필터를 통과시킴)
-        if (path.startsWith("/form/") || path.startsWith("/oauth")) {
+        if (path.startsWith("/form/") || path.startsWith("/login/")) {
             log.info("httpUri = {}", httpRequest.getRequestURI());
             chain.doFilter(request, response);
             return;

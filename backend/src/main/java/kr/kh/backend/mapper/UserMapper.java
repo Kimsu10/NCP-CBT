@@ -12,9 +12,15 @@ public interface UserMapper {
     @Select("SELECT * FROM user WHERE nickname = #{username}")
     User findByUsername(String username);
 
+    // 일반 로그인 insert
     @Insert("INSERT INTO user(email, nickname, password, roles) " +
             "VALUES (#{email}, #{username}, #{password}, #{roles})")
     void insertUser(LoginDTO loginDTO);
+
+    // 소셜 로그인 insert
+    @Insert("INSERT INTO user(email, nickname, roles, platform) " +
+            "VALUES (#{email}, #{nickname}, #{roles}, #{platform})")
+    void insertOauthUser(User user);
 
     @Select("SELECT COUNT(*) = 1 FROM user WHERE nickname = #{username}")
     boolean isUsernameExisted(String username);
