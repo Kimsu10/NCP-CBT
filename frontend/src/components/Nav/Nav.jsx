@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "../Modal/Modal";
+import { useParams } from "react-router-dom";
 
 const Nav = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
   const [isListOpen, setIsListOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false); 
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const token = sessionStorage.getItem("accessToken");
 
@@ -25,12 +26,13 @@ const Nav = () => {
   };
 
   const openProfile = () => {
-    setIsProfileOpen(prev => !prev); 
+    setIsProfileOpen(prev => !prev);
+    console.log("Profile Icon clicked, isProfileOpen:", !isProfileOpen);
   };
 
   const logout = () => {
-    sessionStorage.removeItem("accessToken"); 
-    window.location.reload(); 
+    sessionStorage.removeItem("accessToken");
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -165,6 +167,7 @@ const ProfileIcon = styled.i`
   font-size: 1.8rem;
   color: ${props => props.theme.white};
   cursor: pointer;
+  z-index: 99;
 `;
 
 const ListIcon = styled.i`
@@ -192,6 +195,7 @@ const ProfileMenu = styled.div`
   flex-direction: column;
   gap: 0.5rem;
   text-align: center;
+  z-index: 99;
 `;
 
 const LogoutButton = styled.span`
@@ -250,4 +254,9 @@ const MobileLogout = styled.span`
 const UserProfile = styled.div`
   font-weight: 700;
   color: ${props => props.theme.white};
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;

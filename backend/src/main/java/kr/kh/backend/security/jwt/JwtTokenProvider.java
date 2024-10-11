@@ -4,7 +4,9 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import kr.kh.backend.dto.security.JwtToken;
+import kr.kh.backend.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +27,10 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
 
     private final Key key;
+
+    //    트큰의 username으로 user_id 죄회해서 해볼게 있어서 임시로 작성
+    @Autowired
+    private UserMapper userMapper;
 
     /**
      * 암호 키 설정 : yml 파일에서 설정한 secret key 를 가져와서 토큰의 암호화, 복호화에 사용한다.
@@ -92,8 +98,17 @@ public class JwtTokenProvider {
 
         // UserDetails 객체를 만들어서 주체(subject) 와 권한 정보를 포함한 인증 정보를 리턴
         UserDetails principal = new User(claims.getSubject(), "", authorities);
+
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
+
+    // 트큰의 username으로 user_id 반환
+    public String getUsernameFromToken(String accessToken) {
+        Claims claims = parseClaims(accessToken);
+        return claims.getSubject();
+    }
+
+//
 
     // 주어진 access token 을 복호화하고, 만료된 토큰인 경우에도 claims 반환
     private Claims parseClaims(String jwtToken) {
