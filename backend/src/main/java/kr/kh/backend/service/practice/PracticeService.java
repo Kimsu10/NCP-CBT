@@ -1,6 +1,7 @@
 package kr.kh.backend.service.practice;
 
 import kr.kh.backend.dto.BookmarkDTO;
+import kr.kh.backend.dto.PracticeComplaintsDTO;
 import kr.kh.backend.mapper.PracticeMapper;
 import kr.kh.backend.mapper.UserMapper; // 올바른 UserMapper 임포트
 import kr.kh.backend.security.jwt.JwtTokenProvider;
@@ -42,17 +43,15 @@ public class PracticeService {
 
         try {
             BookmarkDTO existingBookmark = practiceMapper.findBookmarkByUserIdAndQuestionId(userId, (long) bookmarkDTO.getQuestionId());
-//            log.info("북마크 존재 ########################################: {}", existingBookmark);
+//            log.info("북마크 존재 : {}", existingBookmark);
 
             if (existingBookmark != null) {
                 practiceMapper.deleteBookmark(existingBookmark.getId());
-//                log.info("북마크 id가 존재하는경우 삭제 ##############################: {}", existingBookmark.getId());
+//                log.info("북마크 id가 존재하는경우 삭제 : {}", existingBookmark.getId());
                 return ResponseEntity.ok("북마크가 성공적으로 삭제되었습니다.");
-            }
-
-            else {
+            } else {
                 practiceMapper.addBookmark(bookmarkDTO);
-//                log.info("새로운 북마크 확인################################: {}", bookmarkDTO);
+//                log.info("새로운 북마크 확인 : {}", bookmarkDTO);
                 return ResponseEntity.ok("북마크가 성공적으로 추가되었습니다.");
             }
         } catch (Exception e) {
@@ -86,6 +85,31 @@ public class PracticeService {
         }
     }
 
+    // 문제 오류 신고
+    public ResponseEntity<String> addQuestionComplaints(PracticeComplaintsDTO practiceComplaintsDTO, String token) {
+        String username = jwtTokenProvider.getUsernameFromToken(token);
+
+        if (username == null) {
+            return ResponseEntity.badRequest().body("사용자 정보가 없습니다.");
+        }
+
+        Long userId = userMapper.findUserIdByUsername(username);
+
+        if (userId == null) {
+            return ResponseEntity.badRequest().body("유효한 사용자 ID가 없습니다.");
+        }
+
+        practiceComplaintsDTO.setUserId(userId);
+
+        try {
+            practiceMapper.addComplaint(practiceComplaintsDTO);
+            log.info("저장되었나 불평 불만?????????????? : {}", practiceComplaintsDTO);
+            return ResponseEntity.ok("문제 오류가 성공적으로 접수되었습니다.");
+        } catch (Exception e) {
+            log.error("Error adding complaint: {}", e.getMessage());
+            return ResponseEntity.status(500).body("문제 오류 신고 중 문제가 발생했습니다: " + e.getMessage());
+        }
+    }
 
 
 }
