@@ -7,6 +7,7 @@ import ControlExplain from "../../components/ControlExplain/ControlExplain";
 import CorrectMark from "../../components/Marks/CorrectMark";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import ComplaintModal from "../../components/Modal/ComplaintModal";
 
 const Practice = () => {
   const param = useParams();
@@ -16,7 +17,7 @@ const Practice = () => {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
-
+  const [isComplaintModal, setIsComplaintModal] = useState(false);
   const [animation, setAnimation] = useState("fade-right");
 
   useEffect(() => {
@@ -97,6 +98,18 @@ const Practice = () => {
     setIsChecked(false);
   };
 
+  const handleModal = () => {
+    if (isComplaintModal === false) {
+      setIsComplaintModal(true);
+    } else if (isComplaintModal === true) {
+      setIsComplaintModal(false);
+    }
+  };
+
+  const closeModal = () => {
+    setIsComplaintModal(false);
+  };
+
   // 북마크 요청
   const handleBookmark = async () => {
     try {
@@ -129,11 +142,6 @@ const Practice = () => {
       console.error("북마크 추가 중 오류 발생:", err);
       alert("북마크 실패. 개발자에게 문의하세요");
     }
-  };
-
-  // 신고 요청
-  const handleReport = () => {
-    alert("신고 성공");
   };
 
   const currentQuestion = data
@@ -200,19 +208,19 @@ const Practice = () => {
 
   return (
     <PracticeBody>
-      <SubjectTitle>{subjectName}</SubjectTitle>
+      {/* <SubjectTitle>{subjectName}</SubjectTitle> */}
       <ProgressBarContainer>
         <Progress width={progressBar} />
-        <CurrentPage>
+        {/* <CurrentPage>
           {currentIdx + 1} / {totalPage}
-        </CurrentPage>
+        </CurrentPage> */}
       </ProgressBarContainer>
       <ControlExplain />
       <ProblemBox key={currentIdx} data-aos={animation}>
         <BookmarkButton onClick={handleBookmark}>
           <i className="bi bi-bookmark-star-fill"></i> 북마크
         </BookmarkButton>
-        <ComplaintButton onClick={handleReport}>
+        <ComplaintButton onClick={handleModal}>
           <i className="bi bi-bell-fill"></i> 오류신고
         </ComplaintButton>
         {currentQuestion ? (
@@ -327,6 +335,7 @@ const Practice = () => {
           <NotFound />
         )}
       </ProblemBox>
+
       <ButtonContainer>
         <PrevButton
           onClick={() => {
@@ -337,6 +346,9 @@ const Practice = () => {
         >
           이전 문제
         </PrevButton>
+        <CurrentPage>
+          {currentIdx + 1} / {totalPage}
+        </CurrentPage>
         <NextButton
           onClick={() => {
             handleNextQuestion();
@@ -346,6 +358,15 @@ const Practice = () => {
           다음 문제
         </NextButton>
       </ButtonContainer>
+
+      {isComplaintModal && (
+        <ComplaintModal
+          modalTitle="문제 오류 신고"
+          onClose={handleModal}
+          setIsComplaint={setIsComplaintModal}
+          isComplaint={isComplaintModal}
+        />
+      )}
     </PracticeBody>
   );
 };
@@ -473,12 +494,16 @@ const ButtonContainer = styled.div`
   display: flex;
   margin: 2rem 0;
   gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  width: 60%;
+  min-width: 30rem;
 `;
 
 const PrevButton = styled.button`
   padding: 0.5rem 1rem;
   font-size: 1.2rem;
-  background-color: ${props => props.theme.mainColor};
+  background-color: ${props => props.theme.mainColor2};
   border: none;
   cursor: pointer;
 
@@ -486,6 +511,11 @@ const PrevButton = styled.button`
     background-color: lightgray;
     cursor: not-allowed;
   }
+`;
+
+const CurrentPage = styled.span`
+  font-size: 1.2rem;
+  color: #7c7c7c;
 `;
 
 const NextButton = styled.button`
@@ -542,10 +572,10 @@ const ExplanationText = styled.p`
 // 프로그래스 바
 const ProgressBarContainer = styled.div`
   width: 100%;
-  height: 3.3rem;
+  height: 0.3rem;
   background-color: #e0e0e0;
   position: absolute;
-  bottom: 0;
+  top: 0;
 `;
 
 const Progress = styled.div`
@@ -555,11 +585,11 @@ const Progress = styled.div`
   transition: width 0.1s ease-in-out;
 `;
 
-const CurrentPage = styled.span`
-  font-size: 1.2rem;
-  color: white;
-  z-index: 40;
-  position: absolute;
-  top: 30%;
-  left: 49%;
-`;
+// const CurrentPage = styled.span`
+//   font-size: 1.2rem;
+//   color: #ff1010;
+//  z-index: 40;
+//   position: absolute;
+//   top: 30%;
+//   left: 49%;
+// `;
