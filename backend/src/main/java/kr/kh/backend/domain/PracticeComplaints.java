@@ -5,7 +5,6 @@ import lombok.Data;
 @Data
 public class PracticeComplaints {
 
-    private Long id;
     private Long userId;
     private Long subjectId;
     private Long subjectQuestionId;

@@ -27,5 +27,9 @@ public interface PracticeMapper {
             "VALUES (#{subjectId}, #{title}, #{content}, #{userId}, #{subjectQuestionId})")
     void addComplaint(PracticeComplaintsDTO practiceComplaintsDTO);
 
+
+    // 중복 신고 여부 확인
+    @Select("SELECT * FROM question_complaints WHERE user_id = #{userId} AND subject_question_id = #{subjectQuestionId}")
+    PracticeComplaintsDTO findComplaintByUserIdAndSubjectQuestionId(Long userId, Long subjectQuestionId);
 }
 
