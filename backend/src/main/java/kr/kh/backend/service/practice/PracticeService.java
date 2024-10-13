@@ -25,16 +25,15 @@ public class PracticeService {
 
     // 상태 코드와 함께 응답 메시지를 반환
     public ResponseEntity<String> addBookmark(BookmarkDTO bookmarkDTO, String token) {
-//        log.info("추가하는 북마크 값 ############################: {}", bookmarkDTO);
 
         String username = jwtTokenProvider.getUsernameFromToken(token);
-//        log.info("JWT username 출력#########################: {}", username);
+
         if (username == null) {
             return ResponseEntity.badRequest().body("사용자 정보가 없습니다.");
         }
 
         Long userId = userMapper.findUserIdByUsername(username);
-//        log.info("Found userId: {}", userId);
+
         if (userId == null) {
             return ResponseEntity.badRequest().body("사용자 정보가 없습니다.");
         }
@@ -43,19 +42,15 @@ public class PracticeService {
 
         try {
             BookmarkDTO existingBookmark = practiceMapper.findBookmarkByUserIdAndQuestionId(userId, (long) bookmarkDTO.getQuestionId());
-//            log.info("북마크 존재 : {}", existingBookmark);
 
             if (existingBookmark != null) {
                 practiceMapper.deleteBookmark(existingBookmark.getId());
-//                log.info("북마크 id가 존재하는경우 삭제 : {}", existingBookmark.getId());
                 return ResponseEntity.ok("북마크가 성공적으로 삭제되었습니다.");
             } else {
                 practiceMapper.addBookmark(bookmarkDTO);
-//                log.info("새로운 북마크 확인 : {}", bookmarkDTO);
                 return ResponseEntity.ok("북마크가 성공적으로 추가되었습니다.");
             }
         } catch (Exception e) {
-//            log.error("Error adding bookmark: {}", e.getMessage());
             return ResponseEntity.status(500).body("북마크 추가 중 오류가 발생했습니다: " + e.getMessage());
         }
 

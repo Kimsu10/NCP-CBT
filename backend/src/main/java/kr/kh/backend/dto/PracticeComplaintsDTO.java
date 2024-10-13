@@ -12,3 +12,12 @@ public class PracticeComplaintsDTO {
     private String content;
 
 }
+
+/* Post - body
+    {
+    "subjectId": 1,
+    "subjectQuestionId": 8,
+    "title": "제목",
+    "content": "이의있습니다"
+}
+* */
