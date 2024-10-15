@@ -104,7 +104,7 @@ const Modal = ({ type, closeModal }) => {
       sessionStorage.setItem("accessToken", accessToken);
       sessionStorage.setItem("refreshToken", refreshToken);
 
-      navigate("/");
+      // navigate("/");
       closeModal();
     } catch (err) {
       console.error(

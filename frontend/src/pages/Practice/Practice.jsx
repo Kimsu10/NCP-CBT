@@ -133,7 +133,7 @@ const Practice = () => {
           setIsBookmarked(false);
         }
       } catch (error) {
-        console.error("Error fetching bookmark status:", error);
+        console.error("북마크 중 오류가 발생 하였습니다 :", error);
       }
     };
 
@@ -171,7 +171,7 @@ const Practice = () => {
         }
       }
     } catch (err) {
-      console.error("데이터를 서버에 전송하는중 오류가 발생 하였습니다 :", err);
+      console.error("북마크 중 오류가 발생 하였습니다 :", err);
       alert("북마크 실패. 개발자에게 문의하세요");
     }
   };

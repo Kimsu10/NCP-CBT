@@ -51,15 +51,24 @@ const ComplaintModal = ({
         if (res.status === 200) {
           alert("문제 오류 접수 완료");
           setIsComplaint(!isComplaint);
-        } else {
-          alert("문제 접수 실패");
         }
       }
     } catch (err) {
-      console.error(
-        "데이터를 서버에 전송하는중 오류가 발생 하였습니다 : ",
-        err,
-      );
+      if (err.response && err.response.status === 400) {
+        const message = err.response.data;
+        setIsComplaint(!isComplaint);
+
+        if (message === "이미 해당 문제에 대한 오류 신고가 접수되었습니다.") {
+          alert("이미 해당 문제에 대한 오류 신고가 접수되었습니다.");
+        } else if (message === "사용자 정보가 없습니다.") {
+          alert("토큰만료. 다시 로그인 해주세요.");
+        } else {
+          alert("문제 접수 실패: " + message);
+        }
+      } else {
+        alert("데이터를 서버에 전송하는 중 오류가 발생했습니다.");
+        console.error("서버 오류: ", err);
+      }
     }
   };
 
