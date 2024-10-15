@@ -10,11 +10,13 @@ import kr.kh.backend.dto.security.JwtToken;
 import kr.kh.backend.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,9 +39,6 @@ public class Oauth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         responseToken.put("accessToken", jwtToken.getAccessToken());
         responseToken.put("refreshToken", jwtToken.getRefreshToken());
 
-        // 리다이렉트할 url 설정
-        String responseURL = "http://localhost:3000/";
-
         // refresh token 은 쿠키 (HttpOnly) 로 전송
         Cookie refreshTokenCookie = new Cookie("refreshToken", jwtToken.getRefreshToken());
         refreshTokenCookie.setHttpOnly(true);
@@ -51,10 +50,5 @@ public class Oauth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         response.setContentType("application/json; charset=utf-8");
         response.setHeader("Authorization", "Bearer " + jwtToken.getAccessToken());
         response.addCookie(refreshTokenCookie);
-
-        response.sendRedirect(responseURL);
-
-        log.info("JWT 토큰 전송 완료");
-
     }
 }

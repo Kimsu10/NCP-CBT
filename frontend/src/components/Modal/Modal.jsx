@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { flexRowBox } from "../../styles/Variables";
@@ -181,8 +181,45 @@ const Modal = ({ type, closeModal }) => {
 
   // 네이버 로그인
   const doNaverLogin = () => {
-    window.location.href = "http://localhost:8080";
+    // axios
+    //   .get("http://localhost:8080/login/naver")
+    //   .then(res => {
+    //     console.log(res);
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
+
+    let state = encodeURI(process.env.REACT_APP_NAVER_REDIRECT_URI);
+    window.location.href =
+      "https://nid.naver.com/oauth2.0/authorize?response_type=code" +
+      "&client_id=" +
+      process.env.REACT_APP_NAVER_CLIENT_ID +
+      "&redirect_uri=" +
+      process.env.REACT_APP_NAVER_REDIRECT_URI +
+      "&state=" +
+      state;
   };
+
+  useEffect(() => {
+    const href = window.location.href;
+    let params = new URL(document.location).searchParams;
+    let code = params.get("code");
+    let state = params.get("state");
+
+    const naver = async () => {
+      await axios
+        .get(
+          `http://localhost:8080/api/v1/oauth2/authorization/naver?code=${code}&state=${state}`,
+        )
+        .then(res => console.log(res))
+        .catch(err => {
+          console.log(err);
+        });
+    };
+
+    naver();
+  }, []);
 
   return (
     <ModalContainer>

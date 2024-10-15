@@ -3,9 +3,11 @@ package kr.kh.backend.controller;
 import kr.kh.backend.dto.security.JwtToken;
 import kr.kh.backend.dto.security.LoginDTO;
 import kr.kh.backend.mapper.UserMapper;
+import kr.kh.backend.service.security.Oauth2UserService;
 import kr.kh.backend.service.security.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +19,7 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final Oauth2UserService oauth2UserService;
 
     // 회원가입
     @PostMapping("/form/register")
@@ -65,11 +68,10 @@ public class UserController {
         return isExisted;
     }
 
-    // 토큰 인증 테스트를 위한 컨트롤러인데 아직 공사중...
-    @PostMapping("/admin/test")
-    public String loginTest() {
-        log.info("admin test controller");
-        return "login success";
+    // 네이버 로그인
+    @GetMapping("/api/v1/oauth2/authorization/naver")
+    public void loginNaver(@RequestParam String code, @RequestParam String state) {
+        log.info("login naver, code : {}, state : {}", code, state);
     }
 
 }
