@@ -9,6 +9,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import ComplaintModal from "../../components/Modal/ComplaintModal";
 import KeyboardController from "../../hooks/KeyboardController";
+import axiosConfig from "../../utils/axiosConfig";
 
 const Practice = () => {
   const param = useParams();
@@ -116,14 +117,10 @@ const Practice = () => {
   useEffect(() => {
     const fetchBookmarkStatus = async () => {
       try {
-        const token = sessionStorage.getItem("accessToken");
-        if (!token) return;
+        if (!questionId) return;
 
-        const res = await axios.get("/bookmarks", {
+        const res = await axiosConfig.get("/bookmarks", {
           params: { questionId },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         });
 
         if (res.status === 200) {
@@ -133,53 +130,40 @@ const Practice = () => {
         if (error.response) {
           if (error.response.status === 404) {
             setIsBookmarked(false);
+            console.clear();
+            return;
           } else {
             console.error(
               "북마크 GET 요청 404 이외의 에러:",
               error.response.data,
             );
           }
-        } else {
-          console.error("북마크를 조회 실패 :", error.message);
         }
       }
     };
 
-    if (questionId) {
-      fetchBookmarkStatus();
-    }
+    fetchBookmarkStatus();
   }, [questionId]);
 
-  // 북마크 POST/DELETE 요청
   const handleBookmark = async () => {
     try {
-      const token = sessionStorage.getItem("accessToken");
-
       const bookmarkDTO = {
         subjectId: subjectId,
         questionId: questionId,
       };
 
-      if (!token) {
-        alert("로그인이 필요합니다.");
-      } else {
-        const res = await axios.post("/bookmarks", bookmarkDTO, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+      const res = await axiosConfig.post("/bookmarks", bookmarkDTO);
 
-        if (res.status === 200) {
-          const message = res.data;
-          if (message.includes("삭제")) {
-            setIsBookmarked(false);
-          } else if (message.includes("추가")) {
-            setIsBookmarked(true);
-          }
+      if (res.status === 200) {
+        const message = res.data;
+        if (message.includes("삭제")) {
+          setIsBookmarked(false);
+        } else if (message.includes("추가")) {
+          setIsBookmarked(true);
         }
       }
     } catch (err) {
-      console.error("북마크 추가/삭제 실패 :", err);
+      console.error("북마크 추가/삭제 실패:", err);
       alert("북마크 추가/삭제 실패. 개발자에게 문의하세요.");
     }
   };

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import axiosConfig from "../../utils/axiosConfig";
 
 const ComplaintModal = ({
   modalTitle,
@@ -26,8 +27,6 @@ const ComplaintModal = ({
 
   const handleComplaintReport = async () => {
     try {
-      const token = sessionStorage.getItem("accessToken");
-
       const PracticeComplaintsDTO = {
         subjectId: subjectId,
         subjectQuestionId: questionId,
@@ -35,23 +34,14 @@ const ComplaintModal = ({
         content: complaint.content,
       };
 
-      if (!token) {
-        alert("로그인이 필요합니다.");
-      } else {
-        const res = await axios.post(
-          "/practice-complaints",
-          PracticeComplaintsDTO,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
+      const res = await axiosConfig.post(
+        "/practice-complaints",
+        PracticeComplaintsDTO,
+      );
 
-        if (res.status === 200) {
-          alert("문제 오류 접수 완료");
-          setIsComplaint(!isComplaint);
-        }
+      if (res.status === 200) {
+        alert("문제 오류 접수 완료");
+        setIsComplaint(!isComplaint);
       }
     } catch (err) {
       if (err.response && err.response.status === 400) {
