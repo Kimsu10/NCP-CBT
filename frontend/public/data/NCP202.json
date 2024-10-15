@@ -741,7 +741,7 @@
       }
     ],
     "answer": 4,
-    "explanation": "설명된 밸런싱 방식은 'Source IP Hash' 방식입니다. 이 방법은 클라이언트의 IP 주소를 해시하여 특정 서버에 매핑합니다. 같은 IP에서 오는 요청은 항상 같은 서버로 전달되므로, 세션 유지가 필요한 애플리케이션에 유용합니다. Round-Robin은 순차적으로 서버를 선택하는 방식이고, Weighted는 각 서버에 가중치를 부여하여 트래픽을 분배하는 방식입니다. Least-Connection은 현재 연결 수가 가장 적은 서버로 새로운 연결을 보내는 방식입니다."
+    "explanation": "설명된 밸런싱 방식은 'Source IP Hash' 방식입니다. 이 방법은 클라이언트의 IP 주소를 해시하여 특정 서버에 매핑합니다. 같은 IP에서 오는 요청은 항상 같은 서버로 전달되므로, 세션 유지가 필요한 애플리케이션에 유용합니다. Round-Robin은 순차적으로 서버를 선택하는 방식이고, Weighted는 각 서버에 가중치를 부여하여 트래픽을 분배하는 방식입니다. Least-Connection은 현재 연결 수가 가장 적은 서버로 새로운 연결을 보내는 방식입니다. "
   },
   {
     "id": 332,
@@ -1125,7 +1125,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "Cloud Insight는 네트워크 연결 서비스가 아니라 모니터링 및 분석 도구입니다. 이 서비스는 클라우드 리소스의 성능, 가용성, 비용 등을 모니터링하고 분석하는 데 사용됩니다. 반면에 다른 세 서비스(Cloud CDNnect, IPSEC VPN, SSL VPN)는 모두 네이버 클라우드 플랫폼의 네트워크와 외부 네트워크 간의 연결을 제공하는 데 사용됩니다."
   },
   {
     "id": 348,
@@ -1701,11 +1701,11 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "RUA는 'Real User Analytics'의 약자로, 실제 사용자의 웹 경험을 분석하는 서비스입니다. "
   },
   {
     "id": 372,
-    "question": "Cloud DB for MySQL에 대한 설명으로 틀린 것을 모두 고르시오.",
+    "question": "Cloud DB for MySQL에 대한 설명으로 틀린 것을 모두 고르시오. 1)웹사이트나 서비스에 접속하는 실제 사용자 데이터 수집합니다. 2) 국가,브라우저,디바이스 등 여러 기준으로 데이터를 분류 분석합니다. 3) 각 기준별로 웹 페이지 로딩 속도를 측정하고 분석합니다. 4) PV(Page View) Count (페이지뷰)를 수집하고 분석합니다. RUA는 이러한 데이터를 통해 웹사이트 운영자가 사용자 경험을 개선하고 성능을 최적화 할 수 있도록 도와줍니다.",
     "example": [
       {
         "num": 1,
@@ -2353,7 +2353,7 @@
   },
   {
     "id": 399,
-    "question": "VOD Transcoder에 대한 설명 중 틀린 것을 모두 고르시오",
+    "question": "VOD Transcoder에 대한 설명 중 틀린 것을 고르시오",
     "example": [
       {
         "num": 1,
@@ -2372,7 +2372,7 @@
         "text": "Output 경로는 File Storage와 Object Storage에 저장할 수 있다."
       }
     ],
-    "answer": [2, 4],
+    "answer": 2,
     "explanation": "VOD Transcoder는 H.264 및 H.265 코덱을 지원하며, H.265만 지원하지 않습니다."
   },
   {
@@ -2781,7 +2781,7 @@
       }
     ],
     "answer": 4,
-    "explanation": "RTSP는 Live Station의 Output Protocol이 아닙니다."
+    "explanation": "RTSP는 주로 입력(Input) 프로토콜로 사용되거나 다른 스트리밍 서비스에서 사용됩니다. HLS, MPEG-DASH, RTMP는 모두 현대적인 라이브 스트리밍 서비스에서 널리 사용되는 출력 프로토콜입니다. 이들은 다양한 디바이스와 네트워크 환경에서 효율적인 스트리밍을 가능하게 합니다. "
   },
   {
     "id": 417,
@@ -3169,26 +3169,26 @@
   },
   {
     "id": 433,
-    "question": "Live Station 에서 Output Protocol 이 아닌 것은 무엇인가?",
+    "question": "Cloud Activity Tracer에 대한 설명 중 잘못된 것은?",
     "example": [
       {
         "num": 1,
-        "text": "HLS"
+        "text": "Console 활동에 대한 로그만 수집이 가능하다."
       },
       {
         "num": 2,
-        "text": "MPEG-DASH"
+        "text": "Cloud Log Analytics와도 연계가되어 계정 활동 로그 수집 및 분석이 가능하다."
       },
       {
         "num": 3,
-        "text": "RTMP"
+        "text": "메인 계정 뿐만 아니라 서브계정에 대한 활동 로그도 수집한다."
       },
       {
         "num": 4,
-        "text": "RTSP"
+        "text": "Cloud Activity Tracer 페이지 자체적으로 검색 및 필터링 기능을 제공한다."
       }
     ],
-    "answer": 4,
+    "answer": 1,
     "explanation": ""
   },
   {
@@ -3265,27 +3265,27 @@
   },
   {
     "id": 437,
-    "question": "VOD Transcoder에 대한 설명 중 틀린 것은?",
+    "question": "VOD Transcoder에 대한 설명으로 잘못된 것을 고르시오",
     "example": [
       {
         "num": 1,
-        "text": "preset은 1-5까지 설정 가능하다."
+        "text": "job 생성 후 설정은 언제든 변경 가능하다."
       },
       {
         "num": 2,
-        "text": "Codec은 H.264만 지원한다."
+        "text": "동시 최대 5개의 미디어 파일 포맷으로 변환이 가능하다."
       },
       {
         "num": 3,
-        "text": "Thumbnail을 자동 생성한다."
+        "text": "Job 실행 결과에 대한 알람을 받을 수 있다."
       },
       {
         "num": 4,
-        "text": "Output 경로는 File Storage와 Object Storage에 저장할 수 있다."
+        "text": "Thumbnail 설정이 가능하다"
       }
     ],
-    "answer": 2,
-    "explanation": "VOD Transcoder는 다양한 코덱을 지원합니다."
+    "answer": 1,
+    "explanation": "트랜스코딩 작업은 대개 한 번 설정되면 그대로 실행되며, 실행 중 설정 변경은 허용되지 않습니다. 새로운 설정이 필요한 경우, 일반적으로 새 작업을 생성해야 합니다. 이는 작업의 일관성과 안정성을 보장하기 위함입니다."
   },
   {
     "id": 438,
@@ -4249,26 +4249,26 @@
   },
   {
     "id": 478,
-    "question": "HTTP 2.0 기능을 지원하는 Load Balancer 는 무엇인가?",
+    "question": "Cloud DB for MySQL에 제공되는 High-memory 타입의 최고 VM사양은?",
     "example": [
       {
         "num": 1,
-        "text": "Classic Load Balancer"
+        "text": "16VCPU, 128GB"
       },
       {
         "num": 2,
-        "text": "Network Load Balancer"
+        "text": "32VCPU, 128GB"
       },
       {
         "num": 3,
-        "text": "Network Proxy Load Balancer"
+        "text": "32CPU, 256GB"
       },
       {
         "num": 4,
-        "text": "Application Load Balancer"
+        "text": "48VCPU, 256GBr"
       }
     ],
-    "answer": 4,
+    "answer": 3,
     "explanation": ""
   },
   {
@@ -4513,54 +4513,6 @@
   },
   {
     "id": 489,
-    "question": "중복 문제",
-    "example": [
-      {
-        "num": 1,
-        "text": "192.168.31.0~192.168.31.255"
-      },
-      {
-        "num": 2,
-        "text": "192.168.30.0~192.168.31.255"
-      },
-      {
-        "num": 3,
-        "text": "192.168.31.0~192.168.32.255"
-      },
-      {
-        "num": 4,
-        "text": "192.168.0.0~192.168.255.255"
-      }
-    ],
-    "answer": 2,
-    "explanation": ""
-  },
-  {
-    "id": 490,
-    "question": "VOD Transcoder에 대한 설명으로 잘못된 것을 고르시오",
-    "example": [
-      {
-        "num": 1,
-        "text": "job 생성 후 설정은 언제든 변경 가능하다."
-      },
-      {
-        "num": 2,
-        "text": "동시 최대 5개의 미디어 파일 포맷으로 변환이 가능하다."
-      },
-      {
-        "num": 3,
-        "text": " Job 실행 결과에 대한 알람을 받을 수 있다."
-      },
-      {
-        "num": 4,
-        "text": "Thumbnail 설정이 가능하다"
-      }
-    ],
-    "answer": 1,
-    "explanation": ""
-  },
-  {
-    "id": 491,
     "question": "Sub account에 대한 설명 중 옳은 것을 모두 고르시오.",
     "example": [
       {
@@ -4581,54 +4533,6 @@
       }
     ],
     "answer": [1, 2, 3],
-    "explanation": ""
-  },
-  {
-    "id": 492,
-    "question": "Cloud DB for MySQL에 제공되는 High-memory 타입의 최고 VM사양은?",
-    "example": [
-      {
-        "num": 1,
-        "text": "16VCPU, 128GB"
-      },
-      {
-        "num": 2,
-        "text": "32VCPU, 128GB"
-      },
-      {
-        "num": 3,
-        "text": "32CPU, 256GB"
-      },
-      {
-        "num": 4,
-        "text": "48VCPU, 256GB"
-      }
-    ],
-    "answer": 3,
-    "explanation": ""
-  },
-  {
-    "id": 493,
-    "question": "Cloud Activity Tracer에 대한 설명 중 잘못된 것은?",
-    "example": [
-      {
-        "num": 1,
-        "text": "Console 활동에 대한 로그만 수집이 가능하다."
-      },
-      {
-        "num": 2,
-        "text": "Cloud Log Analytics와도 연계가되어 계정 활동 로그 수집 및 분석이 가능하다."
-      },
-      {
-        "num": 3,
-        "text": "메인 계정 뿐만 아니라 서브계정에 대한 활동 로그도 수집한다."
-      },
-      {
-        "num": 4,
-        "text": "Cloud Activity Tracer 페이지 자체적으로 검색 및 필터링 기능을 제공한다."
-      }
-    ],
-    "answer": 1,
     "explanation": ""
   }
 ]

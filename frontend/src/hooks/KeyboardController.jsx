@@ -32,6 +32,7 @@ const KeyboardController = ({
           handleOptionChange(4);
           break;
         case "Enter":
+        case "ArrowUp":
           if (selectedOptions.length > 0) {
             handleCheckAnswer();
           }
@@ -42,6 +43,7 @@ const KeyboardController = ({
         case "ArrowLeft":
           handlePreviousQuestion();
           break;
+        case "ArrowDown":
         case "r":
         case "ㄱ":
           handleRetry();
