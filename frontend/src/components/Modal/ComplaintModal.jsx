@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import axios from "axios";
 
-const ComplaintModal = ({ modalTitle, isComplaint, setIsComplaint }) => {
-  // 신고 요청
-  const handleReport = () => {
-    alert("신고 성공");
-  };
+const ComplaintModal = ({
+  modalTitle,
+  isComplaint,
+  setIsComplaint,
+  subjectId,
+  questionId,
+}) => {
+  const [complaint, setComplaint] = useState({
+    title: "",
+    content: "",
+  });
 
   const handleModal = () => {
     setIsComplaint(!isComplaint);
@@ -17,17 +24,76 @@ const ComplaintModal = ({ modalTitle, isComplaint, setIsComplaint }) => {
     }
   };
 
+  const handleComplaintReport = async () => {
+    try {
+      const token = sessionStorage.getItem("accessToken");
+
+      const PracticeComplaintsDTO = {
+        subjectId: subjectId,
+        subjectQuestionId: questionId,
+        title: complaint.title,
+        content: complaint.content,
+      };
+
+      if (!token) {
+        alert("로그인이 필요합니다.");
+      } else {
+        const res = await axios.post(
+          "/practice-complaints",
+          PracticeComplaintsDTO,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        if (res.status === 200) {
+          alert("문제 오류 접수 완료");
+          setIsComplaint(!isComplaint);
+        } else {
+          alert("문제 접수 실패");
+        }
+      }
+    } catch (err) {
+      console.error(
+        "데이터를 서버에 전송하는중 오류가 발생 하였습니다 : ",
+        err,
+      );
+    }
+  };
+
   return (
     <ModalBackground id="modal-background" onClick={closeModalOnClickOutside}>
       <ModalContainer>
         <ModalTitle>{modalTitle}</ModalTitle>
         <BoldText>제목</BoldText>
-        <ComplaintTitle />
+        <ComplaintTitle
+          value={complaint.title}
+          onChange={e =>
+            setComplaint(prev => ({
+              ...prev,
+              title: e.target.value,
+            }))
+          }
+        />
         <BoldText>내용</BoldText>
-        <ComplaintText />
+        <ComplaintText
+          value={complaint.content}
+          onChange={e =>
+            setComplaint(prev => ({
+              ...prev,
+              content: e.target.value,
+            }))
+          }
+        />
         <ButtonBox>
-          <ComplaintSubmitButon>신고</ComplaintSubmitButon>
-          <CancelComplaintButton>취소</CancelComplaintButton>
+          <ComplaintSubmitButon onClick={handleComplaintReport}>
+            신고
+          </ComplaintSubmitButon>
+          <CancelComplaintButton onClick={handleModal}>
+            취소
+          </CancelComplaintButton>
         </ButtonBox>
       </ModalContainer>
     </ModalBackground>

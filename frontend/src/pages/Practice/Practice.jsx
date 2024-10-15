@@ -32,7 +32,6 @@ const Practice = () => {
   const questionId = randomIds[currentIdx];
   const totalPage = data?.length;
   const progressBar = totalPage ? Math.ceil((currentIdx / totalPage) * 100) : 0;
-  // 올림을 해도 99가 최고. 다음문제를 눌렀을때 나올 완료 컴포넌트 만들어서 넣자
 
   const subjects = [{ NCA: 1 }, { NCP200: 2 }, { NCP202: 3 }, { NCP207: 4 }];
 
@@ -40,6 +39,8 @@ const Practice = () => {
     const subject = subjects.find(el => Object.keys(el)[0] === subjectName);
     return subject ? subject[subjectName] : null;
   };
+
+  const subjectId = getSubjectId(param.name);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -111,13 +112,15 @@ const Practice = () => {
     setIsComplaintModal(false);
   };
 
-  // 북마크 요청
+  // 북마크 GET 요청
+
+  // 북마크 POST/DELETE 요청
   const handleBookmark = async () => {
     try {
       const token = sessionStorage.getItem("accessToken");
 
       const bookmarkDTO = {
-        subjectId: getSubjectId(param.name),
+        subjectId: subjectId,
         questionId: questionId,
       };
 
@@ -140,7 +143,7 @@ const Practice = () => {
         }
       }
     } catch (err) {
-      console.error("북마크 추가 중 오류 발생:", err);
+      console.error("데이터를 서버에 전송하는중 오류가 발생 하였습니다 :", err);
       alert("북마크 실패. 개발자에게 문의하세요");
     }
   };
@@ -325,6 +328,8 @@ const Practice = () => {
           onClose={handleModal}
           setIsComplaint={setIsComplaintModal}
           isComplaint={isComplaintModal}
+          subjectId={subjectId}
+          questionId={questionId}
         />
       )}
     </PracticeBody>
