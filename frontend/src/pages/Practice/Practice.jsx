@@ -10,6 +10,7 @@ import "aos/dist/aos.css";
 import ComplaintModal from "../../components/Modal/ComplaintModal";
 import KeyboardController from "../../hooks/KeyboardController";
 import axiosConfig from "../../utils/axiosConfig";
+import WrongMark from "../../components/Marks/WrongMark";
 
 const Practice = () => {
   const param = useParams();
@@ -213,7 +214,8 @@ const Practice = () => {
                 Q.{currentIdx + 1} &nbsp;
                 {currentQuestion.question}
               </QuestionText>
-              {isCorrect ? <CorrectMark /> : ""}
+              {!isCorrect && isChecked ? <WrongMark /> : ""}
+              {isCorrect && isChecked ? <CorrectMark /> : ""}
             </QuestionWrapper>
             <OptionsContainer>
               {currentQuestion.example.map((ex, Idx) => {
