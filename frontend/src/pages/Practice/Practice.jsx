@@ -20,6 +20,7 @@ const Practice = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [isComplaintModal, setIsComplaintModal] = useState(false);
   const [animation, setAnimation] = useState("fade-right");
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   useEffect(() => {
     AOS.init({
@@ -113,6 +114,33 @@ const Practice = () => {
   };
 
   // 북마크 GET 요청
+  useEffect(() => {
+    const fetchBookmarkStatus = async () => {
+      try {
+        const token = sessionStorage.getItem("accessToken");
+        if (!token) return;
+
+        const res = await axios.get("/bookmarks", {
+          params: { questionId },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (res.status === 200 && res.data) {
+          setIsBookmarked(true);
+        } else {
+          setIsBookmarked(false);
+        }
+      } catch (error) {
+        console.error("Error fetching bookmark status:", error);
+      }
+    };
+
+    if (questionId) {
+      fetchBookmarkStatus();
+    }
+  }, [questionId]);
 
   // 북마크 POST/DELETE 요청
   const handleBookmark = async () => {
@@ -180,7 +208,7 @@ const Practice = () => {
         handleBookmark={handleBookmark}
       />
       <ProblemBox key={currentIdx} data-aos={animation}>
-        <BookmarkButton onClick={handleBookmark}>
+        <BookmarkButton onClick={handleBookmark} isBookmarked={isBookmarked}>
           <i className="bi bi-bookmark-star-fill"></i> 북마크
         </BookmarkButton>
         <ComplaintButton onClick={handleModal}>
@@ -373,14 +401,15 @@ const BookmarkButton = styled.span`
   width: 6rem;
   font-size: 1rem;
   background-color: transparent;
-  color: orange;
+  color: ${({ isBookmarked }) => (isBookmarked ? "green" : "orange")};
   padding: 0.5rem;
   border-radius: 8px;
   cursor: pointer;
 
   &:hover {
     color: white;
-    background-color: orange;
+    background-color: ${({ isBookmarked }) =>
+      isBookmarked ? "green" : "transparent"};
   }
 `;
 
