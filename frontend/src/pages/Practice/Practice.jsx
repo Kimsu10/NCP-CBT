@@ -8,6 +8,7 @@ import CorrectMark from "../../components/Marks/CorrectMark";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import ComplaintModal from "../../components/Modal/ComplaintModal";
+import KeyboardController from "../../hooks/KeyboardController";
 
 const Practice = () => {
   const param = useParams();
@@ -156,66 +157,25 @@ const Practice = () => {
       (!Array.isArray(currentQuestion.answer) &&
         currentQuestion.answer === selectedOptions[0]));
 
-  // 키보드 이벤트
-  useEffect(() => {
-    const handleKeyDown = e => {
-      if (isChecked && ["1", "2", "3", "4"].includes(e.key)) {
-        return;
-      }
-
-      switch (e.key) {
-        case "1":
-          handleOptionChange(1);
-          break;
-        case "2":
-          handleOptionChange(2);
-          break;
-        case "3":
-          handleOptionChange(3);
-          break;
-        case "4":
-          handleOptionChange(4);
-          break;
-        case "Enter":
-          if (selectedOptions.length > 0) {
-            handleCheckAnswer();
-          }
-          break;
-        case "ArrowRight":
-          handleNextQuestion();
-          break;
-        case "ArrowLeft":
-          handlePreviousQuestion();
-          break;
-        case "r":
-        case "ㄱ":
-          handleRetry();
-          break;
-        case "b":
-        case "ㅠ":
-          handleBookmark();
-          break;
-        default:
-          break;
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [selectedOptions, isChecked, currentIdx, currentQuestion]);
-
   return (
     <PracticeBody>
       {/* <SubjectTitle>{subjectName}</SubjectTitle> */}
       <ProgressBarContainer>
         <Progress width={progressBar} />
-        {/* <CurrentPage>
-          {currentIdx + 1} / {totalPage}
-        </CurrentPage> */}
       </ProgressBarContainer>
       <ControlExplain />
+      <KeyboardController
+        handleOptionChange={handleOptionChange}
+        selectedOptions={selectedOptions}
+        isChecked={isChecked}
+        currentIdx={currentIdx}
+        currentQuestion={currentQuestion}
+        handleNextQuestion={handleNextQuestion}
+        handlePreviousQuestion={handlePreviousQuestion}
+        handleCheckAnswer={handleCheckAnswer}
+        handleRetry={handleRetry}
+        handleBookmark={handleBookmark}
+      />
       <ProblemBox key={currentIdx} data-aos={animation}>
         <BookmarkButton onClick={handleBookmark}>
           <i className="bi bi-bookmark-star-fill"></i> 북마크
@@ -584,12 +544,3 @@ const Progress = styled.div`
   background-color: #4b9a8f;
   transition: width 0.1s ease-in-out;
 `;
-
-// const CurrentPage = styled.span`
-//   font-size: 1.2rem;
-//   color: #ff1010;
-//  z-index: 40;
-//   position: absolute;
-//   top: 30%;
-//   left: 49%;
-// `;

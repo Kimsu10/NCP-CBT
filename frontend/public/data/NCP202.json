@@ -1,7 +1,7 @@
 [
   {
     "id": 301,
-    "question": "이미지 옵티마이저에서 다음과 같은 쿼리스트링이 의미하는 것이 아닌 것은? /파일명.jpg?type=m_wm&w=512&h=1024&bgcolor=000011&wm_path=http://watermark_URL&wm_offx=11& wm_offy=10&wm_align=2&anilimit=100&extop=3",
+    "question": "이미지 옵티마이저에서 다음과 같은 쿼리스트링이 의미하는 것이 아닌 것은? '/파일명.jpg?type=m_wm&w=512&h=1024&bgcolor=000011&wm_path=http://watermark_URL&wm_offx=11& wm_offy=10&wm_align=2&anilimit=100&extop=3'",
     "example": [
       {
         "num": 1,
@@ -1201,7 +1201,7 @@
   },
   {
     "id": 351,
-    "question": "VPC 생성 시 생성 가능한 IP 주소 범위가 아닌 것은 무엇인가?",
+    "question": "VPC 생성 시 생성 가능한 IP 주소 범위가 아닌 것을 모두 고르시오",
     "example": [
       {
         "num": 1,
@@ -1221,7 +1221,7 @@
       }
     ],
     "answer": [1, 3, 4],
-    "explanation": ""
+    "explanation": "VPC의 IP 주소 범위는 , Private 대역(10.0.0.0/8 , 172.16.0.0/12, 192.168.0.0/16) 내에서 /16~28 범위여야합니다."
   },
   {
     "id": 352,
@@ -2353,7 +2353,7 @@
   },
   {
     "id": 399,
-    "question": "VOD Transcoder에 대한 설명 중 틀린 것은?",
+    "question": "VOD Transcoder에 대한 설명 중 틀린 것을 모두 고르시오",
     "example": [
       {
         "num": 1,
@@ -2368,11 +2368,11 @@
         "text": "Thumbnail을 자동 생성한다."
       },
       {
-        "num": 2,
+        "num": 4,
         "text": "Output 경로는 File Storage와 Object Storage에 저장할 수 있다."
       }
     ],
-    "answer": 2,
+    "answer": [2, 4],
     "explanation": "VOD Transcoder는 H.264 및 H.265 코덱을 지원하며, H.265만 지원하지 않습니다."
   },
   {
@@ -4513,7 +4513,7 @@
   },
   {
     "id": 489,
-    "question": "다음과 같이 서브넷을 192.168.31.0/23을 만들었다. 그렇다면 IP 주소 대역은 어떻게 되는가?",
+    "question": "중복 문제",
     "example": [
       {
         "num": 1,
