@@ -1197,7 +1197,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "네이버 클라우드 플랫폼의 AI 서비스 중 'Clova Image Recognition'은 제공되지 않습니다. 실제로 제공되는 서비스는 Clova OCR, Clova Voice, Clova Face Recognition입니다."
   },
   {
     "id": 51,
@@ -1221,7 +1221,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "네이버 클라우드 플랫폼의 챗봇 서비스는 라인, 톡톡, 페이스북과 연동되지만, 트위터와는 연동되지 않습니다. 트위터는 현재 지원되는 채널 목록에 포함되어 있지 않습니다."
   },
   {
     "id": 52,
@@ -1245,7 +1245,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "네이버 클라우드 플랫폼의 Cloud Log Analytics 서비스는 로그 데이터를 최대 30일간 저장합니다. 이는 고정된 기간으로, 사용자가 임의로 연장하거나 축소할 수 없습니다."
   },
   {
     "id": 53,
@@ -1269,7 +1269,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "Outbound Mailer에서 스프레드시트나 DB의 데이터를 메일 제목과 본문에 순차적으로 입력하는 기능은 '치환 태그'입니다. 이 기능을 사용하면 각 수신자에 대해 개인화된 내용을 자동으로 삽입할 수 있습니다."
   },
   {
     "id": 54,
@@ -1293,7 +1293,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "네이버 클라우드 플랫폼의 Cloud Log Analytics 서비스는 최대 100GB의 로그 용량을 저장할 수 있습니다. 이는 고정된 용량 제한으로, 사용자가 임의로 변경할 수 없습니다."
   },
   {
     "id": 55,
@@ -1317,7 +1317,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "네이버 클라우드 플랫폼은 블로그, 유튜브, 페이스북을 통해 사용자와 소통하고 있지만, 트위터 채널은 현재 운영하고 있지 않습니다. 트위터는 네이버 클라우드 플랫폼의 공식 소통 채널 목록에 포함되어 있지 않습니다."
   },
   {
     "id": 56,
@@ -1341,7 +1341,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "VPC 플랫폼에서 Init Script는 Zone에 직접적으로 의존하지 않습니다. Init Script는 서버 인스턴스 생성 시 실행되는 스크립트로, 특정 Zone에 종속되지 않고 어느 Zone에서든 사용 가능합니다. 반면 VPC는 리전에, Subnet은 Zone에, Cloud DB는 Multi Zone에 의존하는 것이 맞습니다."
   },
   {
     "id": 57,
@@ -1365,7 +1365,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "네이버 클라우드 플랫폼의 App Safer는 루팅 탐지, 애플리케이션 변조 탐지, 메모리 변조 탐지 기능을 제공합니다. 하지만 APK 추출 탐지는 현재 App Safer의 기능 목록에 포함되어 있지 않습니다. APK 추출은 다른 보안 솔루션이나 방법을 통해 대응해야 할 수 있습니다."
   },
   {
     "id": 58,
@@ -1389,7 +1389,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "Object Detection 서비스에 대한 설명이 잘못되었습니다. Object Detection은 이미지나 비디오에서 객체를 감지하고 식별하는 서비스입니다. 문제에서 설명된 '입력한 텍스트를 자연스러운 목소리로 재생해주는 음성 합성 API 서비스'는 Clova Voice (또는 Text-to-Speech) 서비스의 설명입니다. 다른 서비스들(Clova Speech Recognition, Clova Face Recognition, Papago NMT)의 설명은 정확합니다."
   },
   {
     "id": 59,
@@ -1413,7 +1413,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "CDN+의 요금은 월 전송량에 따라 결정되며, 일 평균 전송량으로 계산되지 않는다."
   },
   {
     "id": 60,
@@ -1437,7 +1437,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "Live Station 생성 시 CDN을 동시에 생성할 수 있으며, 별도로 생성할 필요가 없다."
   },
   {
     "id": 61,
@@ -1461,7 +1461,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "'VMware onNcloud'는 하이브리드 및 프라이빗 클라우드 솔루션으로, 기존 VMware 환경을 클라우드로 확장할 수 있는 기능을 제공합니다. 이 상품은 고객이 온프레미스와 클라우드 환경을 유기적으로 연결하여 효율적인 자원 관리를 할 수 있도록 돕습니다."
   },
   {
     "id": 62,
@@ -1485,7 +1485,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "클라우드는 일반적으로 Legacy 인프라보다 비용 효율적이지만, 동일한 네트워크 사용량을 기준으로 항상 저렴하다고 단정할 수 없습니다. 클라우드의 실제 비용은 사용 패턴, 규모, 최적화 정도 등 여러 요인에 따라 달라질 수 있습니다."
   },
   {
     "id": 63,
@@ -1509,7 +1509,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "네이버 클라우드 플랫폼의 공식 CLI(Command Line Interface) 도구는 'Ncloud'입니다. 이 명령어를 통해 사용자는 터미널에서 네이버 클라우드 플랫폼의 다양한 서비스와 리소스를 관리할 수 있습니다."
   },
   {
     "id": 64,
@@ -1533,7 +1533,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "Guest 계정 사용 제한은 주로 Windows 시스템의 보안 설정입니다. Linux에서는 일반적으로 'Guest' 계정이 기본으로 존재하지 않습니다. UMASK 설정, 홈 디렉토리 권한 설정, Anonymous FTP 비활성화는 모두 Linux 시스템의 일반적인 보안 점검 항목입니다."
   },
   {
     "id": 65,
@@ -1557,7 +1557,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "네트워크 프록시 로드밸런서는 L4 계층에서 동작하며, TCP 기반 애플리케이션의 세션 유지를 지원합니다. 이 로드밸런서는 소스 IP 주소를 기반으로 동일한 클라이언트의 요청을 항상 같은 서버로 전달하여 세션 유지를 가능하게 합니다."
   },
   {
     "id": 66,
@@ -1581,7 +1581,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "Auto Scaling 구성 시 일반적으로 ACG(Access Control Group), Load Balancer, VPC/Subnet은 설정 가능한 항목입니다. 그러나 NAS(Network Attached Storage)는 Auto Scaling 그룹의 직접적인 설정 항목이 아닙니다. NAS는 별도의 스토리지 서비스로, Auto Scaling으로 생성된 인스턴스에서 필요시 연결하여 사용할 수 있습니다."
   },
   {
     "id": 67,
@@ -1605,7 +1605,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "네이버 클라우드 플랫폼의 Block Storage는 Detach/Attach, Snapshot 생성, 그리고 Disk 용량 증설 기능을 제공합니다. 하지만 대부분의 클라우드 서비스와 마찬가지로, 데이터 손실 위험 때문에 Disk 용량 축소 기능은 제공하지 않습니다. 용량 축소가 필요한 경우, 새로운 작은 볼륨을 생성하고 데이터를 마이그레이션하는 방식을 사용해야 합니다."
   },
   {
     "id": 68,
@@ -1629,7 +1629,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "네이버 클라우드 플랫폼에서는 하나의 계정당 최대 3개의 VPC를 생성할 수 있습니다. 이는 대부분의 사용 사례를 커버하면서도 리소스 관리의 복잡성을 제한하기 위한 정책입니다. 각 VPC는 독립된 네트워크 환경을 제공하여 개발, 테스트, 운영 환경을 분리하거나 다른 프로젝트를 위한 격리된 환경을 구성하는 데 사용될 수 있습니다."
   },
   {
     "id": 69,
@@ -1653,7 +1653,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "Private Subnet에 있는 서버들은 Internet Gateway를 통해 직접 외부 인터넷으로 나갈 수 없습니다. 이는 Private Subnet의 주요 특징 중 하나입니다. 대신, NAT Gateway를 통해 외부 인터넷과 통신할 수 있습니다. 다른 설명들은 모두 정확합니다: Private Subnet의 서버들은 공인 IP를 가질 수 없고, 일부 클라우드 서비스는 Public Subnet에 위치해야 하며, Subnet의 유형(Private/Public)은 생성 후 변경할 수 없습니다."
   },
   {
     "id": 70,
@@ -1677,7 +1677,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "로드밸런서에서 발급된 CNAME은 고객이 보유한 CNAME에는 등록할 수 있지만, ROOT DOMAIN에는 직접 등록할 수 없습니다. ROOT DOMAIN(Apex Domain)에는 A 레코드만 사용할 수 있기 때문입니다. 다른 설명들은 모두 정확합니다: HTTP Keep-Alive는 연결을 재사용하는 옵션이고, Connection Idle Timeout은 연결 유지 시간을 설정하며, Proxy Protocol은 클라이언트 IP를 확인하는 데 사용됩니다."
   },
   {
     "id": 71,
