@@ -181,7 +181,6 @@ const Modal = ({ type, closeModal }) => {
 
   // 네이버 로그인
   const doNaverLogin = () => {
-    console.log("Naver login function called.");
     window.location.href = "http://localhost:8080";
   };
 

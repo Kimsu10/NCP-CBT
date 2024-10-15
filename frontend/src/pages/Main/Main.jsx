@@ -1,5 +1,3 @@
-import axios from "axios";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Main = () => {
@@ -9,15 +7,15 @@ const Main = () => {
     navigate(`/${name}/practice`);
   };
 
-  useEffect(() => {
-    const corsTest = () => {
-      axios
-        .get("http://localhost:8080")
-        .then(res => console.log(res))
-        .catch(err => console.log(err));
-    };
-    corsTest();
-  }, []);
+  // useEffect(() => {
+  //   const corsTest = () => {
+  //     axios
+  //       .get("http://localhost:8080")
+  //       .then(res => console.log(res))
+  //       .catch(err => console.log(err));
+  //   };
+  //   corsTest();
+  // }, []);
 
   return (
     <>
