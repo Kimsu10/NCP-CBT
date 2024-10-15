@@ -113,7 +113,6 @@ const Practice = () => {
     setIsComplaintModal(false);
   };
 
-  // 북마크 GET 요청
   useEffect(() => {
     const fetchBookmarkStatus = async () => {
       try {
@@ -127,13 +126,22 @@ const Practice = () => {
           },
         });
 
-        if (res.status === 200 && res.data) {
+        if (res.status === 200) {
           setIsBookmarked(true);
-        } else {
-          setIsBookmarked(false);
         }
       } catch (error) {
-        console.error("북마크 중 오류가 발생 하였습니다 :", error);
+        if (error.response) {
+          if (error.response.status === 404) {
+            setIsBookmarked(false);
+          } else {
+            console.error(
+              "북마크 GET 요청 404 이외의 에러:",
+              error.response.data,
+            );
+          }
+        } else {
+          console.error("북마크를 조회 실패 :", error.message);
+        }
       }
     };
 
@@ -164,15 +172,15 @@ const Practice = () => {
         if (res.status === 200) {
           const message = res.data;
           if (message.includes("삭제")) {
-            alert("북마크가 삭제되었습니다.");
+            setIsBookmarked(false);
           } else if (message.includes("추가")) {
-            alert("북마크가 추가되었습니다.");
+            setIsBookmarked(true);
           }
         }
       }
     } catch (err) {
-      console.error("북마크 중 오류가 발생 하였습니다 :", err);
-      alert("북마크 실패. 개발자에게 문의하세요");
+      console.error("북마크 추가/삭제 실패 :", err);
+      alert("북마크 추가/삭제 실패. 개발자에게 문의하세요.");
     }
   };
 
@@ -208,7 +216,7 @@ const Practice = () => {
         handleBookmark={handleBookmark}
       />
       <ProblemBox key={currentIdx} data-aos={animation}>
-        <BookmarkButton onClick={handleBookmark} isBookmarked={isBookmarked}>
+        <BookmarkButton onClick={handleBookmark} $isBookmarked={isBookmarked}>
           <i className="bi bi-bookmark-star-fill"></i> 북마크
         </BookmarkButton>
         <ComplaintButton onClick={handleModal}>
@@ -401,15 +409,15 @@ const BookmarkButton = styled.span`
   width: 6rem;
   font-size: 1rem;
   background-color: transparent;
-  color: ${({ isBookmarked }) => (isBookmarked ? "green" : "orange")};
+  color: ${({ $isBookmarked }) => ($isBookmarked ? "green" : "orange")};
   padding: 0.5rem;
   border-radius: 8px;
   cursor: pointer;
 
   &:hover {
     color: white;
-    background-color: ${({ isBookmarked }) =>
-      isBookmarked ? "green" : "transparent"};
+    background-color: ${({ $isBookmarked }) =>
+      $isBookmarked ? "green" : "orange"};
   }
 `;
 
