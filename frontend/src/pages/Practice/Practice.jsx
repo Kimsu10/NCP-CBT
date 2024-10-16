@@ -114,10 +114,6 @@ const Practice = () => {
     }
   };
 
-  // const closeModal = () => {
-  //   setIsComplaintModal(false);
-  // };
-
   useEffect(() => {
     const fetchBookmarkStatus = async () => {
       try {
@@ -202,6 +198,7 @@ const Practice = () => {
         handleCheckAnswer={handleCheckAnswer}
         handleRetry={handleRetry}
         handleBookmark={handleBookmark}
+        isComplaintModal={isComplaintModal}
       />
       <ProblemBox key={currentIdx} data-aos={animation}>
         <BookmarkButton onClick={handleBookmark} $isBookmarked={isBookmarked}>

@@ -11,10 +11,15 @@ const KeyboardController = ({
   handleCheckAnswer,
   handleRetry,
   handleBookmark,
+  isComplaintModal,
 }) => {
   useEffect(() => {
     const handleKeyDown = e => {
       if (isChecked && ["1", "2", "3", "4"].includes(e.key)) {
+        return;
+      }
+
+      if (isComplaintModal) {
         return;
       }
 
