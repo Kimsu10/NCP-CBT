@@ -1,6 +1,18 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const NotFound = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("accessToken");
+
+    if (token) {
+      navigate("/");
+    }
+  }, [navigate]);
+
   return (
     <WhoAreYou>
       <h1>...?</h1>

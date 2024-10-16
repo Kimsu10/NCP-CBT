@@ -103,8 +103,9 @@ const Modal = ({ type, closeModal }) => {
 
       sessionStorage.setItem("accessToken", accessToken);
       sessionStorage.setItem("refreshToken", refreshToken);
+      //404때문에 reload -> 방법을 찾아보자..
+      window.location.reload();
 
-      // navigate("/");
       closeModal();
     } catch (err) {
       console.error(
