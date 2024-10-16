@@ -57,6 +57,7 @@ const ComplaintModal = ({
         }
       } else {
         alert("로그인시 이용 가능합니다.");
+        setIsComplaint(!isComplaint);
         console.error("error occured: ", err);
       }
     }

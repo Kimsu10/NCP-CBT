@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Confetti from "react-confetti";
 import useDebouncedWinSize from "../../hooks/useDebounceWinSize";
 import { useNavigate, useParams } from "react-router-dom";
+import NotFound from "../NotFound/NotFound";
 
 const FinishPage = () => {
   const navigate = useNavigate();
@@ -33,6 +34,10 @@ const FinishPage = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  if (!token) {
+    return <NotFound />;
+  }
+
   return (
     <>
       <Confetti
@@ -59,7 +64,7 @@ const FinishPage = () => {
         }}
       />
       <FinishContainer>
-        <FinishTitle>완 주 성 공 !</FinishTitle>
+        <FinishTitle>고생하셨습니다</FinishTitle>
         <CertificateImageBox>
           <CertificateImage src="/images/certificate.png" />
           <h1 className="user-name">{signature}</h1>

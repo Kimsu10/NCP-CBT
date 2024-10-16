@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "../Modal/Modal";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Nav = ({ username }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -11,9 +11,7 @@ const Nav = ({ username }) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isToken, setIsToken] = useState(null);
   const token = sessionStorage.getItem("accessToken");
-
-  // const param = useParams();
-  // console.log(param.name); // 왜 undefined일까?
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem("accessToken");
@@ -62,7 +60,11 @@ const Nav = ({ username }) => {
 
   return (
     <NavBody>
-      <NavLogo src="/images/logo.png" alt="logo" />
+      <NavLogo
+        src="/images/logo.png"
+        alt="logo"
+        onClick={() => navigate("/")}
+      />
       <ControllerBox>
         {windowWidth > 720 && (
           <>
@@ -149,6 +151,7 @@ const NavLogo = styled.img`
   height: 2.5rem;
   border-radius: 0.4rem;
   opacity: 0.9;
+  cursor: pointer;
 `;
 
 const ControllerBox = styled.div`

@@ -24,6 +24,9 @@ const Practice = () => {
   const [isComplaintModal, setIsComplaintModal] = useState(false);
   const [animation, setAnimation] = useState("fade-right");
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isTokenValid, setIsTokenValid] = useState(true);
+
+  const token = sessionStorage.getItem("accessToken");
 
   useEffect(() => {
     AOS.init({
@@ -47,6 +50,11 @@ const Practice = () => {
   const subjectId = getSubjectId(param.name);
 
   useEffect(() => {
+    if (!token) {
+      navigate("/who-are-you");
+      return;
+    }
+
     const fetchData = async () => {
       try {
         const response = await axios.get(`/data/${subjectName}.json`);

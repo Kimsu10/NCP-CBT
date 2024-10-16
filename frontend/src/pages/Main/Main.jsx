@@ -1,5 +1,3 @@
-import axios from "axios";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Main = () => {
@@ -14,13 +12,13 @@ const Main = () => {
     <>
       <div>메인페이지</div>
       {/* 임시 버튼 -> 연습문제로 이동  ncp는 ncp 메인에서 ncp200,ncp202 이런식으로 나눠져야함*/}
-      <button className="nca" onClick={() => handleMovePractice("NCA")}>
+      <button className="nca" onClick={() => handleMovePractice("nca")}>
         NCA
       </button>
-      <button className="ncp" onClick={() => handleMovePractice("NCP")}>
+      <button className="ncp" onClick={() => handleMovePractice("ncp")}>
         NCP
       </button>
-      <button className="nce" onClick={() => handleMovePractice("NCE")}>
+      <button className="nce" onClick={() => handleMovePractice("nce")}>
         NCE
       </button>
     </>
