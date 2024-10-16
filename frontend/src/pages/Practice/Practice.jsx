@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
@@ -15,6 +15,7 @@ import WrongMark from "../../components/Marks/WrongMark";
 const Practice = () => {
   const param = useParams();
   const subjectName = param.name;
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [randomIds, setRandomIds] = useState([]);
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -70,6 +71,8 @@ const Practice = () => {
       setCurrentIdx(currentIdx + 1);
       setSelectedOptions([]);
       setIsChecked(false);
+    } else {
+      navigate(`/${subjectName}/practice/finish`);
     }
   };
 
@@ -111,9 +114,9 @@ const Practice = () => {
     }
   };
 
-  const closeModal = () => {
-    setIsComplaintModal(false);
-  };
+  // const closeModal = () => {
+  //   setIsComplaintModal(false);
+  // };
 
   useEffect(() => {
     const fetchBookmarkStatus = async () => {
@@ -164,8 +167,8 @@ const Practice = () => {
         }
       }
     } catch (err) {
-      console.error("북마크 추가/삭제 실패:", err);
-      alert("북마크 추가/삭제 실패. 개발자에게 문의하세요.");
+      console.error("error occured:", err);
+      alert("로그인시 이용 가능합니다.");
     }
   };
 
@@ -362,7 +365,7 @@ export default Practice;
 
 const PracticeBody = styled.div`
   width: 100%;
-  min-height: 91vh;
+  min-height: 87vh;
   display: flex;
   flex-direction: column;
   align-items: center;

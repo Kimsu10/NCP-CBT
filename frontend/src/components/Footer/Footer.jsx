@@ -6,9 +6,8 @@ const Footer = () => {
 export default Footer;
 
 const FooterBody = styled.div`
-  /* position: fixed;
-  bottom: 0; */
   width: 100%;
+  height: 8vh;
   padding: 1rem;
   background-color: lightgray;
   text-align: center;

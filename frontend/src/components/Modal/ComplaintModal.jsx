@@ -56,8 +56,8 @@ const ComplaintModal = ({
           alert("문제 접수 실패: " + message);
         }
       } else {
-        alert("데이터를 서버에 전송하는 중 오류가 발생했습니다.");
-        console.error("서버 오류: ", err);
+        alert("로그인시 이용 가능합니다.");
+        console.error("error occured: ", err);
       }
     }
   };
