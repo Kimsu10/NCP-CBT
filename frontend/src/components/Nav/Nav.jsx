@@ -3,13 +3,24 @@ import styled from "styled-components";
 import Modal from "../Modal/Modal";
 import { useParams } from "react-router-dom";
 
-const Nav = () => {
+const Nav = ({ username }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
   const [isListOpen, setIsListOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [isToken, setIsToken] = useState(null);
   const token = sessionStorage.getItem("accessToken");
+
+  // const param = useParams();
+  // console.log(param.name); // 왜 undefined일까?
+
+  useEffect(() => {
+    const storedToken = sessionStorage.getItem("accessToken");
+    if (storedToken) {
+      setIsToken(storedToken);
+    }
+  }, [token]);
 
   const openModal = type => {
     setModalType(type);
@@ -68,6 +79,9 @@ const Nav = () => {
                   className="bi bi-person-circle"
                   onClick={openProfile}
                 ></ProfileIcon>
+                <Username onClick={openProfile}>
+                  <b>{username}</b>
+                </Username>
                 {isProfileOpen && (
                   <ProfileMenu>
                     <UserProfile>내 정보</UserProfile>
@@ -80,25 +94,33 @@ const Nav = () => {
         )}
         {windowWidth <= 720 && (
           <>
-            <ListIcon className="bi bi-list" onClick={openList} />
-            {isListOpen && (
-              <MobileList>
-                {token ? (
-                  <>
-                    <UserProfile>내 정보</UserProfile>
-                    <MobileLogout onClick={logout}>로그아웃</MobileLogout>
-                  </>
-                ) : (
-                  <>
+            {!token ? (
+              <>
+                <ListIcon className="bi bi-list" onClick={openList} />
+                {isListOpen && (
+                  <MobileList>
                     <MobileLogin onClick={() => openModal("login")}>
                       로그인
                     </MobileLogin>
                     <MobileRegister onClick={() => openModal("register")}>
                       회원가입
                     </MobileRegister>
-                  </>
+                  </MobileList>
                 )}
-              </MobileList>
+              </>
+            ) : (
+              <>
+                <ProfileIcon
+                  className="bi bi-person-circle"
+                  onClick={openProfile}
+                />
+                {isProfileOpen && (
+                  <MobileList>
+                    <UserProfile>내 정보</UserProfile>
+                    <MobileLogout onClick={logout}>로그아웃</MobileLogout>
+                  </MobileList>
+                )}
+              </>
             )}
           </>
         )}
@@ -135,6 +157,14 @@ const ControllerBox = styled.div`
   justify-content: space-between;
   color: ${props => props.theme.white};
   gap: 1rem;
+`;
+
+const Username = styled.span`
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const Login = styled.span`
@@ -219,6 +249,7 @@ const MobileList = styled.div`
   flex-direction: column;
   text-align: center;
   gap: 1rem;
+  z-index: 9999;
 `;
 
 const MobileLogin = styled.span`
