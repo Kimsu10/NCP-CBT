@@ -1,5 +1,6 @@
 package kr.kh.backend.controller;
 
+import kr.kh.backend.dto.oauth2.OauthLoginDTO;
 import kr.kh.backend.dto.security.JwtToken;
 import kr.kh.backend.dto.security.LoginDTO;
 import kr.kh.backend.mapper.UserMapper;
@@ -69,9 +70,20 @@ public class UserController {
     }
 
     // 네이버 로그인
-    @GetMapping("/api/v1/oauth2/authorization/naver")
-    public void loginNaver(@RequestParam String code, @RequestParam String state) {
-        log.info("login naver, code : {}, state : {}", code, state);
+    @PostMapping("/login/naver")
+    public ResponseEntity<?> loginNaver(@RequestBody OauthLoginDTO oauthLoginDTO) {
+        log.info("네이버 로그인 컨트롤러");
+
+        // 네이버에서 사용자 정보 조회.
+        LoginDTO loginDTO = oauth2UserService.getNaverUser(oauthLoginDTO.getCode(), oauthLoginDTO.getState());
+        if(loginDTO == null) {
+        }
+        // JWT 토큰 생성.
+
+        // 토큰 넣어서 전송한다.
+
+
+        return ResponseEntity.status(200).body(null);
     }
 
 }

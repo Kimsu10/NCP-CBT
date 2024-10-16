@@ -201,26 +201,6 @@ const Modal = ({ type, closeModal }) => {
       state;
   };
 
-  useEffect(() => {
-    const href = window.location.href;
-    let params = new URL(document.location).searchParams;
-    let code = params.get("code");
-    let state = params.get("state");
-
-    const naver = async () => {
-      await axios
-        .get(
-          `http://localhost:8080/api/v1/oauth2/authorization/naver?code=${code}&state=${state}`,
-        )
-        .then(res => console.log(res))
-        .catch(err => {
-          console.log(err);
-        });
-    };
-
-    naver();
-  }, []);
-
   return (
     <ModalContainer>
       <ModalContent>

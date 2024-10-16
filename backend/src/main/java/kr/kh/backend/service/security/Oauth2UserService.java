@@ -3,11 +3,12 @@ package kr.kh.backend.service.security;
 import kr.kh.backend.domain.User;
 import kr.kh.backend.dto.oauth2.NaverUserInfo;
 import kr.kh.backend.dto.oauth2.Oauth2UserInfo;
-import kr.kh.backend.dto.security.JwtToken;
+import kr.kh.backend.dto.security.LoginDTO;
 import kr.kh.backend.mapper.UserMapper;
-import kr.kh.backend.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,7 +17,9 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.http.HttpRequest;
 import java.util.Map;
 
 @Service
@@ -25,10 +28,46 @@ import java.util.Map;
 public class Oauth2UserService extends DefaultOAuth2UserService {
 
     private final UserMapper userMapper;
-    private final JwtTokenProvider jwtTokenProvider;
+
+    @Value("${spring.security.oauth2.client.registration.naver.client-id}")
+    private String clientId;
+
+    @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
+    private String clientSecret;
 
     /**
-     * 소셜 로그인한 정보로 이미 디비에 있는 유저인지 확인한 이후 로그인 진행.
+     * 네이버 로그인
+     * 로그인한 사용자 정보가 디비에 있는지 확인 후 유저 정보 리턴.
+     */
+    public LoginDTO getNaverUser(String code, String state) {
+        log.info("네이버 로그인 서비스");
+        RestTemplate restTemplate = new RestTemplate();
+
+        // 리액트에서 받은 인가 코드로 접근 코드 획득
+        String getTokenUrl = "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code"
+                + "&client_id=" + clientId + "&client_secret=" + clientSecret
+                + "&code=" + code + "&state=" + state;
+        Map<String, String> naverToken = restTemplate.getForObject(getTokenUrl, Map.class);
+        String naverAccessToken = naverToken.get("access_token");
+        log.info("네이버 접근 코드 획득 : {}", naverAccessToken != null);
+
+        // 접근 코드로 사용자의 로그인 정보 획득
+        String getUserUrl = "https://openapi.naver.com/v1/nid/me";
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + naverAccessToken);
+        HttpEntity<String> request = new HttpEntity<>(null, headers);
+        ResponseEntity<Map> naverUser = restTemplate.exchange(getUserUrl, HttpMethod.GET, request, Map.class);
+        log.info("네이버 사용자 정보 획득 : {}", naverUser != null);
+
+        // 네이버 사용자 정보가 디비에 있는지 확인
+        if(naverUser != null) {
+
+        }
+        return null;
+    }
+
+    /**
+     * 소셜 로그인한 정보로 이미 디비에 있는 유저인지 확인한 후 로그인 진행.
      * (이 과정에서 UserDetails 객체를 생성하여 Authentication 객체 안에 넣는다.)
      */
     @Override
@@ -82,4 +121,5 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
 
         return user;
     }
+
 }
