@@ -4,7 +4,9 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import kr.kh.backend.dto.security.JwtToken;
+import kr.kh.backend.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,7 +20,6 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -26,6 +27,10 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
 
     private final Key key;
+
+    //    트큰의 username으로 user_id 죄회해서 해볼게 있어서 임시로 작성
+    @Autowired
+    private UserMapper userMapper;
 
     /**
      * 암호 키 설정 : yml 파일에서 설정한 secret key 를 가져와서 토큰의 암호화, 복호화에 사용한다.
@@ -41,26 +46,26 @@ public class JwtTokenProvider {
     public JwtToken generateToken(Authentication authentication) {
         log.info("Generate JWT token = {}", authentication);
         // 유저 권한 가져오기
-        List<String> authoritiesList = authentication.getAuthorities().stream()
+        String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+                .collect(Collectors.joining(","));
 
-        log.info("user roles = {}", authoritiesList);
+        log.info("user roles = {}", authorities);
         long now = System.currentTimeMillis();
 
-        // access token 생성 : 인증된 사용자의 권한 정보와 만료 시간을 담는다.
-        Date expiration = new Date(now + 1000 * 60 * 60 * 24);
+        // access token 생성 : 인증된 사용자의 권한 정보와 만료 시간을 담는다. (1시간)
+        Date expiration = new Date(now + 1000 * 60 * 60);
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim("auth", authoritiesList)
+                .claim("auth", authorities)
                 .setExpiration(expiration)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
         log.info("generated access Token = {}", accessToken);
 
-        // refresh token 생성 : access token 의 갱신을 위해 사용된다.
+        // refresh token 생성 : access token 의 갱신을 위해 사용된다. (1주일)
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + 1000 * 60 * 60 * 24))
+                .setExpiration(new Date(now + 1000 * 60 * 60 * 24 * 7))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
         log.info("generated refresh Token = {}", accessToken);
@@ -93,8 +98,17 @@ public class JwtTokenProvider {
 
         // UserDetails 객체를 만들어서 주체(subject) 와 권한 정보를 포함한 인증 정보를 리턴
         UserDetails principal = new User(claims.getSubject(), "", authorities);
+
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
+
+    // 트큰의 username으로 user_id 반환
+    public String getUsernameFromToken(String accessToken) {
+        Claims claims = parseClaims(accessToken);
+        return claims.getSubject();
+    }
+
+//
 
     // 주어진 access token 을 복호화하고, 만료된 토큰인 경우에도 claims 반환
     private Claims parseClaims(String jwtToken) {

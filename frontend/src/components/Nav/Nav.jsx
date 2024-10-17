@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "../Modal/Modal";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Nav = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
   const [isListOpen, setIsListOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("accessToken");
+  const navigate = useNavigate();
 
   const openModal = type => {
     setModalType(type);
@@ -21,6 +24,16 @@ const Nav = () => {
 
   const openList = () => {
     setIsListOpen(prev => !prev);
+  };
+
+  const openProfile = () => {
+    setIsProfileOpen(prev => !prev);
+    console.log("Profile Icon clicked, isProfileOpen:", !isProfileOpen);
+  };
+
+  const logout = () => {
+    sessionStorage.removeItem("accessToken");
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -39,7 +52,13 @@ const Nav = () => {
 
   return (
     <NavBody>
-      <NavLogo src="/images/logo.png" alt="logo" />
+      <NavLogo
+        src="/images/logo.png"
+        alt="logo"
+        onClick={() => {
+          navigate("/");
+        }}
+      />
       <ControllerBox>
         {windowWidth > 720 && (
           <>
@@ -51,7 +70,18 @@ const Nav = () => {
                 </Register>
               </>
             ) : (
-              <ProfileIcon className="bi bi-person-circle"></ProfileIcon>
+              <>
+                <ProfileIcon
+                  className="bi bi-person-circle"
+                  onClick={openProfile}
+                ></ProfileIcon>
+                {isProfileOpen && (
+                  <ProfileMenu>
+                    <UserProfile>내 정보</UserProfile>
+                    <LogoutButton onClick={logout}>로그아웃</LogoutButton>
+                  </ProfileMenu>
+                )}
+              </>
             )}
           </>
         )}
@@ -61,7 +91,10 @@ const Nav = () => {
             {isListOpen && (
               <MobileList>
                 {token ? (
-                  <UserProfile>내 정보</UserProfile>
+                  <>
+                    <UserProfile>내 정보</UserProfile>
+                    <MobileLogout onClick={logout}>로그아웃</MobileLogout>
+                  </>
                 ) : (
                   <>
                     <MobileLogin onClick={() => openModal("login")}>
@@ -77,7 +110,9 @@ const Nav = () => {
           </>
         )}
       </ControllerBox>
-      {isModalOpen && <Modal type={modalType} closeModal={closeModal} />}
+      {isModalOpen && (
+        <Modal type={modalType} closeModal={closeModal} openModal={openModal} />
+      )}
     </NavBody>
   );
 };
@@ -99,6 +134,9 @@ const NavLogo = styled.img`
   height: 2.5rem;
   border-radius: 0.4rem;
   opacity: 0.9;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const ControllerBox = styled.div`
@@ -138,6 +176,8 @@ const Register = styled.span`
 const ProfileIcon = styled.i`
   font-size: 1.8rem;
   color: ${props => props.theme.white};
+  cursor: pointer;
+  z-index: 99;
 `;
 
 const ListIcon = styled.i`
@@ -151,6 +191,30 @@ const ListIcon = styled.i`
 
   &:hover {
     color: ${props => props.theme.hoverColor};
+  }
+`;
+
+const ProfileMenu = styled.div`
+  position: absolute;
+  top: 4.1rem;
+  right: 1rem;
+  background-color: ${props => props.theme.mainColor};
+  padding: 1rem;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+  z-index: 99;
+`;
+
+const LogoutButton = styled.span`
+  font-weight: 700;
+  cursor: pointer;
+  color: ${props => props.theme.white};
+
+  &:hover {
+    text-decoration: underline;
   }
 `;
 
@@ -187,7 +251,22 @@ const MobileRegister = styled.span`
   }
 `;
 
+const MobileLogout = styled.span`
+  font-weight: 700;
+  cursor: pointer;
+  color: ${props => props.theme.white};
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 const UserProfile = styled.div`
   font-weight: 700;
   color: ${props => props.theme.white};
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
