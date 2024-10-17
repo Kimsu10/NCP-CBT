@@ -1,13 +1,24 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "../Modal/Modal";
+import { useNavigate, useParams } from "react-router-dom";
 
-const Nav = () => {
+const Nav = ({ username }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
   const [isListOpen, setIsListOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const token = localStorage.getItem("token");
+  const [isToken, setIsToken] = useState(null);
+  const token = sessionStorage.getItem("accessToken");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedToken = sessionStorage.getItem("accessToken");
+    if (storedToken) {
+      setIsToken(storedToken);
+    }
+  }, [token]);
 
   const openModal = type => {
     setModalType(type);
@@ -21,6 +32,16 @@ const Nav = () => {
 
   const openList = () => {
     setIsListOpen(prev => !prev);
+  };
+
+  const openProfile = () => {
+    setIsProfileOpen(prev => !prev);
+    console.log("Profile Icon clicked, isProfileOpen:", !isProfileOpen);
+  };
+
+  const logout = () => {
+    sessionStorage.removeItem("accessToken");
+    window.location.reload();
   };
 
   useEffect(() => {
@@ -39,7 +60,11 @@ const Nav = () => {
 
   return (
     <NavBody>
-      <NavLogo src="/images/logo.png" alt="logo" />
+      <NavLogo
+        src="/images/logo.png"
+        alt="logo"
+        onClick={() => navigate("/")}
+      />
       <ControllerBox>
         {windowWidth > 720 && (
           <>
@@ -51,33 +76,60 @@ const Nav = () => {
                 </Register>
               </>
             ) : (
-              <ProfileIcon className="bi bi-person-circle"></ProfileIcon>
+              <>
+                <ProfileIcon
+                  className="bi bi-person-circle"
+                  onClick={openProfile}
+                ></ProfileIcon>
+                <Username onClick={openProfile}>
+                  <b>{username}</b>
+                </Username>
+                {isProfileOpen && (
+                  <ProfileMenu>
+                    <UserProfile>내 정보</UserProfile>
+                    <LogoutButton onClick={logout}>로그아웃</LogoutButton>
+                  </ProfileMenu>
+                )}
+              </>
             )}
           </>
         )}
         {windowWidth <= 720 && (
           <>
-            <ListIcon className="bi bi-list" onClick={openList} />
-            {isListOpen && (
-              <MobileList>
-                {token ? (
-                  <UserProfile>내 정보</UserProfile>
-                ) : (
-                  <>
+            {!token ? (
+              <>
+                <ListIcon className="bi bi-list" onClick={openList} />
+                {isListOpen && (
+                  <MobileList>
                     <MobileLogin onClick={() => openModal("login")}>
                       로그인
                     </MobileLogin>
                     <MobileRegister onClick={() => openModal("register")}>
                       회원가입
                     </MobileRegister>
-                  </>
+                  </MobileList>
                 )}
-              </MobileList>
+              </>
+            ) : (
+              <>
+                <ProfileIcon
+                  className="bi bi-person-circle"
+                  onClick={openProfile}
+                />
+                {isProfileOpen && (
+                  <MobileList>
+                    <UserProfile>내 정보</UserProfile>
+                    <MobileLogout onClick={logout}>로그아웃</MobileLogout>
+                  </MobileList>
+                )}
+              </>
             )}
           </>
         )}
       </ControllerBox>
-      {isModalOpen && <Modal type={modalType} closeModal={closeModal} />}
+      {isModalOpen && (
+        <Modal type={modalType} closeModal={closeModal} openModal={openModal} />
+      )}
     </NavBody>
   );
 };
@@ -99,6 +151,7 @@ const NavLogo = styled.img`
   height: 2.5rem;
   border-radius: 0.4rem;
   opacity: 0.9;
+  cursor: pointer;
 `;
 
 const ControllerBox = styled.div`
@@ -107,6 +160,14 @@ const ControllerBox = styled.div`
   justify-content: space-between;
   color: ${props => props.theme.white};
   gap: 1rem;
+`;
+
+const Username = styled.span`
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const Login = styled.span`
@@ -138,6 +199,8 @@ const Register = styled.span`
 const ProfileIcon = styled.i`
   font-size: 1.8rem;
   color: ${props => props.theme.white};
+  cursor: pointer;
+  z-index: 99;
 `;
 
 const ListIcon = styled.i`
@@ -154,6 +217,30 @@ const ListIcon = styled.i`
   }
 `;
 
+const ProfileMenu = styled.div`
+  position: absolute;
+  top: 4.1rem;
+  right: 1rem;
+  background-color: ${props => props.theme.mainColor};
+  padding: 1rem;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+  z-index: 99;
+`;
+
+const LogoutButton = styled.span`
+  font-weight: 700;
+  cursor: pointer;
+  color: ${props => props.theme.white};
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 const MobileList = styled.div`
   position: absolute;
   top: 4.1rem;
@@ -165,6 +252,7 @@ const MobileList = styled.div`
   flex-direction: column;
   text-align: center;
   gap: 1rem;
+  z-index: 9999;
 `;
 
 const MobileLogin = styled.span`
@@ -187,7 +275,22 @@ const MobileRegister = styled.span`
   }
 `;
 
+const MobileLogout = styled.span`
+  font-weight: 700;
+  cursor: pointer;
+  color: ${props => props.theme.white};
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 const UserProfile = styled.div`
   font-weight: 700;
   color: ${props => props.theme.white};
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
