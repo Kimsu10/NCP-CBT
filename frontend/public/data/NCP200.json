@@ -117,7 +117,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "네이버 클라우드 플랫폼은 한국, 일본, 홍콩, 싱가포르, 미국 서부 등의 리전을 운영하고 있으며, 미국 동부 리전은 현재 제공되지 않습니다."
   },
   {
     "id": 151,
@@ -333,7 +333,7 @@
       }
     ],
     "answer": [1, 2, 3, 4],
-    "explanation": ""
+    "explanation": "createNasVolumeInstance, getNasVolumeInstanceList, changeNasVolumeSize, removeNasVolumeAccessControl은 모두 NAVER CLOUD PLATFORM의 NAS 서비스에서 제공하는 공식 CLI 명령어입니다."
   },
   {
     "id": 160,
@@ -1389,7 +1389,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "Compact/Standard/High Memory 서버는 네이버 클라우드 플랫폼의 모든 리전에서 동일하게 제공되지 않으며, 리전별로 사용 가능한 서버 타입이 다를 수 있습니다."
   },
   {
     "id": 204,
@@ -3477,7 +3477,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "VPC 환경/Classic 2세대의 High CPU 서버는 vCPU 대비 RAM 용량이 적은 것이 특징이며, vCPU 4개, RAM 8GB 구성이 제공되는 정확한 스펙입니다."
   },
   {
     "id": 291,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { flexRowBox } from "../../styles/Variables";
@@ -180,10 +180,17 @@ const Modal = ({ type, closeModal }) => {
     }
   };
 
-  // 네이버 로그인
+  // 네이버 로그인 페이지로 전송
   const doNaverLogin = () => {
-    console.log("Naver login function called.");
-    window.location.href = "http://localhost:8080";
+    let state = encodeURI(process.env.REACT_APP_NAVER_REDIRECT_URI);
+    window.location.href =
+      "https://nid.naver.com/oauth2.0/authorize?response_type=code" +
+      "&client_id=" +
+      process.env.REACT_APP_NAVER_CLIENT_ID +
+      "&redirect_uri=" +
+      process.env.REACT_APP_NAVER_REDIRECT_URI +
+      "&state=" +
+      state;
   };
 
   return (
