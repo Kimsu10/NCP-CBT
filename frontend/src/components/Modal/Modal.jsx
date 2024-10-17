@@ -179,17 +179,8 @@ const Modal = ({ type, closeModal }) => {
     }
   };
 
-  // 네이버 로그인
+  // 네이버 로그인 페이지로 전송
   const doNaverLogin = () => {
-    // axios
-    //   .get("http://localhost:8080/login/naver")
-    //   .then(res => {
-    //     console.log(res);
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
-
     let state = encodeURI(process.env.REACT_APP_NAVER_REDIRECT_URI);
     window.location.href =
       "https://nid.naver.com/oauth2.0/authorize?response_type=code" +

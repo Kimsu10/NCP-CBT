@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Modal from "../Modal/Modal";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Nav = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -10,6 +10,7 @@ const Nav = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const token = sessionStorage.getItem("accessToken");
+  const navigate = useNavigate();
 
   const openModal = type => {
     setModalType(type);
@@ -51,7 +52,13 @@ const Nav = () => {
 
   return (
     <NavBody>
-      <NavLogo src="/images/logo.png" alt="logo" />
+      <NavLogo
+        src="/images/logo.png"
+        alt="logo"
+        onClick={() => {
+          navigate("/");
+        }}
+      />
       <ControllerBox>
         {windowWidth > 720 && (
           <>
@@ -127,6 +134,9 @@ const NavLogo = styled.img`
   height: 2.5rem;
   border-radius: 0.4rem;
   opacity: 0.9;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const ControllerBox = styled.div`

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Main = () => {
   const navigate = useNavigate();
@@ -8,12 +8,19 @@ const Main = () => {
     navigate(`/${name}/practice`);
   };
 
-  // 네이버 로그인 핸들러
-  const handleNaverLogin = async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get("code");
-    const state = urlParams.get("state");
+  // 네이버 로그인 핸들러 (네이버에서 받은 인가코드를 백으로 전송 -> 백에서 인증완료된 JWT 토큰을 받는다)
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get("code");
+  const state = urlParams.get("state");
 
+  useEffect(() => {
+    if (code !== null) {
+      console.log("code?", code !== null);
+      handleNaverLogin(code, state);
+    }
+  }, []);
+
+  const handleNaverLogin = async (code, state) => {
     const response = await fetch("http://localhost:8080/login/naver", {
       method: "POST",
       headers: {
@@ -22,21 +29,22 @@ const Main = () => {
       body: JSON.stringify({ code, state }),
     });
 
-    if (response.ok) {
-      const data = await response.json();
-      const accessToken = data.accessToken;
+    if (response.status === 400) {
+      navigate("/");
+      alert("사용자 정보가 없습니다. 로그인을 다시 시도해주세요.");
+    }
 
+    if (response.status === 200) {
       // accessToken을 세션 스토리지에 저장 (추후 변경 가능성 있음)
-      sessionStorage.setItem("token", accessToken);
+      const data = await response.headers.get("Authorization");
+      const accessToken = data.split(" ")[1];
+      sessionStorage.setItem("accessToken", accessToken);
+      navigate("/");
+      window.location.reload();
     } else {
       console.error("Failed to fetch token");
     }
   };
-
-  // useEffect 안에서 호출
-  useEffect(() => {
-    handleNaverLogin();
-  }, []);
 
   // useEffect(() => {
   //   const corsTest = () => {

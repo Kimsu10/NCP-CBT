@@ -19,7 +19,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.http.HttpRequest;
 import java.util.Map;
 
 @Service
@@ -39,7 +38,7 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
      * 네이버 로그인
      * 로그인한 사용자 정보가 디비에 있는지 확인 후 유저 정보 리턴.
      */
-    public LoginDTO getNaverUser(String code, String state) {
+    public Authentication getNaverUser(String code, String state) {
         log.info("네이버 로그인 서비스");
         RestTemplate restTemplate = new RestTemplate();
 
@@ -49,21 +48,46 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
                 + "&code=" + code + "&state=" + state;
         Map<String, String> naverToken = restTemplate.getForObject(getTokenUrl, Map.class);
         String naverAccessToken = naverToken.get("access_token");
-        log.info("네이버 접근 코드 획득 : {}", naverAccessToken != null);
+        log.info("네이버 접근 코드 획득 : {}", naverAccessToken);
 
         // 접근 코드로 사용자의 로그인 정보 획득
         String getUserUrl = "https://openapi.naver.com/v1/nid/me";
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + naverAccessToken);
         HttpEntity<String> request = new HttpEntity<>(null, headers);
-        ResponseEntity<Map> naverUser = restTemplate.exchange(getUserUrl, HttpMethod.GET, request, Map.class);
-        log.info("네이버 사용자 정보 획득 : {}", naverUser != null);
+        ResponseEntity<Map> naverResponse = restTemplate.exchange(getUserUrl, HttpMethod.GET, request, Map.class);
+        Map<String, String> naverUser = (Map) naverResponse.getBody().get("response");
+        log.info("네이버 사용자 정보 획득 : {}", naverUser);
 
         // 네이버 사용자 정보가 디비에 있는지 확인
         if(naverUser != null) {
+            String username = naverUser.get("nickname");
+            String email = naverUser.get("email");
+            String role = "USER";
 
+            User user = userMapper.findByUsername(username);
+
+            if(user == null) {
+                user = User.builder()
+                        .nickname(username)
+                        .email(email)
+                        .platform("naver")
+                        .roles(role)
+                        .build();
+                userMapper.insertOauthUser(user);
+                log.info("새로운 oauth2 유저를 등록했습니다 : {}", user);
+            }
+
+            Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.info("oauth2 유저가 인증되었습니다 = {}", authentication);
+
+            return authentication;
+
+        } else {
+            log.info("네이버 사용자의 정보를 확인할 수 없습니다.");
+            return null;
         }
-        return null;
     }
 
     /**
