@@ -5,11 +5,8 @@ import kr.kh.backend.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,8 +16,6 @@ public class UserService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
-    private final CustomUserDetailsService customUserDetailsService;
-    private final PasswordEncoder passwordEncoder;
 
     /**
      * 유저의 로그인 요청으로 들어온 username + password 를 기반으로 검증 진행 후 JWT 토큰 생성
@@ -28,13 +23,13 @@ public class UserService {
     public JwtToken generateJwtToken(String username, String password) {
         log.info("Generate JWT Token = username : {}", username);
 
-        // 사용자 정보를 로드
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
-
-        // 비밀번호 비교
-        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
-            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
-        }
+//        // 사용자 정보를 로드
+//        UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+//
+//        // 비밀번호 비교
+//        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+//            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+//        }
 
         // username + password 기반으로 Authentication 객체 생성
         UsernamePasswordAuthenticationToken authenticationToken =
