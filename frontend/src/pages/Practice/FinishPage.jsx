@@ -8,7 +8,7 @@ import NotFound from "../NotFound/NotFound";
 const FinishPage = () => {
   const navigate = useNavigate();
   const { width, height } = useDebouncedWinSize();
-  const [numberOfPieces, setNumberOfPieces] = useState(50);
+  const [numberOfPieces, setNumberOfPieces] = useState(60);
   const [username, setUsername] = useState("");
   const token = sessionStorage.getItem("accessToken");
 
@@ -41,8 +41,9 @@ const FinishPage = () => {
   return (
     <>
       <Confetti
-        width={width - 100}
+        width={width - 80}
         height={height}
+        wind={0.03}
         numberOfPieces={numberOfPieces}
         opacity={0.7}
         drawShape={ctx => {
@@ -64,7 +65,7 @@ const FinishPage = () => {
         }}
       />
       <FinishContainer>
-        <FinishTitle>고생하셨습니다</FinishTitle>
+        <FinishTitle>축 하 합 니 다</FinishTitle>
         <CertificateImageBox>
           <CertificateImage src="/images/certificate.png" />
           <h1 className="user-name">{signature}</h1>
@@ -90,6 +91,7 @@ const FinishContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 6rem 0;
 `;
 
 const FinishTitle = styled.h1`

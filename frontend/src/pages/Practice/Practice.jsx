@@ -374,7 +374,8 @@ const PracticeBody = styled.div`
   align-items: center;
   background-color: ${props => props.theme.white};
   justify-content: center;
-  position: relative; //
+  position: relative;
+  margin-top: 6rem;
 `;
 
 const ProblemBox = styled.div`
@@ -560,8 +561,9 @@ const ProgressBarContainer = styled.div`
   width: 100%;
   height: 0.3rem;
   background-color: #e0e0e0;
-  position: absolute;
-  top: 0;
+  position: fixed;
+  top: 4rem;
+  z-index: 1000;
 `;
 
 const Progress = styled.div`
