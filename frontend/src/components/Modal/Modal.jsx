@@ -70,7 +70,6 @@ const Modal = ({ type, closeModal }) => {
         },
       );
 
-      console.log(response.data);
       setShowLoginForm(true);
     } catch (err) {
       console.error(

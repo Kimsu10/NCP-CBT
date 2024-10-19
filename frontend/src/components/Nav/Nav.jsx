@@ -14,7 +14,6 @@ const Nav = ({ username }) => {
   const navigate = useNavigate();
 
   const { name: subjectName } = useParams();
-  console.log("subjectName:", subjectName);
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem("accessToken");
@@ -39,7 +38,6 @@ const Nav = ({ username }) => {
 
   const openProfile = () => {
     setIsProfileOpen(prev => !prev);
-    console.log("Profile Icon clicked, isProfileOpen:", !isProfileOpen);
   };
 
   const logout = () => {
