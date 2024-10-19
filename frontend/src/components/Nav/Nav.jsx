@@ -13,6 +13,9 @@ const Nav = ({ username }) => {
   const token = sessionStorage.getItem("accessToken");
   const navigate = useNavigate();
 
+  const { name: subjectName } = useParams();
+  console.log("subjectName:", subjectName);
+
   useEffect(() => {
     const storedToken = sessionStorage.getItem("accessToken");
     if (storedToken) {
@@ -65,6 +68,7 @@ const Nav = ({ username }) => {
         alt="logo"
         onClick={() => navigate("/")}
       />
+      <SubjectTitle>{subjectName}</SubjectTitle>
       <ControllerBox>
         {windowWidth > 720 && (
           <>
@@ -152,6 +156,17 @@ const NavLogo = styled.img`
   border-radius: 0.4rem;
   opacity: 0.9;
   cursor: pointer;
+`;
+
+const SubjectTitle = styled.span`
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: white;
+  padding-left: 4rem;
+
+  @media (max-width: 720px) {
+    padding-left: 0;
+  }
 `;
 
 const ControllerBox = styled.div`

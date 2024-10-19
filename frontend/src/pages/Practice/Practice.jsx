@@ -51,8 +51,7 @@ const Practice = () => {
 
   useEffect(() => {
     if (!token) {
-      navigate("/who-are-you");
-      return;
+      navigate(`/${subjectName}/who-are-you`);
     }
 
     const fetchData = async () => {
@@ -190,7 +189,6 @@ const Practice = () => {
 
   return (
     <PracticeBody>
-      {/* <SubjectTitle>{subjectName}</SubjectTitle> */}
       <ProgressBarContainer>
         <Progress width={progressBar} />
       </ProgressBarContainer>
@@ -377,14 +375,6 @@ const PracticeBody = styled.div`
   background-color: ${props => props.theme.white};
   justify-content: center;
   position: relative; //
-`;
-
-const SubjectTitle = styled.span`
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: white;
-  position: fixed;
-  top: 1.3rem;
 `;
 
 const ProblemBox = styled.div`

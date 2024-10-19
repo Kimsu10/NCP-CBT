@@ -1,17 +1,18 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 const NotFound = () => {
   const navigate = useNavigate();
+  const param = useParams();
 
   useEffect(() => {
     const token = sessionStorage.getItem("accessToken");
 
     if (token) {
-      navigate("/");
+      navigate(`/${param.name}/practice`);
     }
-  }, [navigate]);
+  }, []);
 
   return (
     <WhoAreYou>

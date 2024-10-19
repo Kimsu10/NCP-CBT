@@ -6,7 +6,7 @@ const Main = () => {
   const navigate = useNavigate();
 
   const handleMovePractice = name => {
-    navigate(`/${name}/practice`);
+    navigate(`/${name}`);
   };
 
   // 네이버 로그인 핸들러 (네이버에서 받은 인가코드를 백으로 전송 -> 백에서 인증완료된 JWT 토큰을 받는다)
@@ -46,16 +46,6 @@ const Main = () => {
       console.error("Failed to fetch token");
     }
   };
-
-  // useEffect(() => {
-  //   const corsTest = () => {
-  //     axios
-  //       .get("http://localhost:8080")
-  //       .then(res => console.log(res))
-  //       .catch(err => console.log(err));
-  //   };
-  //   corsTest();
-  // }, []);
 
   return (
     <>
