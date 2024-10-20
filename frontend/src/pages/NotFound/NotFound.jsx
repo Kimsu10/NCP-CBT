@@ -10,7 +10,7 @@ const NotFound = () => {
     const token = sessionStorage.getItem("accessToken");
 
     if (token) {
-      navigate(`/${param.name}/practice`);
+      navigate(`/${param.name}`);
     }
   }, []);
 

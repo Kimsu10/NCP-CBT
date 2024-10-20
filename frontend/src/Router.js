@@ -7,7 +7,7 @@ import Practice from "./pages/Practice/Practice";
 import FinishPage from "./pages/Practice/FinishPage";
 import NotFound from "./pages/NotFound/NotFound";
 import NcpMain from "./pages/Main/NcpMain";
-import TestMatch from "./pages/TestMatch/TestMatch";
+import MatchPage from "./pages/TestMatch/MatchPage";
 
 const Router = () => {
   const [username, setUsername] = useState("");
@@ -51,7 +51,7 @@ const Router = () => {
         />
         <Route
           path="/:name/testMatch"
-          element={<PageWrapper username={username} Component={TestMatch} />}
+          element={<PageWrapper username={username} Component={MatchPage} />}
         />
       </Routes>
       <Footer />
