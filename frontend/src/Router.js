@@ -7,6 +7,7 @@ import Practice from "./pages/Practice/Practice";
 import FinishPage from "./pages/Practice/FinishPage";
 import NotFound from "./pages/NotFound/NotFound";
 import NcpMain from "./pages/Main/NcpMain";
+import TestMatch from "./pages/TestMatch/TestMatch";
 
 const Router = () => {
   const [username, setUsername] = useState("");
@@ -47,6 +48,10 @@ const Router = () => {
         <Route
           path="/:name/who-are-you"
           element={<PageWrapper username={username} Component={NotFound} />}
+        />
+        <Route
+          path="/:name/testMatch"
+          element={<PageWrapper username={username} Component={TestMatch} />}
         />
       </Routes>
       <Footer />

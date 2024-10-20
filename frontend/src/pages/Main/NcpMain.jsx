@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
 const NcpMain = () => {
   const navigate = useNavigate();
+  const { name } = useParams();
 
   return (
     <SubjectMain>
@@ -11,6 +12,9 @@ const NcpMain = () => {
       <MovePractice onClick={() => navigate(`/NCP200/practice`)}>
         NCP200 연습
       </MovePractice>
+      <TestMatch onClick={() => navigate(`/${name}/testMatch`)}>
+        매칭 시험?
+      </TestMatch>
     </SubjectMain>
   );
 };
@@ -22,3 +26,5 @@ const SubjectMain = styled.div`
 `;
 
 const MovePractice = styled.button``;
+
+const TestMatch = styled.button``;
