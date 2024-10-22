@@ -8,6 +8,7 @@ import FinishPage from "./pages/Practice/FinishPage";
 import NotFound from "./pages/NotFound/NotFound";
 import NcpMain from "./pages/Main/NcpMain";
 import MatchPage from "./pages/TestMatch/MatchPage";
+import OneOnOne from "./pages/TestMatch/OneOnOne";
 
 const Router = () => {
   const [username, setUsername] = useState("");
@@ -50,8 +51,8 @@ const Router = () => {
           element={<PageWrapper username={username} Component={NotFound} />}
         />
         <Route
-          path="/:name/testMatch"
-          element={<PageWrapper username={username} Component={MatchPage} />}
+          path="/1on1"
+          element={<PageWrapper username={username} Component={OneOnOne} />}
         />
       </Routes>
       <Footer />

@@ -107,8 +107,8 @@ const Main = () => {
           <button className="nce" onClick={() => handleMovePractice("NCE")}>
             NCE
           </button>
-          <button className="nce" onClick={() => handleMovePractice("NCE")}>
-            게임
+          <button className="1on1" onClick={() => handleMovePractice("1on1")}>
+            1on1
           </button>
         </div>
       </MainContainer>
