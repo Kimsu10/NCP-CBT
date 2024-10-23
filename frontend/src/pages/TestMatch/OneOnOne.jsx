@@ -137,16 +137,33 @@ const OneOnOneBody = styled.div`
 const ImageBox = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin: 4rem 2rem;
+  min-width: 28rem;
 
+  @media (max-width: 720px) {
+    flex-direction: column;
+    margin: 2rem;
+    gap: 1rem;
+  }
+
+  .nce-image,
   .nac-image {
     padding-top: 1rem;
     width: 28%;
+
+    @media (max-width: 720px) {
+      min-width: 20rem;
+    }
   }
 
   .ncp-container {
     position: relative;
-    width: 30%;
+    width: 31.5%;
+
+    @media (max-width: 720px) {
+      min-width: 20rem;
+    }
   }
 
   .ncp-image {
@@ -155,15 +172,12 @@ const ImageBox = styled.div`
     position: relative;
   }
 
-  .nce-image {
-    width: 28%;
-  }
-
   .ncp-card {
-    height: 99%;
+    height: 100%;
     padding: 1rem;
     border-radius: 12px;
     background-color: #f1f1f1;
+
     &:hover {
       background-color: #ddd;
     }
@@ -171,23 +185,27 @@ const ImageBox = styled.div`
 
   .type-buttons {
     width: 100%;
+    height: 100%;
     position: absolute;
-    top: 100%;
+    top: 0;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     gap: 1rem;
-    background-color: gray;
-    padding: 0.5rem;
+    padding: 1rem;
+    background-color: #80808096;
     border-radius: 10px;
 
     button {
-      width: 10rem;
+      width: 100%;
+      height: 28%;
       margin: 0.2rem 0;
       background-color: lightgray;
       border: none;
       padding: 0.5rem 1rem;
+      font-size: 1.2rem;
       cursor: pointer;
     }
 
@@ -212,5 +230,9 @@ const MatchButtonBox = styled.div`
     height: 4rem;
     font-size: 1.2rem;
     background-color: ${props => props.theme.mainColor};
+  }
+
+  @media (max-width: 720px) {
+    flex-direction: column;
   }
 `;
