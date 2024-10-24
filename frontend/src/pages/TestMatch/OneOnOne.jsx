@@ -1,45 +1,63 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import io from "socket.io-client";
-import { useNavigate } from "react-router-dom";
 
-const socket = io("http://localhost:4000", {
-  path: "/testMatch",
-});
+import { useNavigate } from "react-router-dom";
 
 const OneOnOne = () => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [waiting, setWaiting] = useState(false); // 대기 상태
-  const [isReady, setIsReady] = useState(false); // 방에 입장할 준비
-  const [showTypeButtons, setShowTypeButtons] = useState(false); // NCP 이미지 클릭 시 버튼 보이기
+  const [waiting, setWaiting] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+  const [showTypeButtons, setShowTypeButtons] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [roomName, setRoomName] = useState("");
+  const [selectedName, setSelectedName] = useState("");
   const typeButtonsRef = useRef(null);
+  const modalRef = useRef(null);
+  const socketRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    socket.on("roomReady", roomName => {
-      setIsReady(true);
-      alert(`방에 입장할 준비가 완료되었습니다: ${roomName}`);
-      navigate(`/${selectedImage}/1on1/${roomName}`);
+    socketRef.current = io("http://localhost:4000", {
+      path: "/1on1",
     });
-  }, [selectedImage, navigate]);
 
-  useEffect(() => {
-    const handleClickOutside = event => {
-      if (
-        typeButtonsRef.current &&
-        !typeButtonsRef.current.contains(event.target)
-      ) {
-        setShowTypeButtons(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
+    socketRef.current.on("roomReady", ({ roomName, selectedName }) => {
+      console.log("Received roomReady event:", selectedName, roomName);
+      setSelectedName(selectedName);
+      setRoomName(roomName);
+      setIsReady(true);
+    });
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      socketRef.current.disconnect();
     };
   }, []);
 
+  useEffect(() => {
+    console.log("selectedName 상태:", selectedName);
+    console.log("roomName 상태:", roomName);
+    console.log("isReady 상태:", isReady);
+
+    if (isReady && selectedName && roomName) {
+      // if (selectedName !== undefined && roomName !== undefined) {
+      //   navigate(`/1on1/${selectedName}/${roomName}`);
+      //   console.log("이동 준비 완료:", selectedName, roomName);
+      // } else {
+      //   console.error(
+      //     "selectedName 또는 roomName이 설정되지 않았습니다.",
+      //     selectedName,
+      //     roomName,
+      //   );
+      // }
+      const targetUrl = `/1on1/${selectedName}/${roomName}`; // 이동할 URL
+      console.log("이동 준비 완료:", selectedName, roomName);
+      console.log("이동할 URL:", targetUrl);
+      navigate(targetUrl);
+    }
+  }, [isReady, roomName, selectedName, navigate]);
+
+  // 과목 선택
   const handleImageClick = imageName => {
     setSelectedImage(imageName);
 
@@ -50,15 +68,61 @@ const OneOnOne = () => {
     }
   };
 
+  // 방생성 -> roomName, selectedName 서버에 잘 들어감
   const handleRoomCreation = () => {
+    const roomId = Math.random().toString(36).substring(2, 10);
+    console.log("방 생성:", roomId);
+    setRoomName(roomId);
     setWaiting(true);
-    socket.emit("createRoom", { roomName: "myRoom" });
+
+    socketRef.current.emit("createRoom", {
+      roomName: roomId,
+      selectedName: selectedImage,
+    });
   };
 
   const handleButtonClick = type => {
     setSelectedImage(`NCP${type}`);
     setShowTypeButtons(false);
   };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleRoomEnter = () => {
+    if (roomName) {
+      // 방 참가자가 서버에 입장 요청
+      socketRef.current.emit("joinRoom", {
+        roomName: roomName,
+      });
+
+      console.log("방 입장 요청:", selectedName, roomName);
+    } else {
+      alert("방 번호를 입력하세요.");
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = event => {
+      if (
+        typeButtonsRef.current &&
+        !typeButtonsRef.current.contains(event.target)
+      ) {
+        setShowTypeButtons(false);
+      }
+
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setIsModalOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <>
@@ -111,10 +175,27 @@ const OneOnOne = () => {
           >
             {waiting ? "대기 중..." : "방만들기"}
           </button>
-          <button className="enter-room">입장하기</button>
+          <button className="enter-room" onClick={openModal}>
+            입장하기
+          </button>
         </MatchButtonBox>
 
         {isReady && <div>입장 준비 완료! 방으로 이동합니다.</div>}
+
+        {isModalOpen && (
+          <ModalBackground>
+            <ModalBox ref={modalRef}>
+              <h2>방 번호를 입력하세요</h2>
+              <input
+                type="text"
+                value={roomName}
+                onChange={e => setRoomName(e.target.value)}
+                placeholder="방 번호"
+              />
+              <button onClick={handleRoomEnter}>입장하기</button>
+            </ModalBox>
+          </ModalBackground>
+        )}
       </OneOnOneBody>
     </>
   );
@@ -234,5 +315,46 @@ const MatchButtonBox = styled.div`
 
   @media (max-width: 720px) {
     flex-direction: column;
+  }
+`;
+
+const ModalBackground = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ModalBox = styled.div`
+  background-color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+
+  h2 {
+    margin-bottom: 1rem;
+  }
+
+  input {
+    width: 12rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+
+  button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background-color: lightseagreen;
+    color: white;
+    border: none;
+    cursor: pointer;
   }
 `;

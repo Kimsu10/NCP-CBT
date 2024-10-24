@@ -7,7 +7,6 @@ import Practice from "./pages/Practice/Practice";
 import FinishPage from "./pages/Practice/FinishPage";
 import NotFound from "./pages/NotFound/NotFound";
 import NcpMain from "./pages/Main/NcpMain";
-import MatchPage from "./pages/TestMatch/MatchPage";
 import OneOnOne from "./pages/TestMatch/OneOnOne";
 import TestMatch from "./pages/TestMatch/TestMatch";
 
@@ -55,7 +54,10 @@ const Router = () => {
           path="/1on1"
           element={<PageWrapper username={username} Component={OneOnOne} />}
         />
-        <Route path="/:name/1on1/:roomId" element={<TestMatch />} />
+        <Route
+          path="/1on1/:selectedName/:roomName"
+          element={<PageWrapper Component={TestMatch} />}
+        />
       </Routes>
       <Footer />
     </BrowserRouter>
@@ -63,10 +65,10 @@ const Router = () => {
 };
 
 const PageWrapper = ({ username, Component }) => {
-  const { name } = useParams();
+  const { name, selectedName } = useParams();
   return (
     <>
-      <Nav username={username} subjectName={name} />
+      <Nav username={username} subjectName={name || selectedName} />
       <Component />
     </>
   );

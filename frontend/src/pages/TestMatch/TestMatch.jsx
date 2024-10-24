@@ -7,6 +7,8 @@ import styled from "styled-components";
 import NotFound from "../NotFound/NotFound";
 
 const TestMatch = () => {
+  const { selectedName, roomName } = useParams();
+
   const param = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
@@ -27,6 +29,9 @@ const TestMatch = () => {
     AOS.refresh();
   }, [currentIdx]);
 
+  console.log(selectedName, "과목이름", roomName, "방이름");
+  console.log("니가 null이야?: " + data);
+
   const questionId = randomIds[currentIdx];
   const totalPage = randomIds?.length;
   const progressBar = totalPage ? Math.ceil((currentIdx / totalPage) * 100) : 0;
@@ -41,13 +46,10 @@ const TestMatch = () => {
   const subjectId = getSubjectId(param.name);
 
   useEffect(() => {
-    // if (!token) {
-    //   navigate(`/${subjectName}/who-are-you`);
-    // }
-
     const fetchData = async () => {
       try {
-        const response = await axios.get(`/data/${subjectName}.json`);
+        const response = await axios.get(`/data/${selectedName}.json`);
+        console.log(response);
         setData(response.data);
 
         const ids = response.data.map(el => el.id);
