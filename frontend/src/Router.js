@@ -54,7 +54,7 @@ const Router = () => {
         />
         <Route
           path="/1on1/:selectedName/:roomName"
-          element={<PageWrapper Component={TestMatch} />}
+          element={<PageWrapper username={username} Component={TestMatch} />}
         />
       </Routes>
       <Footer />

@@ -4,11 +4,8 @@ import axios from "axios";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import styled from "styled-components";
-import NotFound from "../NotFound/NotFound";
 
 const TestMatch = () => {
-  const { selectedName, roomName } = useParams();
-
   const param = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
@@ -17,8 +14,9 @@ const TestMatch = () => {
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
   const [animation, setAnimation] = useState("fade-right");
+  const { selectedName, roomName } = useParams();
   const [isTokenValid, setIsTokenValid] = useState(true);
-  const subjectName = param.name;
+  console.log(selectedName);
   const token = sessionStorage.getItem("accessToken");
 
   useEffect(() => {
@@ -29,8 +27,10 @@ const TestMatch = () => {
     AOS.refresh();
   }, [currentIdx]);
 
-  console.log(selectedName, "과목이름", roomName, "방이름");
-  console.log("니가 null이야?: " + data);
+  useEffect(() => {
+    console.log("selectedName:", selectedName);
+    console.log("param.name:", roomName);
+  }, [selectedName, roomName]);
 
   const questionId = randomIds[currentIdx];
   const totalPage = randomIds?.length;
@@ -47,6 +47,7 @@ const TestMatch = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log(selectedName, "과목이름", roomName, "방이름");
       try {
         const response = await axios.get(`/data/${selectedName}.json`);
         console.log(response);
@@ -61,10 +62,10 @@ const TestMatch = () => {
       }
     };
 
-    if (subjectName) {
+    if (selectedName) {
       fetchData();
     }
-  }, [subjectName]);
+  }, [selectedName]);
 
   const currentQuestion = data
     ? data.find(item => item.id === randomIds[currentIdx])
@@ -77,7 +78,7 @@ const TestMatch = () => {
       setSelectedOptions([]);
       setIsChecked(false);
     } else {
-      navigate(`/${subjectName}/practice/finish`);
+      navigate(`/${selectedName}/practice/finish`);
     }
   };
 
@@ -180,7 +181,7 @@ const TestMatch = () => {
               </OptionsContainer>
             </div>
           ) : (
-            <NotFound />
+            "없어요"
           )}
         </ProblemBox>
 
@@ -217,6 +218,8 @@ const TestMatchBody = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  min-height: 94vh;
 `;
 
 const ProblemBox = styled.div`
