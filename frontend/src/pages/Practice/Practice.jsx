@@ -47,6 +47,8 @@ const Practice = () => {
     return subject ? subject[subjectName] : null;
   };
 
+  console.log(questionId);
+
   const subjectId = getSubjectId(param.name);
 
   useEffect(() => {
