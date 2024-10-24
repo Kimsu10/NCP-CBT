@@ -7,6 +7,9 @@ import Practice from "./pages/Practice/Practice";
 import FinishPage from "./pages/Practice/FinishPage";
 import NotFound from "./pages/NotFound/NotFound";
 import NcpMain from "./pages/Main/NcpMain";
+import NcaMain from "./pages/Main/NcaMain";
+import OneOnOne from "./pages/TestMatch/OneOnOne";
+import TestMatch from "./pages/TestMatch/TestMatch";
 
 const Router = () => {
   const [username, setUsername] = useState("");
@@ -32,10 +35,7 @@ const Router = () => {
             </>
           }
         />
-        <Route
-          path="/:name"
-          element={<PageWrapper username={username} Component={NcpMain} />}
-        />
+        <Route path="/:name" element={<PageSwitch username={username} />} />
         <Route
           path="/:name/practice"
           element={<PageWrapper username={username} Component={Practice} />}
@@ -48,17 +48,45 @@ const Router = () => {
           path="/:name/who-are-you"
           element={<PageWrapper username={username} Component={NotFound} />}
         />
+        <Route
+          path="/1on1"
+          element={<PageWrapper username={username} Component={OneOnOne} />}
+        />
+        <Route
+          path="/1on1/:selectedName/:roomName"
+          element={<PageWrapper Component={TestMatch} />}
+        />
       </Routes>
       <Footer />
     </BrowserRouter>
   );
 };
 
-const PageWrapper = ({ username, Component }) => {
+const PageSwitch = ({ username }) => {
   const { name } = useParams();
+
+  const getComponent = () => {
+    switch (name) {
+      case "NCA":
+        return <NcaMain />;
+      default:
+        return <NcpMain />;
+    }
+  };
+
   return (
     <>
       <Nav username={username} subjectName={name} />
+      {getComponent()}
+    </>
+  );
+};
+
+const PageWrapper = ({ username, Component }) => {
+  const { name, selectedName } = useParams();
+  return (
+    <>
+      <Nav username={username} subjectName={name || selectedName} />
       <Component />
     </>
   );
