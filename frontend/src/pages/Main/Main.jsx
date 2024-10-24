@@ -88,7 +88,6 @@ const Main = () => {
             <a href="https://edu.ncloud.com/certi" target="_blank">
               <img
                 src="../../../../images/NAVER-test-link.png"
-                alt="네이버 클라우드 플랫폼 공인 자격증 시험 링크"
                 style={{ width: "100%" }}
               />
             </a>
@@ -105,10 +104,7 @@ const Main = () => {
             NCP
           </button>
           <button className="nce" onClick={() => handleMovePractice("NCE")}>
-            NCE
-          </button>
-          <button className="1on1" onClick={() => handleMovePractice("1on1")}>
-            1on1
+            1 on 1
           </button>
         </div>
       </MainContainer>
@@ -137,7 +133,7 @@ const MainContainer = styled.div`
   }
 
   button {
-    width: 10rem;
+    width: 15rem;
     background-color: #02c95f;
     font-size: 3rem;
   }
