@@ -2,7 +2,7 @@ import { Server } from "socket.io";
 
 function setupSocket(server) {
   const io = new Server(server, {
-    path: "/testMatch",
+    path: "/1on1",
     cors: {
       origin: ["http://localhost:3000"],
       methods: ["GET", "POST"],
@@ -10,34 +10,56 @@ function setupSocket(server) {
     },
   });
 
+  const rooms = {};
+
   io.on("connection", (socket) => {
     console.log("✅ client connected with socket.io");
 
-    const req = socket.request;
-    const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-    console.log("New Client IP:", socket.id);
+    // 방 생성시
+    socket.on("createRoom", ({ roomName, selectedName }) => {
+      const room = io.sockets.adapter.rooms.get(roomName);
+      const roomSize = room ? room.size : 0;
 
-    socket.on("message", (message) => {
-      console.log(`request : ${message}`);
-      socket.send(`Welcome!`);
+      if (roomSize === 0) {
+        socket.join(roomName);
+        rooms[roomName] = { selectedName: selectedName || "뭐가 들어오나볼까" };
+        console.log(
+          `User is waiting in room ${roomName} with subjectName ${rooms[roomName].selectedName}`
+        );
+      } else if (roomSize === 1) {
+        socket.join(roomName);
+        const roomInfo = rooms[roomName];
+        io.to(roomName).emit("roomReady", {
+          roomName,
+          selectedName: roomInfo.selectedName,
+        });
+        console.log(
+          `Room ${roomName} is now ready with 2 users and  ${roomInfo.selectedName}`
+        );
+      } else {
+        socket.emit("roomFull", `Room ${roomName} is full.`);
+      }
     });
 
-    socket.on("greet", (message) => {
-      console.log("Received message from client:", message);
-      socket.emit("response", "반가워");
+    // 방 입장시
+    socket.on("joinRoom", ({ roomName }) => {
+      const roomInfo = rooms[roomName];
+      if (roomInfo) {
+        socket.join(roomName);
+        io.to(roomName).emit("roomReady", {
+          roomName,
+          selectedName: roomInfo.selectedName,
+        });
+        console.log(
+          `User joined room ${roomName} with image ${roomInfo.selectedName}`
+        );
+      } else {
+        socket.emit("roomNotFound", `Room ${roomName} does not exist.`);
+      }
     });
-
-    socket.on("error", (error) => {
-      console.error(error);
-    });
-
-    socket.interval = setInterval(() => {
-      socket.emit("news", "Hi!");
-    }, 5000);
 
     socket.on("disconnect", () => {
-      console.log(`🔌 Disconnected Client IP: ${ip}`);
-      // clearInterval(socket.interval);
+      console.log(`🔌 Disconnected Client ID: ${socket.id}`);
     });
   });
 
