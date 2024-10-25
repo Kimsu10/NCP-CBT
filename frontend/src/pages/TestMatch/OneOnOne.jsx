@@ -35,25 +35,17 @@ const OneOnOne = () => {
   }, []);
 
   useEffect(() => {
-    console.log("selectedName 상태:", selectedName);
-    console.log("roomName 상태:", roomName);
-    console.log("isReady 상태:", isReady);
-
     if (isReady && selectedName && roomName) {
-      // if (selectedName !== undefined && roomName !== undefined) {
-      //   navigate(`/1on1/${selectedName}/${roomName}`);
-      //   console.log("이동 준비 완료:", selectedName, roomName);
-      // } else {
-      //   console.error(
-      //     "selectedName 또는 roomName이 설정되지 않았습니다.",
-      //     selectedName,
-      //     roomName,
-      //   );
-      // }
-      const targetUrl = `/1on1/${selectedName}/${roomName}`; // 이동할 URL
-      console.log("이동 준비 완료:", selectedName, roomName);
-      console.log("이동할 URL:", targetUrl);
-      navigate(targetUrl);
+      if (selectedName !== undefined && roomName !== undefined) {
+        navigate(`/1on1/${selectedName}/${roomName}`);
+        console.log("이동 준비 완료:", selectedName, roomName);
+      } else {
+        console.error(
+          "selectedName 또는 roomName이 설정되지 않았습니다.",
+          selectedName,
+          roomName,
+        );
+      }
     }
   }, [isReady, roomName, selectedName, navigate]);
 
@@ -68,7 +60,7 @@ const OneOnOne = () => {
     }
   };
 
-  // 방생성 -> roomName, selectedName 서버에 잘 들어감
+  // 방 생성
   const handleRoomCreation = () => {
     const roomId = Math.random().toString(36).substring(2, 10);
     console.log("방 생성:", roomId);
@@ -90,9 +82,9 @@ const OneOnOne = () => {
     setIsModalOpen(true);
   };
 
+  // 방 입장
   const handleRoomEnter = () => {
     if (roomName) {
-      // 방 참가자가 서버에 입장 요청
       socketRef.current.emit("joinRoom", {
         roomName: roomName,
       });
@@ -175,9 +167,14 @@ const OneOnOne = () => {
           >
             {waiting ? "대기 중..." : "방만들기"}
           </button>
-          <button className="enter-room" onClick={openModal}>
-            입장하기
-          </button>
+
+          {waiting ? (
+            <button className="cancel-match">취소하기</button>
+          ) : (
+            <button className="enter-room" onClick={openModal}>
+              입장하기
+            </button>
+          )}
         </MatchButtonBox>
 
         {isReady && <div>입장 준비 완료! 방으로 이동합니다.</div>}
@@ -196,6 +193,8 @@ const OneOnOne = () => {
             </ModalBox>
           </ModalBackground>
         )}
+
+        {waiting ? <h1>{roomName}</h1> : ""}
       </OneOnOneBody>
     </>
   );
@@ -207,8 +206,10 @@ const OneOnOneBody = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   margin: 6rem 0;
   padding: 0 4rem;
+  min-height: 70vh;
 
   .subject-title {
     margin-top: 2rem;
@@ -305,6 +306,7 @@ const MatchButtonBox = styled.div`
   display: flex;
   gap: 1rem;
 
+  .cancel-match,
   .enter-room,
   .make-room {
     width: 12rem;

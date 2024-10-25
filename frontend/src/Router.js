@@ -87,7 +87,7 @@ const PageWrapper = ({ username, Component }) => {
   return (
     <>
       <Nav username={username} subjectName={name || selectedName} />
-      <Component />
+      <Component username={username} />
     </>
   );
 };

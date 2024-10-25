@@ -4,8 +4,9 @@ import axios from "axios";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import styled from "styled-components";
+import { io } from "socket.io-client";
 
-const TestMatch = () => {
+const TestMatch = ({ username }) => {
   const param = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
@@ -15,9 +16,32 @@ const TestMatch = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [animation, setAnimation] = useState("fade-right");
   const { selectedName, roomName } = useParams();
-  const [isTokenValid, setIsTokenValid] = useState(true);
-  console.log(selectedName);
+  const [socket, setSocket] = useState(null);
+  const [riverProgress, setRiverProgress] = useState(0);
+  const [roomStatus, setRoomStatus] = useState([]);
   const token = sessionStorage.getItem("accessToken");
+
+  console.log(riverProgress);
+  console.log(roomStatus);
+
+  useEffect(() => {
+    const newSocket = io("http://localhost:4000", {
+      path: "/1on1",
+      withCredentials: true,
+      // transports: ["websocket"],
+    });
+
+    setSocket(newSocket);
+
+    newSocket.on("connect", () => {
+      console.log(`✅ Socket connected with ID: ${newSocket.id}`);
+      console.log(`🏠 Room Name: ${roomName}`);
+    });
+
+    return () => {
+      newSocket.close();
+    };
+  }, []);
 
   useEffect(() => {
     AOS.init({
@@ -26,11 +50,6 @@ const TestMatch = () => {
 
     AOS.refresh();
   }, [currentIdx]);
-
-  useEffect(() => {
-    console.log("selectedName:", selectedName);
-    console.log("param.name:", roomName);
-  }, [selectedName, roomName]);
 
   const questionId = randomIds[currentIdx];
   const totalPage = randomIds?.length;
@@ -47,10 +66,8 @@ const TestMatch = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log(selectedName, "과목이름", roomName, "방이름");
       try {
         const response = await axios.get(`/data/${selectedName}.json`);
-        console.log(response);
         setData(response.data);
 
         const ids = response.data.map(el => el.id);
@@ -103,12 +120,52 @@ const TestMatch = () => {
     }
   };
 
+  // 현재 진도 보내기
+  useEffect(() => {
+    if (socket && currentIdx) {
+      console.log("Emitting progressUpdate:", {
+        roomName,
+        username,
+        progress: currentIdx + 1,
+      });
+      socket.emit("progressUpdate", {
+        roomName,
+        username,
+        progress: currentIdx + 1,
+      });
+    }
+  }, [currentIdx]);
+
+  // room에서 받을 상대방 진도
+  useEffect(() => {
+    console.log("이벤트 발생");
+    if (socket) {
+      const handleRiverProgressUpdated = ({ roomName, roomStatus }) => {
+        const otherUserProgress = roomStatus
+          .filter(user => user.username !== username)
+          .map(user => user.progress);
+        setRoomStatus(roomStatus);
+        setRiverProgress(
+          otherUserProgress.length > 0 ? otherUserProgress[0] : 0,
+        );
+
+        console.log("River participant progress:", roomStatus);
+        console.log("Other User Progress:", otherUserProgress);
+      };
+
+      socket.on("riverProgressUpdated", handleRiverProgressUpdated);
+
+      return () => {
+        if (socket) {
+          socket.off("riverProgressUpdated", handleRiverProgressUpdated);
+        }
+      };
+    }
+  }, [currentIdx]);
+
   return (
     <>
       <TestMatchBody>
-        <ProgressBarContainer>
-          <Progress width={progressBar} />
-        </ProgressBarContainer>
         <ProblemBox key={currentIdx} data-aos={animation}>
           {currentQuestion ? (
             <div>
@@ -195,9 +252,7 @@ const TestMatch = () => {
           >
             이전 문제
           </PrevButton>
-          <CurrentPage>
-            {currentIdx + 1} / {totalPage}
-          </CurrentPage>
+          <CurrentPage>{currentIdx + 1} / 60</CurrentPage>
           <NextButton
             onClick={() => {
               handleNextQuestion();
@@ -207,6 +262,14 @@ const TestMatch = () => {
             다음 문제
           </NextButton>
         </ButtonContainer>
+        <ProgressBarBox>
+          <div className="ProgressBarContainer">
+            <Progress width={progressBar} />
+          </div>
+          <RiverProgressBarContainer>
+            <RiverProgressBar width={(riverProgress / 60) * 100} />
+          </RiverProgressBarContainer>
+        </ProgressBarBox>
       </TestMatchBody>
     </>
   );
@@ -220,6 +283,7 @@ const TestMatchBody = styled.div`
   align-items: center;
   justify-content: center;
   min-height: 94vh;
+  padding: 4rem 0;
 `;
 
 const ProblemBox = styled.div`
@@ -323,18 +387,44 @@ const NextButton = styled.button`
 `;
 
 // 프로그래스 바
-const ProgressBarContainer = styled.div`
+const ProgressBarBox = styled.div`
   width: 100%;
-  height: 0.3rem;
-  background-color: #e0e0e0;
-  position: fixed;
-  top: 4rem;
-  z-index: 1000;
-`;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
+  .ProgressBarContainer {
+    width: 80%;
+    height: 2rem;
+    background-color: #e0e0e0;
+    border-radius: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    padding: 0.2rem 0.3rem;
+  }
+`;
 const Progress = styled.div`
-  height: 100%;
+  height: 90%;
   width: ${props => props.width}%;
+  border-radius: 1rem;
   background-color: #4b9a8f;
   transition: width 0.1s ease-in-out;
+`;
+
+const RiverProgressBarContainer = styled.div`
+  width: 80%;
+  height: 2rem;
+  background-color: #e0e0e0;
+  border-radius: 1.5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  padding: 0.2rem 0.3rem;
+`;
+
+const RiverProgressBar = styled.div`
+  width: ${props => props.width}%;
+  color: red;
+  height: 90%;
 `;
