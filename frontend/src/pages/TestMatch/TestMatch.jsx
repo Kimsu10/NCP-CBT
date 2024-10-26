@@ -28,9 +28,7 @@ const TestMatch = ({ username }) => {
     const newSocket = io("http://localhost:4000", {
       path: "/1on1",
       withCredentials: true,
-      // transports: ["websocket"],
     });
-
     setSocket(newSocket);
 
     newSocket.on("connect", () => {
@@ -47,7 +45,6 @@ const TestMatch = ({ username }) => {
     AOS.init({
       duration: 1000,
     });
-
     AOS.refresh();
   }, [currentIdx]);
 
@@ -70,10 +67,20 @@ const TestMatch = ({ username }) => {
         const response = await axios.get(`/data/${selectedName}.json`);
         setData(response.data);
 
-        const ids = response.data.map(el => el.id);
-        const shuffledIds = ids.sort(() => 0.5 - Math.random());
-        const limitedIds = shuffledIds.slice(0, 60);
-        setRandomIds(limitedIds);
+        const storedIds = sessionStorage.getItem(`randomIds_${selectedName}`);
+        if (storedIds) {
+          // 이미 저장된 ID가 있으면 그걸 사용
+          setRandomIds(JSON.parse(storedIds));
+        } else {
+          // 새로 생성된 ID를 sessionStorage에 저장
+          const ids = response.data.map(el => el.id);
+          const shuffledIds = ids.sort(() => 0.5 - Math.random()).slice(0, 60);
+          sessionStorage.setItem(
+            `randomIds_${selectedName}`,
+            JSON.stringify(shuffledIds),
+          );
+          setRandomIds(shuffledIds);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
