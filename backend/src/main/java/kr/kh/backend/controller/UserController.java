@@ -16,6 +16,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @Slf4j
 @AllArgsConstructor
@@ -39,7 +42,7 @@ public class UserController {
 
     // 로그인
     @PostMapping("/form/login")
-    public JwtToken login(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
         log.info("login : {}", loginDTO.toString());
 
         String username = loginDTO.getUsername();
@@ -49,7 +52,18 @@ public class UserController {
         log.info("request username = {}", username);
         log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
-        return jwtToken;
+        Cookie refreshTokenCookie = new Cookie("refreshToken", jwtToken.getRefreshToken());
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+
+        response.addCookie(refreshTokenCookie);
+
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("accessToken", jwtToken.getAccessToken());
+
+        return ResponseEntity.ok(tokens);
     }
 
     // 닉네임 중복확인
