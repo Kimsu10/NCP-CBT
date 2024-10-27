@@ -95,13 +95,13 @@ const Modal = ({ type, closeModal }) => {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true,
         },
       );
 
-      const { accessToken, refreshToken } = response.data;
+      const { accessToken } = response.data;
 
       sessionStorage.setItem("accessToken", accessToken);
-      sessionStorage.setItem("refreshToken", refreshToken);
 
       window.location.reload();
       // navigate("/");
