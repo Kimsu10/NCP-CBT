@@ -11,6 +11,8 @@ const TestMatch = ({ username }) => {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [randomIds, setRandomIds] = useState([]);
+  const [randomIdsAnswer, setRandomIdsAnswer] = useState([]); // 문제 정답
+  const [userAnswer, setUserAnswer] = useState([]); // 유저 정답 다풀면 채점해서 페이지 넘겨주기
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
@@ -21,8 +23,9 @@ const TestMatch = ({ username }) => {
   const [roomStatus, setRoomStatus] = useState([]);
   const token = sessionStorage.getItem("accessToken");
 
-  console.log(riverProgress);
-  console.log(roomStatus);
+  // console.log(riverProgress);
+  // console.log(selectedOptions);
+  // console.log(userAnswer);
 
   useEffect(() => {
     const newSocket = io("http://localhost:4000", {
@@ -38,6 +41,7 @@ const TestMatch = ({ username }) => {
 
     return () => {
       newSocket.close();
+      // sessionStorage.removeItem(`randomIds_${roomName}`);// 새로고침시 소켓 연결해제되서 문제가 랜덤하게 변해서 다른 방법으로 지워야함
     };
   }, []);
 
@@ -51,7 +55,6 @@ const TestMatch = ({ username }) => {
   const questionId = randomIds[currentIdx];
   const totalPage = randomIds?.length;
   const progressBar = totalPage ? Math.ceil((currentIdx / totalPage) * 100) : 0;
-
   const subjects = [{ NCA: 1 }, { NCP200: 2 }, { NCP202: 3 }, { NCP207: 4 }];
 
   const getSubjectId = subjectName => {
@@ -67,19 +70,31 @@ const TestMatch = ({ username }) => {
         const response = await axios.get(`/data/${selectedName}.json`);
         setData(response.data);
 
-        const storedIds = sessionStorage.getItem(`randomIds_${selectedName}`);
-        if (storedIds) {
-          // 이미 저장된 ID가 있으면 그걸 사용
-          setRandomIds(JSON.parse(storedIds));
+        const storedData = sessionStorage.getItem(`randomIds_${roomName}`);
+
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          setRandomIds(parsedData.map(el => el.id));
+          setRandomIdsAnswer(parsedData.map(el => el.answer));
         } else {
-          // 새로 생성된 ID를 sessionStorage에 저장
           const ids = response.data.map(el => el.id);
           const shuffledIds = ids.sort(() => 0.5 - Math.random()).slice(0, 60);
+
+          // id와 answer 배열 생성
+          const idAnswerPairs = shuffledIds.map(id => {
+            const question = response.data.find(el => el.id === id);
+            return question
+              ? { id: question.id, answer: question.answer }
+              : { id, answer: null };
+          });
+
           sessionStorage.setItem(
-            `randomIds_${selectedName}`,
-            JSON.stringify(shuffledIds),
+            `randomIds_${roomName}`,
+            JSON.stringify(idAnswerPairs),
           );
-          setRandomIds(shuffledIds);
+
+          setRandomIds(idAnswerPairs.map(pair => pair.id));
+          setRandomIdsAnswer(idAnswerPairs.map(pair => pair.answer));
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -89,13 +104,29 @@ const TestMatch = ({ username }) => {
     if (selectedName) {
       fetchData();
     }
-  }, [selectedName]);
+  }, [roomName]);
 
   const currentQuestion = data
     ? data.find(item => item.id === randomIds[currentIdx])
     : null;
 
+  // 다음 질문으로 이동
   const handleNextQuestion = () => {
+    setUserAnswer(prevAnswers => {
+      const updatedAnswers = [...prevAnswers];
+      updatedAnswers[currentIdx] = {
+        id: questionId,
+        answer: selectedOptions,
+      };
+
+      sessionStorage.setItem(
+        `${roomName}_userAnswer`,
+        JSON.stringify(updatedAnswers),
+      );
+
+      return updatedAnswers;
+    });
+
     if (currentIdx < randomIds.length - 1) {
       setAnimation("fade-left");
       setCurrentIdx(currentIdx + 1);
@@ -106,7 +137,23 @@ const TestMatch = ({ username }) => {
     }
   };
 
+  // 이전 질문으로 이동
   const handlePreviousQuestion = () => {
+    setUserAnswer(prevAnswers => {
+      const updatedAnswers = [...prevAnswers];
+      updatedAnswers[currentIdx] = {
+        id: questionId,
+        answer: selectedOptions,
+      };
+
+      sessionStorage.setItem(
+        `${roomName}_userAnswer`,
+        JSON.stringify(updatedAnswers),
+      );
+
+      return updatedAnswers;
+    });
+
     if (currentIdx > 0) {
       setAnimation("fade-right");
       setCurrentIdx(currentIdx - 1);
@@ -115,6 +162,7 @@ const TestMatch = ({ username }) => {
     }
   };
 
+  // 보기 질문 선택
   const handleOptionChange = optionNum => {
     if (Array.isArray(currentQuestion.answer)) {
       if (selectedOptions.includes(optionNum)) {
@@ -130,11 +178,15 @@ const TestMatch = ({ username }) => {
   // 현재 진도 보내기
   useEffect(() => {
     if (socket && currentIdx) {
-      console.log("Emitting progressUpdate:", {
-        roomName,
+      /*  console.log("Emitting progressUpdate:", {
+        roomName, 
         username,
         progress: currentIdx + 1,
       });
+
+     { progress: 10roomName: "zdoqqge5"username: "test02"[[Prototype]]: Object } 
+
+      */
       socket.emit("progressUpdate", {
         roomName,
         username,
@@ -143,11 +195,12 @@ const TestMatch = ({ username }) => {
     }
   }, [currentIdx]);
 
-  // room에서 받을 상대방 진도
+  // room에서 받을 상대방 진도 -> 왜 안넘어오지
   useEffect(() => {
     console.log("이벤트 발생");
     if (socket) {
       const handleRiverProgressUpdated = ({ roomName, roomStatus }) => {
+        console.log(roomName);
         const otherUserProgress = roomStatus
           .filter(user => user.username !== username)
           .map(user => user.progress);
@@ -184,34 +237,10 @@ const TestMatch = ({ username }) => {
               </QuestionWrapper>
               <OptionsContainer>
                 {currentQuestion.example.map((ex, Idx) => {
-                  const isAnswerCorrect =
-                    isChecked &&
-                    !Array.isArray(currentQuestion.answer) &&
-                    currentQuestion.answer === ex.num;
-
-                  const isAnswerWrong =
-                    isChecked &&
-                    !Array.isArray(currentQuestion.answer) &&
-                    selectedOptions.includes(ex.num) &&
-                    currentQuestion.answer !== ex.num;
-
-                  const isAnswersCorrect =
-                    isChecked &&
-                    Array.isArray(currentQuestion.answer) &&
-                    currentQuestion.answer.includes(ex.num);
-
-                  const isAnswersWrong =
-                    isChecked &&
-                    Array.isArray(currentQuestion.answer) &&
-                    selectedOptions.includes(ex.num) &&
-                    !currentQuestion.answer.includes(ex.num);
-
                   return (
                     <OptionLabel
                       key={Idx}
                       $isSelected={selectedOptions.includes(ex.num)}
-                      $isCorrect={isAnswersCorrect}
-                      $isWrong={isAnswersWrong}
                     >
                       <RadioInput
                         type={
@@ -227,15 +256,11 @@ const TestMatch = ({ username }) => {
                       />
                       <CustomRadio
                         $isChecked={selectedOptions.includes(ex.num)}
-                        $isCorrect={isAnswersCorrect || isAnswerCorrect}
-                        $isWrong={isAnswersWrong || isAnswerWrong}
                       >
                         {String.fromCharCode(0x2460 + Idx)}
                       </CustomRadio>
                       <ExampleText
                         $isSelected={selectedOptions.includes(ex.num)}
-                        $isCorrect={isAnswersCorrect || isAnswerCorrect}
-                        $isWrong={isAnswersWrong || isAnswerWrong}
                       >
                         {ex.text}
                       </ExampleText>
