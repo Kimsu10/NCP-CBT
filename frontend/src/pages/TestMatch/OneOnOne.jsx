@@ -73,6 +73,15 @@ const OneOnOne = () => {
     });
   };
 
+  // 방 삭제
+  const handleCancelRoom = () => {
+    socketRef.current.emit("deleteRoom", { roomName: roomName }, res => {
+      if (res.success) {
+        setWaiting(false);
+      }
+    });
+  };
+
   const handleButtonClick = type => {
     setSelectedImage(`NCP${type}`);
     setShowTypeButtons(false);
@@ -169,7 +178,9 @@ const OneOnOne = () => {
           </button>
 
           {waiting ? (
-            <button className="cancel-match">취소하기</button>
+            <button className="cancel-match" onClick={handleCancelRoom}>
+              취소하기
+            </button>
           ) : (
             <button className="enter-room" onClick={openModal}>
               입장하기
@@ -194,7 +205,7 @@ const OneOnOne = () => {
           </ModalBackground>
         )}
 
-        {waiting ? <h1>{roomName}</h1> : ""}
+        {waiting ? <h1 className="room-id">방 번호 : {roomName}</h1> : ""}
       </OneOnOneBody>
     </>
   );
@@ -209,10 +220,14 @@ const OneOnOneBody = styled.div`
   justify-content: center;
   margin: 6rem 0;
   padding: 0 4rem;
-  min-height: 70vh;
+  min-height: 80vh;
 
   .subject-title {
     margin-top: 2rem;
+  }
+
+  .room-id {
+    margin: 2rem 0;
   }
 `;
 
