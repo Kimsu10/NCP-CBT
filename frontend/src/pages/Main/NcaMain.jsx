@@ -5,45 +5,28 @@ import styled from "styled-components";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import RankChart from "../../components/Charts/RankChart";
-import axiosConfig from "../../utils/axiosConfig";
+import axios from "axios";
 
 const NcaMain = () => {
   const navigate = useNavigate();
-  const [firstData, setFirstData] = useState([]);
-  const [lastData, setLastData] = useState([]);
-  const table = ["first_score", "last_score"];
+  const [rankingData, setRankingData] = useState([]);
 
   useEffect(() => {
-    if (firstData.length === 0) {
-      getRankingData(table[0]);
-      getRankingData(table[1]);
+    if (rankingData.length === 0) {
+      getRankingData();
     }
   }, []);
 
-  const getRankingData = async tableName => {
-    if (tableName === "first_score") {
-      const response = await axiosConfig
-        .post(`/ranking/v2`, {
-          title: "NCA",
-          table: tableName,
-        })
-        .catch(err => {
-          console.log(err);
-        });
+  const getRankingData = async () => {
+    const response = await axios
+      .post(`/ranking/v2`, {
+        title: "NCA",
+      })
+      .catch(err => {
+        console.log(err);
+      });
 
-      setFirstData(response.data);
-    } else {
-      const response = await axiosConfig
-        .post(`/ranking/v2`, {
-          title: "NCA",
-          table: tableName,
-        })
-        .catch(err => {
-          console.log(err);
-        });
-
-      setLastData(response.data);
-    }
+    setRankingData(response.data);
   };
 
   // Slider 세팅 (lazyload)
@@ -52,18 +35,33 @@ const NcaMain = () => {
     lazyload: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
+    slidesToShow: 2,
+    slidesToScroll: 2,
     waitForAnimate: false,
-    autoplay: true,
-    autoplaySpeed: 3000,
+    responsive: [
+      {
+        breakpoint: 1130,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          autoplay: true,
+          autoplaySpeed: 3000,
+        },
+      },
+    ],
   };
 
   return (
     <>
       <Slider {...settings}>
-        <RankChart rowData={firstData} chartTitle={"NCA 1회차 랭킹 🏆"} />
-        <RankChart rowData={lastData} chartTitle={"NCA 다회차 랭킹 🏆"} />
+        <RankChart
+          rowData={rankingData.NCAfirst}
+          chartTitle={"NCA 1회차 랭킹 🏆"}
+        />
+        <RankChart
+          rowData={rankingData.NCAlast}
+          chartTitle={"NCA 다회차 랭킹 🏆"}
+        />
       </Slider>
       <MainContainer>
         <ButtonBox>

@@ -107,4 +107,5 @@ const ChartBox = styled.div`
   align-items: center;
   margin: 6rem 0;
   max-height: 27rem;
+  max-width: 80rem;
 `;

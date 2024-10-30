@@ -32,10 +32,10 @@ public class RankController {
     }
 
     @PostMapping("/ranking/v2")
-    public ResponseEntity<List<RankDTO>> getRankingV2(@RequestBody RankDTO rankDTO) {
-        if(rankDTO == null || rankDTO.getTitle() == null || rankDTO.getTable() == null) {
+    public ResponseEntity<Map<String, List>> getRankingV2(@RequestBody RankDTO rankDTO) {
+        if(rankDTO == null || rankDTO.getTitle() == null) {
             throw new CustomException(
-                    "title 및 table 정보는 필수입니다.",
+                    "title 정보는 필수입니다.",
                     "INVALID_RANK_INFO",
                     HttpStatus.BAD_REQUEST
             );

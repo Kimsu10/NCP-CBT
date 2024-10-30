@@ -1,24 +1,113 @@
-import React from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Slider from "react-slick";
 import styled from "styled-components";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import RankChart from "../../components/Charts/RankChart";
+import axios from "axios";
 
-const NcpMain = () => {
+const NcaMain = () => {
   const navigate = useNavigate();
+  const [rankingData, setRankingData] = useState([]);
+
+  useEffect(() => {
+    if (rankingData.length === 0) {
+      getRankingData();
+    }
+  }, []);
+
+  const getRankingData = async () => {
+    const response = await axios
+      .post(`/ranking/v2`, {
+        title: "NCP",
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+    setRankingData(response.data);
+  };
+
+  // Slider 세팅 (lazyload)
+  const settings = {
+    dots: true,
+    lazyload: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 2,
+    slidesToScroll: 2,
+    waitForAnimate: false,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    responsive: [
+      {
+        breakpoint: 1130,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
 
   return (
-    <SubjectMain>
-      {/* 밑에는 테스트시 빨리 이동하려고 만든거라 메인 시작하면 지워주세요 */}
-      <MovePractice onClick={() => navigate(`/NCP200/practice`)}>
-        NCP200 연습
-      </MovePractice>
-    </SubjectMain>
+    <>
+      <Slider {...settings}>
+        <RankChart
+          rowData={rankingData.NCP200first}
+          chartTitle={"NCP200 1회차 랭킹 🏆"}
+        />
+        <RankChart
+          rowData={rankingData.NCP200last}
+          chartTitle={"NCP200 다회차 랭킹 🏆"}
+        />
+        <RankChart
+          rowData={rankingData.NCP202first}
+          chartTitle={"NCP202 1회차 랭킹 🏆"}
+        />
+        <RankChart
+          rowData={rankingData.NCP202last}
+          chartTitle={"NCP202 다회차 랭킹 🏆"}
+        />
+        <RankChart
+          rowData={rankingData.NCP207first}
+          chartTitle={"NCP207 1회차 랭킹 🏆"}
+        />
+        <RankChart
+          rowData={rankingData.NCP207last}
+          chartTitle={"NCP207 다회차 랭킹 🏆"}
+        />
+      </Slider>
+      <MainContainer>
+        <ButtonBox>
+          <Button onClick={() => navigate(`/NCA/practice`)}>연습문제</Button>
+          <Button>실전 모의고사</Button>
+        </ButtonBox>
+      </MainContainer>
+    </>
   );
 };
 
-export default NcpMain;
+export default NcaMain;
 
-const SubjectMain = styled.div`
-  margin-top: 6rem;
+const MainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 5rem 0;
 `;
 
-const MovePractice = styled.button``;
+const ButtonBox = styled.div`
+  min-width: 35rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const Button = styled.button`
+  width: 15rem;
+  background-color: #02c95f;
+  font-size: 2rem;
+`;
