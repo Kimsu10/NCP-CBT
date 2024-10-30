@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -11,59 +11,59 @@ const TestMatch = ({ username }) => {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [randomIds, setRandomIds] = useState([]);
-  const [randomIdsAnswer, setRandomIdsAnswer] = useState([]); // 문제 정답
-  const [userAnswer, setUserAnswer] = useState([]); // 유저 정답 다풀면 채점해서 페이지 넘겨주기
+  const [randomIdsAnswer, setRandomIdsAnswer] = useState([]);
+  const [userAnswer, setUserAnswer] = useState([]);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
   const [animation, setAnimation] = useState("fade-right");
   const { selectedName, roomName } = useParams();
   const [socket, setSocket] = useState(null);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [serverScore, setServerScore] = useState(null);
+  const [finalScore, setFinalScore] = useState(null);
+  const [currentScore, setCurrentScore] = useState(0);
+
+  const socketRef = useRef(null);
+
+  // 진행률 및 방 상태 관리
   const [riverProgress, setRiverProgress] = useState(0);
   const [roomStatus, setRoomStatus] = useState([]);
   const token = sessionStorage.getItem("accessToken");
 
-  // console.log(riverProgress);
-  // console.log(selectedOptions);
-  // console.log(userAnswer);
-
+  // 소켓 연결 설정
   useEffect(() => {
     const newSocket = io("http://localhost:4000", {
       path: "/1on1",
       withCredentials: true,
     });
     setSocket(newSocket);
+    socketRef.current = newSocket;
 
-    newSocket.on("connect", () => {
+    socketRef.current.on("connect", () => {
       console.log(`✅ Socket connected with ID: ${newSocket.id}`);
       console.log(`🏠 Room Name: ${roomName}`);
     });
 
     return () => {
-      newSocket.close();
-      // sessionStorage.removeItem(`randomIds_${roomName}`);// 새로고침시 소켓 연결해제되서 문제가 랜덤하게 변해서 다른 방법으로 지워야함
+      if (socketRef.current) {
+        socketRef.current.close();
+        socketRef.current = null;
+      }
     };
   }, []);
 
   useEffect(() => {
-    AOS.init({
-      duration: 1000,
-    });
+    AOS.init({ duration: 1000 });
     AOS.refresh();
   }, [currentIdx]);
 
   const questionId = randomIds[currentIdx];
   const totalPage = randomIds?.length;
   const progressBar = totalPage ? Math.ceil((currentIdx / totalPage) * 100) : 0;
-  const subjects = [{ NCA: 1 }, { NCP200: 2 }, { NCP202: 3 }, { NCP207: 4 }];
 
-  const getSubjectId = subjectName => {
-    const subject = subjects.find(el => Object.keys(el)[0] === subjectName);
-    return subject ? subject[subjectName] : null;
-  };
-
-  const subjectId = getSubjectId(param.name);
-
+  // 질문 데이터 가져오기
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -71,16 +71,13 @@ const TestMatch = ({ username }) => {
         setData(response.data);
 
         const storedData = sessionStorage.getItem(`randomIds_${roomName}`);
-
         if (storedData) {
           const parsedData = JSON.parse(storedData);
           setRandomIds(parsedData.map(el => el.id));
           setRandomIdsAnswer(parsedData.map(el => el.answer));
         } else {
           const ids = response.data.map(el => el.id);
-          const shuffledIds = ids.sort(() => 0.5 - Math.random()).slice(0, 60);
-
-          // id와 answer 배열 생성
+          const shuffledIds = ids.sort(() => 0.5 - Math.random()).slice(0, 5);
           const idAnswerPairs = shuffledIds.map(id => {
             const question = response.data.find(el => el.id === id);
             return question
@@ -106,24 +103,114 @@ const TestMatch = ({ username }) => {
     }
   }, [roomName]);
 
+  // 현재 진도 보내기
+  useEffect(() => {
+    if (socketRef.current) {
+      if (currentIdx) {
+        socketRef.current.emit("progressUpdate", {
+          roomName,
+          username,
+          progress: currentIdx + 1,
+        });
+      }
+
+      // 상대방 진도 수신 -> 왜 안들어오지
+      const handleRiverProgressUpdated = ({ roomName, roomStatus }) => {
+        console.log("handle River Progress Updated : ", roomName, roomStatus);
+        const otherUserProgress = roomStatus
+          .filter(user => user.userId !== username)
+          .map(user => user.progress);
+        setRoomStatus(roomStatus);
+        setRiverProgress(
+          otherUserProgress.length > 0 ? otherUserProgress[0] : 0,
+        );
+      };
+
+      socketRef.current.on("riverProgressUpdated", handleRiverProgressUpdated);
+
+      return () => {
+        if (socketRef.current) {
+          socketRef.current.off(
+            "riverProgressUpdated",
+            handleRiverProgressUpdated,
+          );
+        }
+      };
+    }
+  }, [currentIdx, roomName, username]);
+
+  // 점수 계산 함수
+  const calculateScore = () => {
+    const storedQuestions = JSON.parse(
+      sessionStorage.getItem(`randomIds_${roomName}`),
+    );
+
+    const storedUserAnswers = JSON.parse(
+      sessionStorage.getItem(`${roomName}_userAnswer`),
+    );
+
+    let correctCount = 0;
+
+    if (
+      storedQuestions &&
+      storedUserAnswers &&
+      storedQuestions.length === storedUserAnswers.length
+    ) {
+      for (let i = 0; i < storedQuestions.length; i++) {
+        const question = storedQuestions[i];
+        const answer = storedUserAnswers[i];
+
+        if (question.id === answer.id) {
+          const correctAnswer = Array.isArray(question.answer)
+            ? question.answer
+            : [question.answer];
+          const userAnswer = Array.isArray(answer.answer)
+            ? answer.answer
+            : [answer.answer];
+
+          const correctAnswerSet = new Set(correctAnswer);
+          const userAnswerSet = new Set(userAnswer);
+
+          if (
+            correctAnswerSet.size === userAnswerSet.size &&
+            [...correctAnswerSet].every(value => userAnswerSet.has(value))
+          ) {
+            correctCount++;
+          }
+        }
+      }
+    }
+
+    // sessionStorage.setItem("finalScore", correctCount);
+    return correctCount;
+  };
+
+  // 점수 비교 수신
+  useEffect(() => {
+    if (socketRef.current) {
+      const handleCompareScore = data => {
+        console.log(data.score);
+        setModalVisible(true);
+      };
+
+      socketRef.current.on("compareScore", handleCompareScore);
+    }
+  }, [socketRef.current]);
+
   const currentQuestion = data
     ? data.find(item => item.id === randomIds[currentIdx])
     : null;
 
   // 다음 질문으로 이동
-  const handleNextQuestion = () => {
+  const handleNextQuestion = async () => {
     setUserAnswer(prevAnswers => {
       const updatedAnswers = [...prevAnswers];
-      updatedAnswers[currentIdx] = {
-        id: questionId,
-        answer: selectedOptions,
-      };
+      updatedAnswers[currentIdx] = { id: questionId, answer: selectedOptions };
 
       sessionStorage.setItem(
         `${roomName}_userAnswer`,
         JSON.stringify(updatedAnswers),
       );
-
       return updatedAnswers;
     });
 
@@ -132,25 +219,44 @@ const TestMatch = ({ username }) => {
       setCurrentIdx(currentIdx + 1);
       setSelectedOptions([]);
       setIsChecked(false);
+      let correctCount = calculateScore(); // 계속 0으로 들어온다
+
+      setCurrentScore(correctCount);
+      console.log(correctCount);
     } else {
-      navigate(`/${selectedName}/practice/finish`);
+      // const calculatedScore = calculateScore();
+      const calculatedScore = sessionStorage.getItem("finalScore");
+      setFinalScore(calculatedScore);
     }
   };
+
+  useEffect(() => {
+    if (finalScore !== null) {
+      sessionStorage.setItem("score", finalScore);
+
+      socket.emit(
+        "completeTest",
+        { username, score: finalScore, roomName },
+        response => {
+          if (response.success) {
+            navigate(`/1on1/${selectedName}/${roomName}/result`);
+          } else {
+            console.error("Error completing the test:", response.message);
+          }
+        },
+      );
+    }
+  }, [finalScore]);
 
   // 이전 질문으로 이동
   const handlePreviousQuestion = () => {
     setUserAnswer(prevAnswers => {
       const updatedAnswers = [...prevAnswers];
-      updatedAnswers[currentIdx] = {
-        id: questionId,
-        answer: selectedOptions,
-      };
-
+      updatedAnswers[currentIdx] = { id: questionId, answer: selectedOptions };
       sessionStorage.setItem(
         `${roomName}_userAnswer`,
         JSON.stringify(updatedAnswers),
       );
-
       return updatedAnswers;
     });
 
@@ -174,54 +280,6 @@ const TestMatch = ({ username }) => {
       setSelectedOptions([optionNum]);
     }
   };
-
-  // 현재 진도 보내기
-  useEffect(() => {
-    if (socket && currentIdx) {
-      /*  console.log("Emitting progressUpdate:", {
-        roomName, 
-        username,
-        progress: currentIdx + 1,
-      });
-
-     { progress: 10roomName: "zdoqqge5"username: "test02"[[Prototype]]: Object } 
-
-      */
-      socket.emit("progressUpdate", {
-        roomName,
-        username,
-        progress: currentIdx + 1,
-      });
-    }
-  }, [currentIdx]);
-
-  // room에서 받을 상대방 진도 -> 왜 안넘어오지
-  useEffect(() => {
-    console.log("이벤트 발생");
-    if (socket) {
-      const handleRiverProgressUpdated = ({ roomName, roomStatus }) => {
-        console.log(roomName);
-        const otherUserProgress = roomStatus
-          .filter(user => user.username !== username)
-          .map(user => user.progress);
-        setRoomStatus(roomStatus);
-        setRiverProgress(
-          otherUserProgress.length > 0 ? otherUserProgress[0] : 0,
-        );
-
-        console.log("River participant progress:", roomStatus);
-        console.log("Other User Progress:", otherUserProgress);
-      };
-
-      socket.on("riverProgressUpdated", handleRiverProgressUpdated);
-
-      return () => {
-        if (socket) {
-          socket.off("riverProgressUpdated", handleRiverProgressUpdated);
-        }
-      };
-    }
-  }, [currentIdx]);
 
   return (
     <>
@@ -284,7 +342,9 @@ const TestMatch = ({ username }) => {
           >
             이전 문제
           </PrevButton>
-          <CurrentPage>{currentIdx + 1} / 60</CurrentPage>
+          <CurrentPage>
+            {currentIdx + 1} / {totalPage}
+          </CurrentPage>
           <NextButton
             onClick={() => {
               handleNextQuestion();
@@ -299,7 +359,7 @@ const TestMatch = ({ username }) => {
             <Progress width={progressBar} />
           </div>
           <RiverProgressBarContainer>
-            <RiverProgressBar width={(riverProgress / 60) * 100} />
+            <RiverProgressBar width={(riverProgress / totalPage) * 100} />
           </RiverProgressBarContainer>
         </ProgressBarBox>
       </TestMatchBody>

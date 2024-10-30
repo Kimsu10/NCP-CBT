@@ -10,6 +10,7 @@ import NcpMain from "./pages/Main/NcpMain";
 import NcaMain from "./pages/Main/NcaMain";
 import OneOnOne from "./pages/TestMatch/OneOnOne";
 import TestMatch from "./pages/TestMatch/TestMatch";
+import MatchResult from "./pages/TestMatch/MatchResult";
 
 const Router = () => {
   const [username, setUsername] = useState("");
@@ -55,6 +56,10 @@ const Router = () => {
         <Route
           path="/1on1/:selectedName/:roomName"
           element={<PageWrapper username={username} Component={TestMatch} />}
+        />
+        <Route
+          path="/1on1/:selectedName/:roomName/result"
+          element={<PageWrapper username={username} Component={MatchResult} />}
         />
       </Routes>
       <Footer />
