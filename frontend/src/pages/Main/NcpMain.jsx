@@ -6,6 +6,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import RankChart from "../../components/Charts/RankChart";
 import axios from "axios";
+import useResponsive from "../../hooks/useResponsive";
 
 const NcaMain = () => {
   const navigate = useNavigate();
@@ -51,6 +52,10 @@ const NcaMain = () => {
     ],
   };
 
+  // 반응형
+  const { windowWidth, isMobile, isTablet, isDesktop, getDeviceType } =
+    useResponsive();
+
   return (
     <>
       <Slider {...settings}>
@@ -79,35 +84,149 @@ const NcaMain = () => {
           chartTitle={"NCP207 다회차 랭킹 🏆"}
         />
       </Slider>
-      <MainContainer>
-        <ButtonBox>
-          <Button onClick={() => navigate(`/NCA/practice`)}>연습문제</Button>
-          <Button>실전 모의고사</Button>
-        </ButtonBox>
-      </MainContainer>
+      {isMobile && (
+        <MobileContainer>
+          <div className="button-box">
+            <h3>NCP200</h3>
+            <button onClick={() => navigate(`/NCP200/practice`)}>
+              연습문제
+            </button>
+            <button>실전 모의고사</button>
+          </div>
+          <div className="button-box">
+            <h3>NCP202</h3>
+            <button onClick={() => navigate(`/NCP202/practice`)}>
+              연습문제
+            </button>
+            <button>실전 모의고사</button>
+          </div>
+          <div className="button-box">
+            <h3>NCP207</h3>
+            <button onClick={() => navigate(`/NCP207/practice`)}>
+              연습문제
+            </button>
+            <button>실전 모의고사</button>
+          </div>
+        </MobileContainer>
+      )}
+      {isTablet && (
+        <TabletContainer>
+          <div className="button-box">
+            <h3>NCP200</h3>
+            <button onClick={() => navigate(`/NCP200/practice`)}>
+              연습문제
+            </button>
+            <button>실전 모의고사</button>
+          </div>
+          <div className="button-box">
+            <h3>NCP202</h3>
+            <button onClick={() => navigate(`/NCP202/practice`)}>
+              연습문제
+            </button>
+            <button>실전 모의고사</button>
+          </div>
+          <div className="button-box">
+            <h3>NCP207</h3>
+            <button onClick={() => navigate(`/NCP207/practice`)}>
+              연습문제
+            </button>
+            <button>실전 모의고사</button>
+          </div>
+        </TabletContainer>
+      )}
+      {isDesktop && (
+        <DesktopContainer>
+          <div className="button-box">
+            <h3>NCP200</h3>
+            <button onClick={() => navigate(`/NCP200/practice`)}>
+              연습문제
+            </button>
+            <button>실전 모의고사</button>
+          </div>
+          <div className="button-box">
+            <h3>NCP202</h3>
+            <button onClick={() => navigate(`/NCP202/practice`)}>
+              연습문제
+            </button>
+            <button>실전 모의고사</button>
+          </div>
+          <div className="button-box">
+            <h3>NCP207</h3>
+            <button onClick={() => navigate(`/NCP207/practice`)}>
+              연습문제
+            </button>
+            <button>실전 모의고사</button>
+          </div>
+        </DesktopContainer>
+      )}
     </>
   );
 };
 
 export default NcaMain;
 
-const MainContainer = styled.div`
+const MobileContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   margin: 5rem 0;
+
+  .button-box {
+    min-width: 40rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 1rem 0;
+  }
+
+  button {
+    width: 10rem;
+    background-color: #02c95f;
+    font-size: 1rem;
+    margin: 1rem 0;
+  }
 `;
 
-const ButtonBox = styled.div`
-  min-width: 35rem;
+const TabletContainer = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  margin: 3rem 0;
+
+  .button-box {
+    min-width: 25rem;
+    max-height: 10rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  button {
+    width: 15rem;
+    background-color: #02c95f;
+    font-size: 2rem;
+    margin: 0.5rem 0;
+  }
 `;
 
-const Button = styled.button`
-  width: 15rem;
-  background-color: #02c95f;
-  font-size: 2rem;
+const DesktopContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin: 3rem 0;
+
+  .button-box {
+    min-width: 20rem;
+    max-height: 10rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  button {
+    width: 15rem;
+    background-color: #02c95f;
+    font-size: 2rem;
+    margin: 0.5rem 0;
+  }
 `;

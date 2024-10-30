@@ -8,6 +8,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import styled from "styled-components";
+import useResponsive from "../../hooks/useResponsive";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip);
 
@@ -89,16 +90,40 @@ const RankChart = ({ rowData, chartTitle }) => {
     ],
   };
 
+  // 반응형
+  const { windowWidth, isMobile, isTablet, isDesktop, getDeviceType } =
+    useResponsive();
+
   return (
     <>
-      <ChartBox>
-        <Bar options={options} data={chartData} />
-      </ChartBox>
+      {isMobile && (
+        <MobileBox>
+          <Bar options={options} data={chartData} />
+        </MobileBox>
+      )}
+      {isTablet && (
+        <ChartBox>
+          <Bar options={options} data={chartData} />
+        </ChartBox>
+      )}
+      {isDesktop && (
+        <ChartBox>
+          <Bar options={options} data={chartData} />
+        </ChartBox>
+      )}
     </>
   );
 };
 
 export default RankChart;
+
+const MobileBox = styled.div`
+  background-color: #f7f7f7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 6rem 0;
+`;
 
 const ChartBox = styled.div`
   background-color: #f7f7f7;
@@ -106,6 +131,6 @@ const ChartBox = styled.div`
   flex-direction: column;
   align-items: center;
   margin: 6rem 0;
-  max-height: 27rem;
+  max-height: 20rem;
   max-width: 80rem;
 `;
