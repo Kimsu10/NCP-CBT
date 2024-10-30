@@ -4,6 +4,7 @@ import Slider from "react-slick";
 import styled from "styled-components";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import useResponsive from "../../hooks/useResponsive";
 
 const Main = () => {
   const navigate = useNavigate();
@@ -63,6 +64,10 @@ const Main = () => {
     autoplaySpeed: 3000,
   };
 
+  // 반응형
+  const { windowWidth, isMobile, isTablet, isDesktop, getDeviceType } =
+    useResponsive();
+
   return (
     <>
       <SlideContainer>
@@ -94,23 +99,51 @@ const Main = () => {
           </div>
         </Slider>
       </SlideContainer>
-      <MainContainer>
-        <div className="subject-button-box">
-          {/* 임시 설정 - 막 바꾸세시라우 */}
-          <button className="nca" onClick={() => handleMovePractice("NCA")}>
-            NCA
-          </button>
-          <button className="ncp" onClick={() => handleMovePractice("NCP")}>
-            NCP
-          </button>
-          <button
-            className="OneOnOne"
-            onClick={() => handleMovePractice("1on1")}
-          >
-            1 on 1
-          </button>
-        </div>
-      </MainContainer>
+      {isMobile && (
+        <MobileContainer>
+          <div className="subject-button-box">
+            <button className="nca" onClick={() => handleMovePractice("NCA")}>
+              NCA
+            </button>
+            <button className="ncp" onClick={() => handleMovePractice("NCP")}>
+              NCP
+            </button>
+            <button className="nce" onClick={() => handleMovePractice("NCE")}>
+              1 on 1
+            </button>
+          </div>
+        </MobileContainer>
+      )}
+      {isTablet && (
+        <DesktopContainer>
+          <div className="subject-button-box">
+            <button className="nca" onClick={() => handleMovePractice("NCA")}>
+              NCA
+            </button>
+            <button className="ncp" onClick={() => handleMovePractice("NCP")}>
+              NCP
+            </button>
+            <button className="nce" onClick={() => handleMovePractice("NCE")}>
+              1 on 1
+            </button>
+          </div>
+        </DesktopContainer>
+      )}
+      {isDesktop && (
+        <DesktopContainer>
+          <div className="subject-button-box">
+            <button className="nca" onClick={() => handleMovePractice("NCA")}>
+              NCA
+            </button>
+            <button className="ncp" onClick={() => handleMovePractice("NCP")}>
+              NCP
+            </button>
+            <button className="nce" onClick={() => handleMovePractice("NCE")}>
+              1 on 1
+            </button>
+          </div>
+        </DesktopContainer>
+      )}
     </>
   );
 };
@@ -120,8 +153,28 @@ const SlideContainer = styled.div`
   margin: 5rem 0;
 `;
 
-// 임시 설정 - 막 바꾸세오
-const MainContainer = styled.div`
+const MobileContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 5rem 0;
+
+  .subject-button-box {
+    min-width: 40rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  button {
+    width: 10rem;
+    background-color: #02c95f;
+    font-size: 1rem;
+    margin: 1rem 0;
+  }
+`;
+
+const DesktopContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
