@@ -4,6 +4,7 @@ import kr.kh.backend.dto.RankDTO;
 import kr.kh.backend.exception.CustomException;
 import kr.kh.backend.service.RankService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class RankController {
 
     private final RankService rankService;
@@ -33,6 +35,7 @@ public class RankController {
 
     @PostMapping("/ranking/v2")
     public ResponseEntity<Map<String, List>> getRankingV2(@RequestBody RankDTO rankDTO) {
+        log.info("랭킹 컨트롤러 !!!!!!");
         if(rankDTO == null || rankDTO.getTitle() == null) {
             throw new CustomException(
                     "title 정보는 필수입니다.",

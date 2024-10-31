@@ -3,8 +3,9 @@ import styled from "styled-components";
 import io from "socket.io-client";
 
 import { useNavigate } from "react-router-dom";
+import MatchWaiting from "./MatchWaiting";
 
-const OneOnOne = () => {
+const OneOnOne = ({ username }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [waiting, setWaiting] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -63,6 +64,8 @@ const OneOnOne = () => {
   // 방 생성
   const handleRoomCreation = () => {
     const roomId = Math.random().toString(36).substring(2, 10);
+    const owner = username;
+    console.log(owner);
     console.log("방 생성:", roomId);
     setRoomName(roomId);
     setWaiting(true);
@@ -133,41 +136,53 @@ const OneOnOne = () => {
         ) : (
           <h1 className="subject-title">과목을 선택하세요</h1>
         )}
-        <ImageBox>
-          <img
-            src="/images/OneOnOne/nca.png"
-            className={`nac-image ncp-card ${
-              selectedImage === "NCA" ? "selected" : ""
-            }`}
-            alt="nca"
-            onClick={() => handleImageClick("NCA")}
-          />
-          <div className="ncp-container">
+        {!waiting ? (
+          <ImageBox>
             <img
-              src="/images/OneOnOne/ncp.png"
-              className={`ncp-image ncp-card ${
-                selectedImage && selectedImage.includes("NCP") ? "selected" : ""
+              src="/images/OneOnOne/nca.png"
+              className={`nac-image ncp-card ${
+                selectedImage === "NCA" ? "selected" : ""
               }`}
-              alt="ncp"
-              onClick={() => handleImageClick("NCP")}
+              alt="nca"
+              onClick={() => handleImageClick("NCA")}
             />
-            {showTypeButtons && (
-              <div className="type-buttons" ref={typeButtonsRef}>
-                <button onClick={() => handleButtonClick("200")}>NCP200</button>
-                <button onClick={() => handleButtonClick("202")}>NCP202</button>
-                <button onClick={() => handleButtonClick("207")}>NCP207</button>
-              </div>
-            )}
-          </div>
-          <img
-            src="/images/OneOnOne/nce.png"
-            className={`nce-image ncp-card ${
-              selectedImage === "NCE" ? "selected" : ""
-            }`}
-            alt="nce"
-            onClick={() => handleImageClick("NCE")}
-          />
-        </ImageBox>
+            <div className="ncp-container">
+              <img
+                src="/images/OneOnOne/ncp.png"
+                className={`ncp-image ncp-card ${
+                  selectedImage && selectedImage.includes("NCP")
+                    ? "selected"
+                    : ""
+                }`}
+                alt="ncp"
+                onClick={() => handleImageClick("NCP")}
+              />
+              {showTypeButtons && (
+                <div className="type-buttons" ref={typeButtonsRef}>
+                  <button onClick={() => handleButtonClick("200")}>
+                    NCP200
+                  </button>
+                  <button onClick={() => handleButtonClick("202")}>
+                    NCP202
+                  </button>
+                  <button onClick={() => handleButtonClick("207")}>
+                    NCP207
+                  </button>
+                </div>
+              )}
+            </div>
+            <img
+              src="/images/OneOnOne/nce.png"
+              className={`nce-image ncp-card ${
+                selectedImage === "NCE" ? "selected" : ""
+              }`}
+              alt="nce"
+              onClick={() => handleImageClick("NCE")}
+            />
+          </ImageBox>
+        ) : (
+          <MatchWaiting roomId={roomName} />
+        )}
         <MatchButtonBox>
           <button
             className="make-room"

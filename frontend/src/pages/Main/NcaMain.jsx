@@ -23,10 +23,10 @@ const NcaMain = () => {
       .post(`/ranking/v2`, {
         title: "NCA",
       })
+
       .catch(err => {
         console.log(err);
       });
-
     setRankingData(response.data);
   };
 

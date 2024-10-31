@@ -24,7 +24,7 @@ const useResponsive = () => {
   useEffect(() => {
     const handleResize = debounce(() => {
       setWindowWidth(window.innerWidth);
-    }, 2000);
+    }, 300);
 
     window.addEventListener("resize", handleResize);
 

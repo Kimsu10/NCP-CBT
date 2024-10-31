@@ -11,6 +11,7 @@ import NcaMain from "./pages/Main/NcaMain";
 import OneOnOne from "./pages/TestMatch/OneOnOne";
 import TestMatch from "./pages/TestMatch/TestMatch";
 import MatchResult from "./pages/TestMatch/MatchResult";
+import MatchWaiting from "./pages/TestMatch/MatchWaiting";
 
 const Router = () => {
   const [username, setUsername] = useState("");

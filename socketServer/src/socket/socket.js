@@ -18,15 +18,17 @@ function setupSocket(server) {
     console.log("Current socket ID:", socket.id);
 
     // 방 생성 시
-    socket.on("createRoom", ({ roomName, selectedName }) => {
-      const room = io.sockets.adapter.rooms.get(roomName);
-      const roomSize = room ? room.size : 0;
+    socket.on("createRoom", ({ roomName, selectedName, owner }) => {
+      if (!rooms[roomName]) {
+        rooms[roomName] = { selectedName: selectedName, users: [] };
+      }
+
+      const roomSize = io.sockets.adapter.rooms.get(roomName)?.size || 0;
 
       if (roomSize === 0) {
         socket.join(roomName);
-        rooms[roomName] = { selectedName: selectedName || "뭐가 들어오나볼까" };
         console.log(
-          `User is waiting in room ${roomName} with subjectName ${rooms[roomName].selectedName}`
+          `User is waiting in room ${roomName} with subjectName ${selectedName} with owner is ${owner}`
         );
       } else if (roomSize === 1) {
         socket.join(roomName);
@@ -41,10 +43,16 @@ function setupSocket(server) {
       } else {
         socket.emit("roomFull", `Room ${roomName} is full.`);
       }
+    });
 
-      // 방에 있는 클라이언트 정보 출력
-      const clientsInRoom = io.sockets.adapter.rooms.get(roomName);
-      console.log(`Clients in room ${roomName}:`, clientsInRoom);
+    // 유저 대기실
+    socket.on("waitingUser", ({ username, roomName }) => {
+      if (!rooms[roomName].users) {
+        rooms[roomName].users = [];
+      }
+      rooms[roomName].users.push(username);
+      console.log(username);
+      io.to(roomName).emit("waitingUsers", rooms[roomName].users);
     });
 
     // 방 삭제 시
@@ -95,7 +103,7 @@ function setupSocket(server) {
         rooms[roomName] = {};
       }
       console.log("진행도 업데이트시의 socket.id", socket.id);
-      console.log("진행도 업데이트시의 userId", socket.usesrId);
+      console.log("진행도 업데이트시의 userId", socket.usesId);
 
       if (typeof progress === "number") {
         rooms[roomName][socket.id] = progress;
@@ -109,19 +117,13 @@ function setupSocket(server) {
           })
         );
 
-        let riverCurrentIdx = roomProgress[0].progress;
-
-        // 방의 진행도 정보 송출 -> console 잘 출력됨
+        // 방의 진행도 정보 송출
         io.to(roomName).emit("riverProgressUpdated", {
-          roomName, //이걸 보내야할까
-          roomStatus: roomProgress, //배열임
-        });
-
-        console.log("Room progress:", roomProgress);
-        console.log("Emitting riverProgressUpdated event:", {
           roomName,
           roomStatus: roomProgress,
         });
+
+        console.log("Room progress:", roomProgress);
       } else {
         console.error(`Invalid progress value: ${progress}`);
       }
@@ -137,13 +139,11 @@ function setupSocket(server) {
       // 점수 수집 완료 여부 확인
       if (Object.keys(scores).length === 2) {
         const usernames = Object.keys(scores);
-        console.log(usernames); // [ 'test01', 'test02' ]
-
         const score1 = scores[usernames[0]];
         const score2 = scores[usernames[1]];
 
         let result1, result2;
-
+        console.log(result1, result2);
         // 승패 결정 로직
         if (score1 > score2) {
           result1 = { score: score1, result: "win" };
@@ -158,22 +158,12 @@ function setupSocket(server) {
 
         // 결과 전송
         usernames.forEach((user) => {
-          console.log("사용자 이름 확인 : ", user);
           const result = user === usernames[0] ? result1 : result2;
-          console.log("결과 확인", result);
-          console.log("방번호", roomName);
-          // socket.to(roomName).emit("compareScore", result);
           io.to(roomName).emit("compareScore", {
             username: user,
             score: result,
           });
         });
-        /* 왜 프론트로 안가지
-        사용자 이름 확인 :  test02
-        결과 확인 { score: 1, result: 'lose' }
-        사용자 이름 확인 :  test01
-        결과 확인 { score: 2, result: 'win' }
-        */
 
         scores = {};
       }
@@ -183,17 +173,14 @@ function setupSocket(server) {
     socket.on("disconnect", () => {
       console.log(`🔌 Disconnected Client ID: ${socket.id}`);
 
-      // 연결 해제된 클라이언트의 방에서 상태 제거
-      for (const roomName of Object.keys(rooms)) {
-        if (rooms[roomName][socket.id]) {
-          delete rooms[roomName][socket.id];
+      for (const roomName in rooms) {
+        if (rooms[roomName].users) {
+          rooms[roomName].users = rooms[roomName].users.filter(
+            (user) => user !== socket.id
+          );
+          io.to(roomName).emit("waitingUsers", rooms[roomName].users);
         }
       }
-    });
-
-    socket.on("endGame", () => {
-      console.log("게임 종료 ");
-      // 여기에  결산한 데이터를 유저이름과 점수를 db의 room에 저장하기
     });
   });
 
