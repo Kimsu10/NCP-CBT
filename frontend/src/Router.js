@@ -51,15 +51,15 @@ const Router = () => {
           element={<PageWrapper username={username} Component={NotFound} />}
         />
         <Route
-          path="/1on1"
+          path="/quiz"
           element={<PageWrapper username={username} Component={OneOnOne} />}
         />
         <Route
-          path="/1on1/:selectedName/:roomName"
+          path="/quiz/:selectedName/:roomName"
           element={<PageWrapper username={username} Component={TestMatch} />}
         />
         <Route
-          path="/1on1/:selectedName/:roomName/result"
+          path="/quiz/:selectedName/:roomName/result"
           element={<PageWrapper username={username} Component={MatchResult} />}
         />
       </Routes>

@@ -1,54 +1,27 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import io from "socket.io-client";
-
 import { useNavigate } from "react-router-dom";
-import MatchWaiting from "./MatchWaiting";
 
 const OneOnOne = ({ username }) => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [waiting, setWaiting] = useState(false);
-  const [isReady, setIsReady] = useState(false);
   const [showTypeButtons, setShowTypeButtons] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [roomName, setRoomName] = useState("");
   const [selectedName, setSelectedName] = useState("");
   const typeButtonsRef = useRef(null);
-  const modalRef = useRef(null);
   const socketRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     socketRef.current = io("http://localhost:4000", {
-      path: "/1on1",
-    });
-
-    socketRef.current.on("roomReady", ({ roomName, selectedName }) => {
-      console.log("Received roomReady event:", selectedName, roomName);
-      setSelectedName(selectedName);
-      setRoomName(roomName);
-      setIsReady(true);
+      path: "/quiz",
     });
 
     return () => {
       socketRef.current.disconnect();
     };
   }, []);
-
-  useEffect(() => {
-    if (isReady && selectedName && roomName) {
-      if (selectedName !== undefined && roomName !== undefined) {
-        navigate(`/1on1/${selectedName}/${roomName}`);
-        console.log("이동 준비 완료:", selectedName, roomName);
-      } else {
-        console.error(
-          "selectedName 또는 roomName이 설정되지 않았습니다.",
-          selectedName,
-          roomName,
-        );
-      }
-    }
-  }, [isReady, roomName, selectedName, navigate]);
 
   // 과목 선택
   const handleImageClick = imageName => {
@@ -61,52 +34,29 @@ const OneOnOne = ({ username }) => {
     }
   };
 
-  // 방 생성
-  const handleRoomCreation = () => {
-    const roomId = Math.random().toString(36).substring(2, 10);
-    const owner = username;
-    console.log(owner);
-    console.log("방 생성:", roomId);
-    setRoomName(roomId);
-    setWaiting(true);
-
-    socketRef.current.emit("createRoom", {
-      roomName: roomId,
-      selectedName: selectedImage,
-    });
-  };
-
-  // 방 삭제
-  const handleCancelRoom = () => {
-    socketRef.current.emit("deleteRoom", { roomName: roomName }, res => {
-      if (res.success) {
-        setWaiting(false);
-      }
-    });
-  };
-
   const handleButtonClick = type => {
     setSelectedImage(`NCP${type}`);
     setShowTypeButtons(false);
   };
 
-  const openModal = () => {
-    setIsModalOpen(true);
+  // 방 생성
+  const handleRoomCreation = () => {
+    const roomId = Math.random().toString(36).substring(2, 10);
+    const token = sessionStorage.getItem("accessToken");
+
+    console.log("방 생성:", roomId);
+    setRoomName(roomId);
+
+    socketRef.current.emit("createRoom", {
+      roomName: roomId,
+      selectedName: selectedImage,
+      token: token,
+    });
+
+    navigate(`/1on1/${selectedImage}/${roomId}`);
   };
 
-  // 방 입장
-  const handleRoomEnter = () => {
-    if (roomName) {
-      socketRef.current.emit("joinRoom", {
-        roomName: roomName,
-      });
-
-      console.log("방 입장 요청:", selectedName, roomName);
-    } else {
-      alert("방 번호를 입력하세요.");
-    }
-  };
-
+  // 과목 선택시 모달이외 선택시 모달 닫힘
   useEffect(() => {
     const handleClickOutside = event => {
       if (
@@ -114,10 +64,6 @@ const OneOnOne = ({ username }) => {
         !typeButtonsRef.current.contains(event.target)
       ) {
         setShowTypeButtons(false);
-      }
-
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        setIsModalOpen(false);
       }
     };
 
@@ -136,91 +82,47 @@ const OneOnOne = ({ username }) => {
         ) : (
           <h1 className="subject-title">과목을 선택하세요</h1>
         )}
-        {!waiting ? (
-          <ImageBox>
+
+        <ImageBox>
+          <img
+            src="/images/OneOnOne/nca.png"
+            className={`nac-image ncp-card ${
+              selectedImage === "NCA" ? "selected" : ""
+            }`}
+            alt="nca"
+            onClick={() => handleImageClick("NCA")}
+          />
+          <div className="ncp-container">
             <img
-              src="/images/OneOnOne/nca.png"
-              className={`nac-image ncp-card ${
-                selectedImage === "NCA" ? "selected" : ""
+              src="/images/OneOnOne/ncp.png"
+              className={`ncp-image ncp-card ${
+                selectedImage && selectedImage.includes("NCP") ? "selected" : ""
               }`}
-              alt="nca"
-              onClick={() => handleImageClick("NCA")}
+              alt="ncp"
+              onClick={() => handleImageClick("NCP")}
             />
-            <div className="ncp-container">
-              <img
-                src="/images/OneOnOne/ncp.png"
-                className={`ncp-image ncp-card ${
-                  selectedImage && selectedImage.includes("NCP")
-                    ? "selected"
-                    : ""
-                }`}
-                alt="ncp"
-                onClick={() => handleImageClick("NCP")}
-              />
-              {showTypeButtons && (
-                <div className="type-buttons" ref={typeButtonsRef}>
-                  <button onClick={() => handleButtonClick("200")}>
-                    NCP200
-                  </button>
-                  <button onClick={() => handleButtonClick("202")}>
-                    NCP202
-                  </button>
-                  <button onClick={() => handleButtonClick("207")}>
-                    NCP207
-                  </button>
-                </div>
-              )}
-            </div>
-            <img
-              src="/images/OneOnOne/nce.png"
-              className={`nce-image ncp-card ${
-                selectedImage === "NCE" ? "selected" : ""
-              }`}
-              alt="nce"
-              onClick={() => handleImageClick("NCE")}
-            />
-          </ImageBox>
-        ) : (
-          <MatchWaiting roomId={roomName} />
-        )}
+            {showTypeButtons && (
+              <div className="type-buttons" ref={typeButtonsRef}>
+                <button onClick={() => handleButtonClick("200")}>NCP200</button>
+                <button onClick={() => handleButtonClick("202")}>NCP202</button>
+                <button onClick={() => handleButtonClick("207")}>NCP207</button>
+              </div>
+            )}
+          </div>
+          <img
+            src="/images/OneOnOne/nce.png"
+            className={`nce-image ncp-card ${
+              selectedImage === "NCE" ? "selected" : ""
+            }`}
+            alt="nce"
+            onClick={() => handleImageClick("NCE")}
+          />
+        </ImageBox>
         <MatchButtonBox>
-          <button
-            className="make-room"
-            onClick={handleRoomCreation}
-            disabled={waiting}
-          >
-            {waiting ? "대기 중..." : "방만들기"}
+          <button className="make-room" onClick={handleRoomCreation}>
+            방만들기
           </button>
-
-          {waiting ? (
-            <button className="cancel-match" onClick={handleCancelRoom}>
-              취소하기
-            </button>
-          ) : (
-            <button className="enter-room" onClick={openModal}>
-              입장하기
-            </button>
-          )}
         </MatchButtonBox>
-
-        {isReady && <div>입장 준비 완료! 방으로 이동합니다.</div>}
-
-        {isModalOpen && (
-          <ModalBackground>
-            <ModalBox ref={modalRef}>
-              <h2>방 번호를 입력하세요</h2>
-              <input
-                type="text"
-                value={roomName}
-                onChange={e => setRoomName(e.target.value)}
-                placeholder="방 번호"
-              />
-              <button onClick={handleRoomEnter}>입장하기</button>
-            </ModalBox>
-          </ModalBackground>
-        )}
-
-        {waiting ? <h1 className="room-id">방 번호 : {roomName}</h1> : ""}
       </OneOnOneBody>
     </>
   );

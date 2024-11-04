@@ -20,10 +20,9 @@ const NcaMain = () => {
 
   const getRankingData = async () => {
     const response = await axios
-      .post(`/ranking/v2`, {
+      .post(`http://localhost:8080/ranking/v2`, {
         title: "NCA",
       })
-
       .catch(err => {
         console.log(err);
       });

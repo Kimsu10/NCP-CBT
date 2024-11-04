@@ -9,7 +9,7 @@ export default function setupProxy(app) {
     }),
   );
   app.use(
-    "/1on1",
+    "/quiz",
     createProxyMiddleware({
       target: "http://localhost:4000",
       changeOrigin: true,
