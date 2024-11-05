@@ -7,6 +7,7 @@ import Practice from "./pages/Practice/Practice";
 import FinishPage from "./pages/Practice/FinishPage";
 import NotFound from "./pages/NotFound/NotFound";
 import NcpMain from "./pages/Main/NcpMain";
+import Exam from "./pages/Exam/Exam";
 
 const Router = () => {
   const [username, setUsername] = useState("");
@@ -39,6 +40,10 @@ const Router = () => {
         <Route
           path="/:name/practice"
           element={<PageWrapper username={username} Component={Practice} />}
+        />
+        <Route
+          path="/:name/exam"
+          element={<PageWrapper username={username} Component={Exam} />}
         />
         <Route
           path="/:name/practice/finish"
