@@ -57,6 +57,7 @@ public class RankService {
 
         if(title.equals("NCA")) {
             findRanker(rankDTO);
+            log.info("Get NCA Ranking !");
         }
 
         if(title.equals("NCP")) {
@@ -71,6 +72,7 @@ public class RankService {
             // NCP207
             rankDTO.setTitle("NCP207");
             findRanker(rankDTO);
+            log.info("Get NCP Ranking !");
         }
 
         return results;

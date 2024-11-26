@@ -19,7 +19,7 @@ public class ExamService {
     public ResponseEntity<?> recordScore(ExamDTO examDTO, String token) {
         String username = jwtTokenProvider.getUsernameFromToken(token);
 
-        if(username == null) {
+        if(token == null) {
             return ResponseEntity.badRequest().body("토큰이 만료되었거나 인증할 수 없는 사용자 정보입니다.");
         }
 

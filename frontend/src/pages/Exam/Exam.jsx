@@ -7,6 +7,7 @@ import AnswerTable from "../../components/Exam/AnswerTable";
 import EmptyAnswerTable from "../../components/Exam/EmptyAnswerTable";
 import ResultModal from "../../components/Modal/ResultModal";
 import axiosConfig from "../../utils/axiosConfig";
+import useResponsive from "../../hooks/useResponsive";
 
 const Exam = () => {
   const param = useParams();
@@ -228,6 +229,10 @@ const Exam = () => {
       })
       .catch(err => console.log(err));
   };
+
+  // 반응형
+  const { windowWidth, isMobile, isTablet, isDesktop, getDeviceType } =
+    useResponsive();
 
   return (
     <>
