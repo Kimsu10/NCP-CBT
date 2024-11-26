@@ -8,6 +8,7 @@ import FinishPage from "./pages/Practice/FinishPage";
 import NotFound from "./pages/NotFound/NotFound";
 import NcpMain from "./pages/Main/NcpMain";
 import Exam from "./pages/Exam/Exam";
+import ExamFinishPage from "./pages/Practice/ExamFinishPage";
 
 const Router = () => {
   const [username, setUsername] = useState("");
@@ -48,6 +49,12 @@ const Router = () => {
         <Route
           path="/:name/practice/finish"
           element={<PageWrapper username={username} Component={FinishPage} />}
+        />
+        <Route
+          path="/:name/exam/finish"
+          element={
+            <PageWrapper username={username} Component={ExamFinishPage} />
+          }
         />
         <Route
           path="/:name/who-are-you"
