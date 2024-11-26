@@ -48,6 +48,7 @@ public class SecurityConfig {
                                 .requestMatchers("/error").permitAll()
                                 .requestMatchers("/form/**").permitAll() // 일반로그인, 회원가입 요청 허용
                                 .requestMatchers("/login/**").permitAll() // 소셜로그인, 회원가입 요청 허용
+                                .requestMatchers("/ranking/**").permitAll() // 메인 페이지 요청 허용
                                 .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN") // ADMIN 권한이 있어야 요청할 수 있는 경로
                                 .anyRequest().authenticated() // 그 밖의 요청은 인증 필요
                 )

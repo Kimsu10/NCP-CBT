@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound/NotFound";
 import NcpMain from "./pages/Main/NcpMain";
 import Exam from "./pages/Exam/Exam";
 import ExamFinishPage from "./pages/Practice/ExamFinishPage";
+import NcaMain from "./pages/Main/NcaMain";
 
 const Router = () => {
   const [username, setUsername] = useState("");
@@ -34,10 +35,7 @@ const Router = () => {
             </>
           }
         />
-        <Route
-          path="/:name"
-          element={<PageWrapper username={username} Component={NcpMain} />}
-        />
+        <Route path="/:name" element={<PageSwitch username={username} />} />
         <Route
           path="/:name/practice"
           element={<PageWrapper username={username} Component={Practice} />}
@@ -66,8 +64,29 @@ const Router = () => {
   );
 };
 
+const PageSwitch = ({ username }) => {
+  const { name } = useParams();
+
+  const getComponent = () => {
+    switch (name) {
+      case "NCA":
+        return <NcaMain />;
+      default:
+        return <NcpMain />;
+    }
+  };
+
+  return (
+    <>
+      <Nav username={username} subjectName={name} />
+      {getComponent()}
+    </>
+  );
+};
+
 const PageWrapper = ({ username, Component }) => {
   const { name } = useParams();
+
   return (
     <>
       <Nav username={username} subjectName={name} />
