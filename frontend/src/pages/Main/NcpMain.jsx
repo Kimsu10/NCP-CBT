@@ -20,7 +20,7 @@ const NcaMain = () => {
 
   const getRankingData = async () => {
     const response = await axios
-      .post(`/ranking/v2`, {
+      .post(`http://localhost:8080/ranking/v2`, {
         title: "NCP",
       })
       .catch(err => {
@@ -91,21 +91,27 @@ const NcaMain = () => {
             <button onClick={() => navigate(`/NCP200/practice`)}>
               연습문제
             </button>
-            <button>실전 모의고사</button>
+            <button onClick={() => navigate(`/NCP200/exam`)}>
+              실전 모의고사
+            </button>
           </div>
           <div className="button-box">
             <h3>NCP202</h3>
             <button onClick={() => navigate(`/NCP202/practice`)}>
               연습문제
             </button>
-            <button>실전 모의고사</button>
+            <button onClick={() => navigate(`/NCP202/exam`)}>
+              실전 모의고사
+            </button>
           </div>
           <div className="button-box">
             <h3>NCP207</h3>
             <button onClick={() => navigate(`/NCP207/practice`)}>
               연습문제
             </button>
-            <button>실전 모의고사</button>
+            <button onClick={() => navigate(`/NCP207/exam`)}>
+              실전 모의고사
+            </button>
           </div>
         </MobileContainer>
       )}
@@ -116,21 +122,27 @@ const NcaMain = () => {
             <button onClick={() => navigate(`/NCP200/practice`)}>
               연습문제
             </button>
-            <button>실전 모의고사</button>
+            <button onClick={() => navigate(`/NCP200/exam`)}>
+              실전 모의고사
+            </button>
           </div>
           <div className="button-box">
             <h3>NCP202</h3>
             <button onClick={() => navigate(`/NCP202/practice`)}>
               연습문제
             </button>
-            <button>실전 모의고사</button>
+            <button onClick={() => navigate(`/NCP202/exam`)}>
+              실전 모의고사
+            </button>
           </div>
           <div className="button-box">
             <h3>NCP207</h3>
             <button onClick={() => navigate(`/NCP207/practice`)}>
               연습문제
             </button>
-            <button>실전 모의고사</button>
+            <button onClick={() => navigate(`/NCP207/exam`)}>
+              실전 모의고사
+            </button>
           </div>
         </TabletContainer>
       )}
@@ -141,21 +153,27 @@ const NcaMain = () => {
             <button onClick={() => navigate(`/NCP200/practice`)}>
               연습문제
             </button>
-            <button>실전 모의고사</button>
+            <button onClick={() => navigate(`/NCP200/exam`)}>
+              실전 모의고사
+            </button>
           </div>
           <div className="button-box">
             <h3>NCP202</h3>
             <button onClick={() => navigate(`/NCP202/practice`)}>
               연습문제
             </button>
-            <button>실전 모의고사</button>
+            <button onClick={() => navigate(`/NCP202/exam`)}>
+              실전 모의고사
+            </button>
           </div>
           <div className="button-box">
             <h3>NCP207</h3>
             <button onClick={() => navigate(`/NCP207/practice`)}>
               연습문제
             </button>
-            <button>실전 모의고사</button>
+            <button onClick={() => navigate(`/NCP207/exam`)}>
+              실전 모의고사
+            </button>
           </div>
         </DesktopContainer>
       )}

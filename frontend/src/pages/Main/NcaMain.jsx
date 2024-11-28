@@ -71,7 +71,7 @@ const NcaMain = () => {
         <MobileContainer>
           <div className="button-box">
             <button onClick={() => navigate(`/NCA/practice`)}>연습문제</button>
-            <button>실전 모의고사</button>
+            <button onClick={() => navigate(`/NCA/exam`)}>실전 모의고사</button>
           </div>
         </MobileContainer>
       )}
@@ -79,7 +79,7 @@ const NcaMain = () => {
         <MainContainer>
           <ButtonBox>
             <Button onClick={() => navigate(`/NCA/practice`)}>연습문제</Button>
-            <Button>실전 모의고사</Button>
+            <Button onClick={() => navigate(`/NCA/exam`)}>실전 모의고사</Button>
           </ButtonBox>
         </MainContainer>
       )}
@@ -87,7 +87,7 @@ const NcaMain = () => {
         <MainContainer>
           <ButtonBox>
             <Button onClick={() => navigate(`/NCA/practice`)}>연습문제</Button>
-            <Button>실전 모의고사</Button>
+            <Button onClick={() => navigate(`/NCA/exam`)}>실전 모의고사</Button>
           </ButtonBox>
         </MainContainer>
       )}

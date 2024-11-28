@@ -7,6 +7,8 @@ import Practice from "./pages/Practice/Practice";
 import FinishPage from "./pages/Practice/FinishPage";
 import NotFound from "./pages/NotFound/NotFound";
 import NcpMain from "./pages/Main/NcpMain";
+import Exam from "./pages/Exam/Exam";
+import ExamFinishPage from "./pages/Practice/ExamFinishPage";
 import NcaMain from "./pages/Main/NcaMain";
 import TestMatch from "./pages/TestMatch/TestMatch";
 import MatchResult from "./pages/TestMatch/MatchResult";
@@ -43,8 +45,18 @@ const Router = () => {
           element={<PageWrapper username={username} Component={Practice} />}
         />
         <Route
+          path="/:name/exam"
+          element={<PageWrapper username={username} Component={Exam} />}
+        />
+        <Route
           path="/:name/practice/finish"
           element={<PageWrapper username={username} Component={FinishPage} />}
+        />
+        <Route
+          path="/:name/exam/finish"
+          element={
+            <PageWrapper username={username} Component={ExamFinishPage} />
+          }
         />
         <Route
           path="/:name/who-are-you"
