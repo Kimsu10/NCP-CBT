@@ -108,8 +108,8 @@ const Main = () => {
             <button className="ncp" onClick={() => handleMovePractice("NCP")}>
               NCP
             </button>
-            <button className="nce" onClick={() => handleMovePractice("1on1")}>
-              1 on 1
+            <button className="nce" onClick={() => handleMovePractice("quiz")}>
+              quiz
             </button>
           </div>
         </MobileContainer>
@@ -123,8 +123,8 @@ const Main = () => {
             <button className="ncp" onClick={() => handleMovePractice("NCP")}>
               NCP
             </button>
-            <button className="nce" onClick={() => handleMovePractice("1on1")}>
-              1 on 1
+            <button className="nce" onClick={() => handleMovePractice("quiz")}>
+              quiz
             </button>
           </div>
         </DesktopContainer>

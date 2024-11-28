@@ -1,36 +1,37 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import io from "socket.io-client";
+import socket from "../../utils/socket";
+import { useParams } from "react-router-dom";
 
-const MatchWaiting = ({ roomId }) => {
+const MatchWaiting = () => {
   const [participants, setParticipants] = useState([]);
+  const param = useParams();
+  const roomId = param.roomName;
   console.log(participants);
 
   useEffect(() => {
-    const socket = io("http://localhost:4000", {
-      path: "/1on1",
-    });
-
-    const username = "사용자이름";
-    const roomName = roomId;
-
     socket.on("waitingUsers", users => {
       setParticipants(users);
     });
 
     return () => {
-      socket.disconnect();
+      socket.off("waitingUsers");
     };
   }, []);
 
   return (
     <>
       <WaitingContainer>
-        <h1 className="room_name">대 기 인 원 : {participants.length}</h1>
+        <h1>{roomId}</h1>
+        <h1 className="waiting-user">대 기 인 원 : {participants.length}</h1>
         <div className="participants_list">
-          {participants.map((user, index) => (
-            <h4 key={index}>{user}</h4>
+          {participants.map((user, idx) => (
+            <h4 key={idx}>{user}</h4>
           ))}
+        </div>
+        <div clasName="row-button-box">
+          <button className="start-button">시작하기</button>
+          <button className="cancel-button">나가기</button>
         </div>
       </WaitingContainer>
     </>
@@ -40,11 +41,12 @@ const MatchWaiting = ({ roomId }) => {
 export default MatchWaiting;
 
 const WaitingContainer = styled.div`
+  margin-top: 8rem;
   min-width: 34rem;
-  min-height: 32rem;
+  min-height: 78vh;
   text-align: center;
 
-  .room_name {
+  .waiting-user {
     font-size: 1.2rem;
     margin: 1rem 0;
   }
@@ -55,10 +57,13 @@ const WaitingContainer = styled.div`
     gap: 8rem;
     justify-content: center;
     font-size: 1.4rem;
+    min-height: 44rem;
   }
 
-  .vertical-line {
-    border: 2px solid black;
-    height: 100%;
+  .row-button-box {
+    width: 34rem;
+    margin: 10rem;
+    display: flex;
+    gap: 20px;
   }
 `;

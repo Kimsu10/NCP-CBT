@@ -12,30 +12,22 @@ const TestMatch = ({ username }) => {
   const [data, setData] = useState(null);
   const [randomIds, setRandomIds] = useState([]);
   const [randomIdsAnswer, setRandomIdsAnswer] = useState([]);
-  const [userAnswer, setUserAnswer] = useState([]);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
   const [animation, setAnimation] = useState("fade-right");
   const { selectedName, roomName } = useParams();
   const [socket, setSocket] = useState(null);
-
   const [modalVisible, setModalVisible] = useState(false);
-  const [serverScore, setServerScore] = useState(null);
   const [finalScore, setFinalScore] = useState(null);
-  const [currentScore, setCurrentScore] = useState(0);
-
-  const socketRef = useRef(null);
-
-  // 진행률 및 방 상태 관리
   const [riverProgress, setRiverProgress] = useState(0);
-  const [roomStatus, setRoomStatus] = useState([]);
   const token = sessionStorage.getItem("accessToken");
+  const socketRef = useRef(null);
 
   // 소켓 연결 설정
   useEffect(() => {
     const newSocket = io("http://localhost:4000", {
-      path: "/1on1",
+      path: "/quiz",
       withCredentials: true,
     });
     setSocket(newSocket);
@@ -77,18 +69,13 @@ const TestMatch = ({ username }) => {
           setRandomIdsAnswer(parsedData.map(el => el.answer));
         } else {
           const ids = response.data.map(el => el.id);
-          const shuffledIds = ids.sort(() => 0.5 - Math.random()).slice(0, 5);
+          const shuffledIds = ids.sort(() => 0.5 - Math.random()).slice(0, 10);
           const idAnswerPairs = shuffledIds.map(id => {
             const question = response.data.find(el => el.id === id);
             return question
               ? { id: question.id, answer: question.answer }
               : { id, answer: null };
           });
-
-          sessionStorage.setItem(
-            `randomIds_${roomName}`,
-            JSON.stringify(idAnswerPairs),
-          );
 
           setRandomIds(idAnswerPairs.map(pair => pair.id));
           setRandomIdsAnswer(idAnswerPairs.map(pair => pair.answer));
@@ -103,132 +90,9 @@ const TestMatch = ({ username }) => {
     }
   }, [roomName]);
 
-  // 현재 진도 보내기
-  useEffect(() => {
-    if (socketRef.current) {
-      if (currentIdx) {
-        socketRef.current.emit("progressUpdate", {
-          roomName,
-          username,
-          progress: currentIdx + 1,
-        });
-      }
-
-      // 상대방 진도 수신 -> 왜 안들어오지
-      const handleRiverProgressUpdated = ({ roomName, roomStatus }) => {
-        console.log("handle River Progress Updated : ", roomName, roomStatus);
-        const otherUserProgress = roomStatus
-          .filter(user => user.userId !== username)
-          .map(user => user.progress);
-        setRoomStatus(roomStatus);
-        setRiverProgress(
-          otherUserProgress.length > 0 ? otherUserProgress[0] : 0,
-        );
-      };
-
-      socketRef.current.on("riverProgressUpdated", handleRiverProgressUpdated);
-
-      return () => {
-        if (socketRef.current) {
-          socketRef.current.off(
-            "riverProgressUpdated",
-            handleRiverProgressUpdated,
-          );
-        }
-      };
-    }
-  }, [currentIdx, roomName, username]);
-
-  // 점수 계산 함수
-  const calculateScore = () => {
-    const storedQuestions = JSON.parse(
-      sessionStorage.getItem(`randomIds_${roomName}`),
-    );
-
-    const storedUserAnswers = JSON.parse(
-      sessionStorage.getItem(`${roomName}_userAnswer`),
-    );
-
-    let correctCount = 0;
-
-    if (
-      storedQuestions &&
-      storedUserAnswers &&
-      storedQuestions.length === storedUserAnswers.length
-    ) {
-      for (let i = 0; i < storedQuestions.length; i++) {
-        const question = storedQuestions[i];
-        const answer = storedUserAnswers[i];
-
-        if (question.id === answer.id) {
-          const correctAnswer = Array.isArray(question.answer)
-            ? question.answer
-            : [question.answer];
-          const userAnswer = Array.isArray(answer.answer)
-            ? answer.answer
-            : [answer.answer];
-
-          const correctAnswerSet = new Set(correctAnswer);
-          const userAnswerSet = new Set(userAnswer);
-
-          if (
-            correctAnswerSet.size === userAnswerSet.size &&
-            [...correctAnswerSet].every(value => userAnswerSet.has(value))
-          ) {
-            correctCount++;
-          }
-        }
-      }
-    }
-
-    // sessionStorage.setItem("finalScore", correctCount);
-    return correctCount;
-  };
-
-  // 점수 비교 수신
-  useEffect(() => {
-    if (socketRef.current) {
-      const handleCompareScore = data => {
-        console.log(data.score);
-        setModalVisible(true);
-      };
-
-      socketRef.current.on("compareScore", handleCompareScore);
-    }
-  }, [socketRef.current]);
-
   const currentQuestion = data
     ? data.find(item => item.id === randomIds[currentIdx])
     : null;
-
-  // 다음 질문으로 이동
-  const handleNextQuestion = async () => {
-    setUserAnswer(prevAnswers => {
-      const updatedAnswers = [...prevAnswers];
-      updatedAnswers[currentIdx] = { id: questionId, answer: selectedOptions };
-
-      sessionStorage.setItem(
-        `${roomName}_userAnswer`,
-        JSON.stringify(updatedAnswers),
-      );
-      return updatedAnswers;
-    });
-
-    if (currentIdx < randomIds.length - 1) {
-      setAnimation("fade-left");
-      setCurrentIdx(currentIdx + 1);
-      setSelectedOptions([]);
-      setIsChecked(false);
-      let correctCount = calculateScore(); // 계속 0으로 들어온다
-
-      setCurrentScore(correctCount);
-      console.log(correctCount);
-    } else {
-      // const calculatedScore = calculateScore();
-      const calculatedScore = sessionStorage.getItem("finalScore");
-      setFinalScore(calculatedScore);
-    }
-  };
 
   useEffect(() => {
     if (finalScore !== null) {
@@ -239,7 +103,7 @@ const TestMatch = ({ username }) => {
         { username, score: finalScore, roomName },
         response => {
           if (response.success) {
-            navigate(`/1on1/${selectedName}/${roomName}/result`);
+            navigate(`/quiz/${selectedName}/${roomName}/result`);
           } else {
             console.error("Error completing the test:", response.message);
           }
@@ -247,26 +111,6 @@ const TestMatch = ({ username }) => {
       );
     }
   }, [finalScore]);
-
-  // 이전 질문으로 이동
-  const handlePreviousQuestion = () => {
-    setUserAnswer(prevAnswers => {
-      const updatedAnswers = [...prevAnswers];
-      updatedAnswers[currentIdx] = { id: questionId, answer: selectedOptions };
-      sessionStorage.setItem(
-        `${roomName}_userAnswer`,
-        JSON.stringify(updatedAnswers),
-      );
-      return updatedAnswers;
-    });
-
-    if (currentIdx > 0) {
-      setAnimation("fade-right");
-      setCurrentIdx(currentIdx - 1);
-      setSelectedOptions([]);
-      setIsChecked(false);
-    }
-  };
 
   // 보기 질문 선택
   const handleOptionChange = optionNum => {
@@ -277,6 +121,20 @@ const TestMatch = ({ username }) => {
         setSelectedOptions([...selectedOptions, optionNum]);
       }
     } else {
+      setSelectedOptions([optionNum]);
+    }
+  };
+
+  const handleButtonClick = optionNum => {
+    if (Array.isArray(currentQuestion.answer)) {
+      // 복수 선택
+      if (selectedOptions.includes(optionNum)) {
+        setSelectedOptions(selectedOptions.filter(num => num !== optionNum));
+      } else {
+        setSelectedOptions([...selectedOptions, optionNum]);
+      }
+    } else {
+      // 단일 선택
       setSelectedOptions([optionNum]);
     }
   };
@@ -301,15 +159,8 @@ const TestMatch = ({ username }) => {
                       $isSelected={selectedOptions.includes(ex.num)}
                     >
                       <RadioInput
-                        type={
-                          Array.isArray(currentQuestion.answer)
-                            ? "checkbox"
-                            : "radio"
-                        }
                         name="options"
                         value={ex.text}
-                        checked={selectedOptions.includes(ex.num)}
-                        onChange={() => handleOptionChange(ex.num)}
                         disabled={isChecked}
                       />
                       <CustomRadio
@@ -328,39 +179,25 @@ const TestMatch = ({ username }) => {
               </OptionsContainer>
             </div>
           ) : (
-            "없어요"
+            "데이터 불러오기 실패"
           )}
         </ProblemBox>
-
         <ButtonContainer>
-          <PrevButton
-            onClick={() => {
-              handlePreviousQuestion();
-              document.activeElement.blur();
-            }}
-            disabled={currentIdx === 0}
-          >
-            이전 문제
-          </PrevButton>
-          <CurrentPage>
-            {currentIdx + 1} / {totalPage}
-          </CurrentPage>
-          <NextButton
-            onClick={() => {
-              handleNextQuestion();
-              document.activeElement.blur();
-            }}
-          >
-            다음 문제
-          </NextButton>
+          {[1, 2, 3, 4].map(num => (
+            <OptionButton
+              key={num}
+              onClick={() => handleButtonClick(num)}
+              $isSelected={selectedOptions.includes(num)}
+            >
+              {num}
+            </OptionButton>
+          ))}
         </ButtonContainer>
+
         <ProgressBarBox>
           <div className="ProgressBarContainer">
             <Progress width={progressBar} />
           </div>
-          <RiverProgressBarContainer>
-            <RiverProgressBar width={(riverProgress / totalPage) * 100} />
-          </RiverProgressBarContainer>
         </ProgressBarBox>
       </TestMatchBody>
     </>
@@ -379,9 +216,9 @@ const TestMatchBody = styled.div`
 `;
 
 const ProblemBox = styled.div`
-  width: 60%;
+  width: 40rem;
   min-width: 30rem;
-  min-height: 36vh;
+  min-height: 32vh;
   max-height: auto;
   padding: 2rem;
   margin-top: 2rem;
@@ -410,7 +247,7 @@ const OptionLabel = styled.label`
   display: flex;
   align-items: center;
   font-size: 1.2rem;
-  cursor: pointer;
+  /* cursor: pointer; */
 `;
 
 const RadioInput = styled.input`
@@ -424,7 +261,7 @@ const CustomRadio = styled.span`
   justify-content: center;
   align-items: center;
   margin-right: 0.5rem;
-  color: ${({ $isChecked }) => ($isChecked ? "blue" : "black")};
+  color: "black";
   border-radius: 50%;
   font-size: 1.5rem;
   line-height: 2rem;
@@ -434,48 +271,32 @@ const CustomRadio = styled.span`
 `;
 
 const ExampleText = styled.span`
-  color: ${({ $isSelected }) => ($isSelected ? "blue" : "black")};
+  color: black;
 `;
 
 const ButtonContainer = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   margin: 2rem 0;
   gap: 1rem;
-  align-items: center;
-  justify-content: space-between;
-  width: 60%;
   min-width: 30rem;
+  width: 40rem;
 `;
 
-const PrevButton = styled.button`
+const OptionButton = styled.button`
   padding: 0.5rem 1rem;
   font-size: 1.2rem;
-  background-color: ${props => props.theme.mainColor2};
+  width: 100%;
+  height: 3rem;
+  background-color: ${({ $isSelected, props }) =>
+    $isSelected ? "#65A07D" : "#02C95F"};
   border: none;
-  cursor: pointer;
-
-  &:disabled {
-    background-color: lightgray;
-    cursor: not-allowed;
-  }
+  /* cursor: pointer; */
 `;
 
 const CurrentPage = styled.span`
   font-size: 1.2rem;
   color: #7c7c7c;
-`;
-
-const NextButton = styled.button`
-  padding: 0.5rem 1rem;
-  font-size: 1.2rem;
-  background-color: ${props => props.theme.mainColor};
-  border: none;
-  cursor: pointer;
-
-  &:disabled {
-    background-color: gray;
-    cursor: not-allowed;
-  }
 `;
 
 // 프로그래스 바
@@ -487,6 +308,7 @@ const ProgressBarBox = styled.div`
 
   .ProgressBarContainer {
     width: 80%;
+    min-width: 32rem;
     height: 2rem;
     background-color: #e0e0e0;
     border-radius: 1.5rem;
@@ -502,21 +324,4 @@ const Progress = styled.div`
   border-radius: 1rem;
   background-color: #4b9a8f;
   transition: width 0.1s ease-in-out;
-`;
-
-const RiverProgressBarContainer = styled.div`
-  width: 80%;
-  height: 2rem;
-  background-color: #e0e0e0;
-  border-radius: 1.5rem;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  padding: 0.2rem 0.3rem;
-`;
-
-const RiverProgressBar = styled.div`
-  width: ${props => props.width}%;
-  color: red;
-  height: 90%;
 `;

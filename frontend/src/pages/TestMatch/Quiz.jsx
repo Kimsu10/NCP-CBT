@@ -2,36 +2,69 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import io from "socket.io-client";
 import { useNavigate } from "react-router-dom";
+import socket from "../../utils/socket";
 
-const OneOnOne = ({ username }) => {
+const Quiz = ({ username }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showTypeButtons, setShowTypeButtons] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [roomName, setRoomName] = useState("");
-  const [selectedName, setSelectedName] = useState("");
+  const [roomToJoin, setRoomToJoin] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const typeButtonsRef = useRef(null);
-  const socketRef = useRef(null);
+  // const socketRef = useRef(null);
+  const modalRef = useRef(null);
   const navigate = useNavigate();
+  const token = sessionStorage.getItem("accessToken");
+
+  // useEffect(() => {
+  //   socketRef.current = io("http://localhost:4000", {
+  //     path: "/quiz",
+  //     withCredentials: true,
+  //     auth: {
+  //       token: sessionStorage.getItem("accessToken"),
+  //     },
+  //   });
+
+  //   return () => {
+  //     socketRef.current.disconnect();
+  //   };
+  // }, []);
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:4000", {
-      path: "/quiz",
+    // 이벤트 등록
+    socket.on("redirect", data => {
+      const { url } = data;
+      navigate(url);
     });
 
     return () => {
-      socketRef.current.disconnect();
+      socket.off("redirect");
     };
-  }, []);
+  }, [navigate]);
+
+  // 모달 상태관리
+  useEffect(() => {
+    const handleClickOutside = event => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setIsModalOpen(false);
+      }
+    };
+
+    if (isModalOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isModalOpen]);
 
   // 과목 선택
   const handleImageClick = imageName => {
     setSelectedImage(imageName);
-
-    if (imageName === "NCP") {
-      setShowTypeButtons(true);
-    } else {
-      setShowTypeButtons(false);
-    }
+    setShowTypeButtons(imageName === "NCP");
   };
 
   const handleButtonClick = type => {
@@ -42,41 +75,45 @@ const OneOnOne = ({ username }) => {
   // 방 생성
   const handleRoomCreation = () => {
     const roomId = Math.random().toString(36).substring(2, 10);
-    const token = sessionStorage.getItem("accessToken");
 
-    console.log("방 생성:", roomId);
-    setRoomName(roomId);
-
-    socketRef.current.emit("createRoom", {
+    socket.emit("createRoom", {
       roomName: roomId,
       selectedName: selectedImage,
       token: token,
     });
 
-    navigate(`/1on1/${selectedImage}/${roomId}`);
+    navigate(`/quiz/${selectedImage}/${roomId}`);
   };
 
-  // 과목 선택시 모달이외 선택시 모달 닫힘
-  useEffect(() => {
-    const handleClickOutside = event => {
-      if (
-        typeButtonsRef.current &&
-        !typeButtonsRef.current.contains(event.target)
-      ) {
-        setShowTypeButtons(false);
-      }
-    };
+  // 방 입장
+  const handleRoomEnter = () => {
+    if (!roomToJoin) {
+      alert("입장할 방 ID를 입력하세요.");
+      return;
+    }
 
-    document.addEventListener("mousedown", handleClickOutside);
+    console.log("방 입장 요청:", roomToJoin);
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+    socket.emit("joinRoom", {
+      roomName: roomToJoin,
+      token: token,
+    });
+    setIsModalOpen(false);
+  };
+
+  // 모달 열기
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  // 모달 닫기
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <>
-      <OneOnOneBody>
+      <QuizBody>
         {selectedImage ? (
           <h1 className="subject-title">{selectedImage}</h1>
         ) : (
@@ -85,7 +122,7 @@ const OneOnOne = ({ username }) => {
 
         <ImageBox>
           <img
-            src="/images/OneOnOne/nca.png"
+            src="/images/quiz/nca.png"
             className={`nac-image ncp-card ${
               selectedImage === "NCA" ? "selected" : ""
             }`}
@@ -94,7 +131,7 @@ const OneOnOne = ({ username }) => {
           />
           <div className="ncp-container">
             <img
-              src="/images/OneOnOne/ncp.png"
+              src="/images/quiz/ncp.png"
               className={`ncp-image ncp-card ${
                 selectedImage && selectedImage.includes("NCP") ? "selected" : ""
               }`}
@@ -110,7 +147,7 @@ const OneOnOne = ({ username }) => {
             )}
           </div>
           <img
-            src="/images/OneOnOne/nce.png"
+            src="/images/quiz/nce.png"
             className={`nce-image ncp-card ${
               selectedImage === "NCE" ? "selected" : ""
             }`}
@@ -118,19 +155,42 @@ const OneOnOne = ({ username }) => {
             onClick={() => handleImageClick("NCE")}
           />
         </ImageBox>
+
         <MatchButtonBox>
           <button className="make-room" onClick={handleRoomCreation}>
             방만들기
           </button>
+          <button className="enter-room" onClick={openModal}>
+            입장하기
+          </button>
         </MatchButtonBox>
-      </OneOnOneBody>
+      </QuizBody>
+
+      {/* 모달 */}
+      {isModalOpen && (
+        <ModalBackground>
+          <ModalBox ref={modalRef}>
+            <h2>방 ID 입력</h2>
+            <input
+              type="text"
+              placeholder="입장할 방 ID를 입력하세요"
+              value={roomToJoin}
+              onChange={e => setRoomToJoin(e.target.value)}
+            />
+            <div className="row-box">
+              <button onClick={handleRoomEnter}>입장하기</button>
+              <button onClick={closeModal}>취소</button>
+            </div>
+          </ModalBox>
+        </ModalBackground>
+      )}
     </>
   );
 };
 
-export default OneOnOne;
+export default Quiz;
 
-const OneOnOneBody = styled.div`
+const QuizBody = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -272,6 +332,7 @@ const ModalBox = styled.div`
   flex-direction: column;
   gap: 1rem;
   align-items: center;
+  width: 24rem;
 
   h2 {
     margin-bottom: 1rem;
@@ -283,12 +344,18 @@ const ModalBox = styled.div`
     font-size: 1rem;
   }
 
-  button {
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    background-color: lightseagreen;
-    color: white;
-    border: none;
-    cursor: pointer;
+  .row-box {
+    display: flex;
+    gap: 12px;
+
+    button {
+      padding: 0.5rem 1rem;
+      width: 5.6rem;
+      font-size: 1rem;
+      background-color: ${props => props.theme.mainColor};
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
   }
 `;

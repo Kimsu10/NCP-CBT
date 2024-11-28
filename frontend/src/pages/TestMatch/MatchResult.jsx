@@ -11,7 +11,7 @@ const MatchResult = () => {
   // Socket연결
   useEffect(() => {
     const newSocket = io("http://localhost:4000", {
-      path: "/1on1",
+      path: "/quiz",
       withCredentials: true,
     });
 

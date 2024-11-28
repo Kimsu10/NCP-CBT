@@ -7,12 +7,12 @@ router.get("/", (req, res) => {
 });
 
 // 게임 완료 요청
-router.get("/:selectedName/1on1/:roomName/result", (req, res) => {
-  res.send("결과 요청 성공");
+router.get("/:selectedName/quiz/:roomName/result", (req, res) => {
+  res.send("Successfully Get Data");
 });
 
 // 토큰 재발급 요청
-router.get("/test", (req, res) => {
+router.get("/refresh", (req, res) => {
   res.json({ message: "Successfully GET Data" });
 });
 

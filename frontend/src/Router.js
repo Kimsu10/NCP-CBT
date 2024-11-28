@@ -8,10 +8,10 @@ import FinishPage from "./pages/Practice/FinishPage";
 import NotFound from "./pages/NotFound/NotFound";
 import NcpMain from "./pages/Main/NcpMain";
 import NcaMain from "./pages/Main/NcaMain";
-import OneOnOne from "./pages/TestMatch/OneOnOne";
 import TestMatch from "./pages/TestMatch/TestMatch";
 import MatchResult from "./pages/TestMatch/MatchResult";
 import MatchWaiting from "./pages/TestMatch/MatchWaiting";
+import Quiz from "./pages/TestMatch/Quiz";
 
 const Router = () => {
   const [username, setUsername] = useState("");
@@ -52,11 +52,11 @@ const Router = () => {
         />
         <Route
           path="/quiz"
-          element={<PageWrapper username={username} Component={OneOnOne} />}
+          element={<PageWrapper username={username} Component={Quiz} />}
         />
         <Route
           path="/quiz/:selectedName/:roomName"
-          element={<PageWrapper username={username} Component={TestMatch} />}
+          element={<PageWrapper username={username} Component={MatchWaiting} />}
         />
         <Route
           path="/quiz/:selectedName/:roomName/result"

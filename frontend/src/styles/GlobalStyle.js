@@ -22,7 +22,8 @@ const GlobalStyle = createGlobalStyle`
     font-weight: 700;
     cursor: pointer;
     color: white;
-    background-color: ${props => props.theme.subColor};
+    width: 8rem;
+    background-color: ${props => props.theme.mainColor};
 
     &:hover {
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); 
