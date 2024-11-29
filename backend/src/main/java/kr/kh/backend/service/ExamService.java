@@ -5,11 +5,13 @@ import kr.kh.backend.mapper.ExamMapper;
 import kr.kh.backend.mapper.UserMapper;
 import kr.kh.backend.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ExamService {
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -18,6 +20,7 @@ public class ExamService {
 
     public ResponseEntity<?> recordScore(ExamDTO examDTO, String token) {
         String username = jwtTokenProvider.getUsernameFromToken(token);
+
 
         if(token == null) {
             return ResponseEntity.badRequest().body("토큰이 만료되었거나 인증할 수 없는 사용자 정보입니다.");

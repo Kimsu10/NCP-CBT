@@ -59,6 +59,7 @@ const Modal = ({ type, closeModal }) => {
   // 회원가입
   const handleRegister = async e => {
     e.preventDefault();
+
     try {
       const response = await axios.post(
         `http://localhost:8080/form/register`,
@@ -151,6 +152,9 @@ const Modal = ({ type, closeModal }) => {
   const handleCheckEmail = async () => {
     if (email === "") {
       alert("이메일을 입력해주세요.");
+    } else if (!emailRegex.test(formData.email)) {
+      alert("유효하지 않은 이메일 형식입니다.");
+      return;
     } else {
       try {
         const response = await axios.get(
