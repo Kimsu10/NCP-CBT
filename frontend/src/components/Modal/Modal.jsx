@@ -35,7 +35,7 @@ const Modal = ({ type, closeModal }) => {
   const { email, username, password, confirmPassword } = formData;
 
   const isLoginValid = username !== "" && password !== "";
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[^\s@]{1,}@[^\s@]{3,}\.[^\s@]{3,}$/;
   const isEmailValid = emailRegex.test(email);
 
   const isPasswordMatch =
