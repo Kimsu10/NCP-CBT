@@ -15,6 +15,7 @@ const Modal = ({ type, closeModal }) => {
     password: "",
     confirmPassword: "",
     roles: "USER",
+    code: "",
   });
 
   const handleInputChange = e => {
@@ -32,7 +33,7 @@ const Modal = ({ type, closeModal }) => {
     }
   };
 
-  const { email, username, password, confirmPassword } = formData;
+  const { email, username, password, confirmPassword, code } = formData;
 
   const isLoginValid = username !== "" && password !== "";
   const emailRegex = /^[^\s@]{1,}@[^\s@]{3,}\.[^\s@]{3,}$/;
@@ -152,34 +153,39 @@ const Modal = ({ type, closeModal }) => {
   const handleCheckEmail = async () => {
     if (email === "") {
       alert("이메일을 입력해주세요.");
-    } else if (!emailRegex.test(formData.email)) {
+      return;
+    }
+
+    if (!emailRegex.test(email)) {
       alert("유효하지 않은 이메일 형식입니다.");
       return;
-    } else {
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/form/checkEmail`,
-          {
-            params: {
-              email: email,
-            },
-          },
-        );
+    }
 
-        const isExisted = response.data;
-        if (isExisted) {
+    try {
+      // 이메일 인증 코드 요청
+      const response = await fetch(
+        `http://localhost:8080/email/send-code?email=${encodeURIComponent(email)}`,
+        {
+          method: "GET",
+        },
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        if (response.status === 400) {
           setIsEmailAvailable(false);
-          alert("이미 사용 중인 이메일입니다.");
+          alert(data || "이미 사용 중인 이메일입니다.");
         } else {
-          setIsEmailAvailable(true);
-          alert("사용 가능한 이메일입니다.");
+          alert("서버와의 연결에 실패했습니다.");
+          console.error("이메일 인증 코드 요청 에러:", data);
         }
-      } catch (err) {
-        console.error(
-          "email check error:",
-          err.response ? err.response.data : err.message,
-        );
+      } else {
+        setIsEmailAvailable(true);
+        alert("인증 코드가 발송되었습니다. 이메일을 확인해주세요.");
       }
+    } catch (err) {
+      console.error("이메일 인증 코드 요청 에러:", err.message);
+      alert("서버와의 연결에 실패했습니다.");
     }
   };
 
@@ -262,6 +268,7 @@ const RegisterForm = ({
   username,
   password,
   confirmPassword,
+  code,
   handleInputChange,
   isFormValid,
   getBorderColor,
@@ -289,11 +296,18 @@ const RegisterForm = ({
         style={{ color: isEmailAvailable === true ? "green" : "red" }}
       >
         {isEmailAvailable === null
-          ? "중복확인"
+          ? "인증요청"
           : isEmailAvailable
             ? "사용 가능"
             : "사용 불가"}
       </CheckEmail>
+      <input
+        type="text"
+        name="code"
+        placeholder="인증 코드"
+        value={code}
+        onChange={handleInputChange}
+      />
       <input
         type="text"
         name="username"

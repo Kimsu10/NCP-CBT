@@ -2,15 +2,19 @@ package kr.kh.backend.controller;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import kr.kh.backend.dto.EmailVerificationDTO;
 import kr.kh.backend.dto.oauth2.OauthLoginDTO;
 import kr.kh.backend.dto.security.JwtToken;
 import kr.kh.backend.dto.security.LoginDTO;
 import kr.kh.backend.mapper.UserMapper;
 import kr.kh.backend.security.jwt.JwtTokenProvider;
+import kr.kh.backend.service.security.EmailVerificationService;
 import kr.kh.backend.service.security.Oauth2UserService;
 import kr.kh.backend.service.security.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +29,7 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final EmailVerificationService emailVerificationService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final Oauth2UserService oauth2UserService;
@@ -78,15 +83,38 @@ public class UserController {
 
     }
 
-    // 이메일 중복확인
-    @GetMapping("/form/checkEmail")
-    public boolean checkEmail(@RequestParam String email) {
+    // 이메일 인증 코드 요청
+    @GetMapping("/form/email-code")
+    public ResponseEntity<?> checkEmail(@RequestParam("email") @Valid String email) {
         boolean isExisted = userMapper.isEmailExisted(email);
 
-        log.info("email {} is existed {}" , email, isExisted );
+        if (isExisted) {
+            log.info("email {} is existed {}", email, isExisted);
+            return new ResponseEntity<>("이미 등록된 이메일입니다.", HttpStatus.BAD_REQUEST);
+        }
 
-        return isExisted;
+        try {
+            emailVerificationService.sendCodeToEmail(email);
+            return new ResponseEntity<>("인증 코드가 발송되었습니다.", HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
+
+    // 이메일 코드 인증하기
+    @PostMapping("/form/email-verify")
+    public ResponseEntity<?> verifyCode(
+            @RequestParam("email") @Valid String email,
+            @RequestParam("authCode") @Valid String authCode) {
+
+        try {
+            EmailVerificationDTO response = emailVerificationService.verifyCode(email, authCode);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     // 네이버 로그인
     @PostMapping("/login/naver")

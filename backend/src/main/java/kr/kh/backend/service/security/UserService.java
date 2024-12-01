@@ -1,21 +1,41 @@
 package kr.kh.backend.service.security;
 
+import kr.kh.backend.domain.EmailVerification;
+import kr.kh.backend.dto.EmailVerificationDTO;
 import kr.kh.backend.dto.security.JwtToken;
+import kr.kh.backend.mapper.UserMapper;
 import kr.kh.backend.security.jwt.JwtTokenProvider;
+import kr.kh.backend.service.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@RequiredArgsConstructor
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Random;
+
 @Slf4j
+@Service
+@Transactional
+@RequiredArgsConstructor
 public class UserService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
+    // 메일관련
+    private static final String AUTH_CODE_PREFIX = "AuthCode ";
+    private final UserMapper userMapper;
+    private MailService mailService;
+
+    @Value("${spring.mail.auth-code-expiration-millis}")
+    private long authCodeExpirationMillis;
 
     /**
      * 유저의 로그인 요청으로 들어온 username + password 를 기반으로 검증 진행 후 JWT 토큰 생성
@@ -37,7 +57,7 @@ public class UserService {
         log.info("authenticationToken = {}", authenticationToken);
 
         // 해당 user 에 대한 검증 진행
-        // 이 과정에서 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행된다..
+        // 이 과정에서 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행된다.
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         log.info("authentication = {}", authentication);
 
@@ -47,4 +67,5 @@ public class UserService {
 
         return jwtToken;
     }
+
 }

@@ -1,7 +1,9 @@
 package kr.kh.backend.mapper;
 
+import kr.kh.backend.domain.EmailVerification;
 import kr.kh.backend.domain.User;
 import kr.kh.backend.dto.security.LoginDTO;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -25,10 +27,34 @@ public interface UserMapper {
     @Select("SELECT COUNT(*) = 1 FROM user WHERE nickname = #{username}")
     boolean isUsernameExisted(String username);
 
+    // 트큰의 username으로 user_id 조회
+    @Select("SELECT id FROM user WHERE nickname = #{username}")
+    Long findUserIdByUsername(String username);
+
+    // 이메일 중복 확인
     @Select("SELECT COUNT(*) = 1 FROM user WHERE email = #{email}")
     boolean isEmailExisted(String email);
 
-//    트큰의 username으로 user_id 죄회
-    @Select("SELECT id FROM user WHERE nickname = #{username}")
-    Long findUserIdByUsername(String username);
+//    @Select("SELECT COUNT(*) > 0 FROM users WHERE email = #{email} AND is_oauth = #{isOauth}")
+//    boolean isEmailExisted(String email);
+
+    // 이메일 인증 테스트 중
+    // 이메일 인증 코드 저장
+    @Insert("INSERT INTO email_verification (email, auth_code, expiration_time) " +
+            "VALUES (#{email}, #{authCode}, #{expirationTime})")
+    void insertEmailVerification(EmailVerification emailVerification);
+
+    // Email로 이메일 인증 조회
+    @Select("SELECT * FROM email_verification WHERE email = #{email}")
+    EmailVerification findByEmail(String email);
+
+    // 인증 코드와 이메일 확인
+    @Select("SELECT COUNT(*) = 1 FROM email_verification " +
+            "WHERE email = #{email} AND auth_code = #{authCode}")
+    boolean verifyAuthCode(String email, String authCode);
+
+    // 인증 코드 삭제
+    @Delete("DELETE FROM email_verification WHERE email = #{email}")
+    void deleteEmailVerification(String email);
+
 }
