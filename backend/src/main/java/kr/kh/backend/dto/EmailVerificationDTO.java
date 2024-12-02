@@ -14,4 +14,9 @@ public class EmailVerificationDTO {
         this.authCode = authCode;
         this.expirationTime = expirationTime;
     }
+
+//    public EmailVerificationDTO(String email, String authCode) {
+//        this.email = email;
+//        this.authCode = authCode;
+//    }
 }

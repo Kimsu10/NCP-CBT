@@ -35,9 +35,6 @@ public interface UserMapper {
     @Select("SELECT COUNT(*) = 1 FROM user WHERE email = #{email}")
     boolean isEmailExisted(String email);
 
-//    @Select("SELECT COUNT(*) > 0 FROM users WHERE email = #{email} AND is_oauth = #{isOauth}")
-//    boolean isEmailExisted(String email);
-
     // 이메일 인증 테스트 중
     // 이메일 인증 코드 저장
     @Insert("INSERT INTO email_verification (email, auth_code, expiration_time) " +

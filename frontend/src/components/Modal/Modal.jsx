@@ -9,6 +9,8 @@ const Modal = ({ type, closeModal }) => {
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [isUsernameAvailable, setIsUsernameAvailable] = useState(null);
   const [isEmailAvailable, setIsEmailAvailable] = useState(null);
+  const [showCheckCode, setShowCheckCode] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(null);
   const [formData, setFormData] = useState({
     email: "",
     username: "",
@@ -149,7 +151,7 @@ const Modal = ({ type, closeModal }) => {
     }
   };
 
-  // email 중복확인
+  // email 인증 요청 및 중복확인
   const handleCheckEmail = async () => {
     if (email === "") {
       alert("이메일을 입력해주세요.");
@@ -162,7 +164,6 @@ const Modal = ({ type, closeModal }) => {
     }
 
     try {
-      // 이메일 인증 코드 요청
       const response = await fetch(
         `http://localhost:8080/email/send-code?email=${encodeURIComponent(email)}`,
         {
@@ -177,6 +178,7 @@ const Modal = ({ type, closeModal }) => {
           alert(data || "이미 사용 중인 이메일입니다.");
         } else {
           alert("서버와의 연결에 실패했습니다.");
+          setShowCheckCode(true);
           console.error("이메일 인증 코드 요청 에러:", data);
         }
       } else {
@@ -185,6 +187,31 @@ const Modal = ({ type, closeModal }) => {
       }
     } catch (err) {
       console.error("이메일 인증 코드 요청 에러:", err.message);
+      alert("서버와의 연결에 실패했습니다.");
+    }
+  };
+
+  // email 인증코드 POST 요청
+  const verifyEmail = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/form/email-verify`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, authCode: code }),
+      });
+
+      if (response.ok) {
+        setIsEmailVerified(true);
+        alert("이메일 인증 성공!");
+      } else {
+        const errorMessage = await response.text();
+        setIsEmailVerified(false);
+        alert(errorMessage);
+      }
+    } catch (err) {
+      console.error("이메일 인증 에러:", err.message);
       alert("서버와의 연결에 실패했습니다.");
     }
   };
@@ -250,11 +277,13 @@ const Modal = ({ type, closeModal }) => {
               handleInputChange={handleInputChange}
               isFormValid={isRegisterFormValid}
               getBorderColor={getBorderColor}
-              isEmailValid={isEmailValid}
+              verifyEmail={verifyEmail}
               handleCheckNick={handleCheckNick}
               isUsernameAvailable={isUsernameAvailable}
               handleCheckEmail={handleCheckEmail}
               isEmailAvailable={isEmailAvailable}
+              isEmailValid={isEmailValid}
+              showCheckCode={showCheckCode}
             />
           </form>
         )}
@@ -277,6 +306,8 @@ const RegisterForm = ({
   isUsernameAvailable,
   handleCheckEmail,
   isEmailAvailable,
+  verifyEmail,
+  showCheckCode,
 }) => {
   return (
     <RegisterFormContainer>
@@ -296,18 +327,25 @@ const RegisterForm = ({
         style={{ color: isEmailAvailable === true ? "green" : "red" }}
       >
         {isEmailAvailable === null
-          ? "인증요청"
+          ? "인증 요청"
           : isEmailAvailable
             ? "사용 가능"
-            : "사용 불가"}
+            : "인증 요청"}
       </CheckEmail>
-      <input
-        type="text"
-        name="code"
-        placeholder="인증 코드"
-        value={code}
-        onChange={handleInputChange}
-      />
+      {showCheckCode && (
+        <CheckCode>
+          <input
+            type="text"
+            name="code"
+            placeholder="인증 코드"
+            value={code}
+            onChange={handleInputChange}
+          />
+          <button type="button" onClick={verifyEmail}>
+            확인
+          </button>
+        </CheckCode>
+      )}
       <input
         type="text"
         name="username"
@@ -475,6 +513,10 @@ const CheckEmail = styled.span`
   &:hover {
     color: blue;
   }
+`;
+
+const CheckCode = styled.div`
+  width: 4rem;
 `;
 
 const CheckNick = styled.span`

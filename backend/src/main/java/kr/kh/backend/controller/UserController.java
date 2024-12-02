@@ -103,12 +103,13 @@ public class UserController {
 
     // 이메일 코드 인증하기
     @PostMapping("/form/email-verify")
-    public ResponseEntity<?> verifyCode(
-            @RequestParam("email") @Valid String email,
-            @RequestParam("authCode") @Valid String authCode) {
+    public ResponseEntity<?> verifyCode(@RequestBody @Valid EmailVerificationDTO emailVerificationDTO) {
 
         try {
-            EmailVerificationDTO response = emailVerificationService.verifyCode(email, authCode);
+            EmailVerificationDTO response = emailVerificationService.verifyCode(
+                    emailVerificationDTO.getEmail(),
+                    emailVerificationDTO.getAuthCode()
+            );
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
