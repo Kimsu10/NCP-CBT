@@ -1,13 +1,13 @@
 package kr.kh.backend.service.security;
 
 import kr.kh.backend.domain.User;
-import kr.kh.backend.dto.oauth2.NaverUserInfo;
-import kr.kh.backend.dto.oauth2.Oauth2UserInfo;
+import kr.kh.backend.dto.oauth2.*;
 import kr.kh.backend.dto.security.LoginDTO;
 import kr.kh.backend.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,7 +18,11 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -29,10 +33,16 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
     private final UserMapper userMapper;
 
     @Value("${spring.security.oauth2.client.registration.naver.client-id}")
-    private String clientId;
+    private String naverClientId;
 
     @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
-    private String clientSecret;
+    private String naverClientSecret;
+
+    @Value("${github.client-id}")
+    private String githubClientId;
+
+    @Value("${github.client-secret}")
+    private String githubClientSecret;
 
     /**
      * 네이버 로그인
@@ -44,11 +54,10 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
 
         // 리액트에서 받은 인가 코드로 접근 코드 획득
         String getTokenUrl = "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code"
-                + "&client_id=" + clientId + "&client_secret=" + clientSecret
+                + "&client_id=" + naverClientId + "&client_secret=" + naverClientSecret
                 + "&code=" + code + "&state=" + state;
         Map<String, String> naverToken = restTemplate.getForObject(getTokenUrl, Map.class);
         String naverAccessToken = naverToken.get("access_token");
-        log.info("네이버 접근 코드 획득 : {}", naverAccessToken);
 
         // 접근 코드로 사용자의 로그인 정보 획득
         String getUserUrl = "https://openapi.naver.com/v1/nid/me";
@@ -57,7 +66,6 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
         HttpEntity<String> request = new HttpEntity<>(null, headers);
         ResponseEntity<Map> naverResponse = restTemplate.exchange(getUserUrl, HttpMethod.GET, request, Map.class);
         Map<String, String> naverUser = (Map) naverResponse.getBody().get("response");
-        log.info("네이버 사용자 정보 획득 : {}", naverUser);
 
         // 네이버 사용자 정보가 디비에 있는지 확인
         if(naverUser != null) {
@@ -86,6 +94,74 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
 
         } else {
             log.info("네이버 사용자의 정보를 확인할 수 없습니다.");
+            return null;
+        }
+    }
+
+    /**
+     * 깃허브 로그인
+     */
+    public Authentication getGithubUser(String code) {
+        log.info("깃허브 로그인 서비스");
+        RestTemplate restTemplate = new RestTemplate();
+
+        // 응답으로 받은 코드로 access token 요청
+        // 요청 객체 생성
+        URI uri = UriComponentsBuilder
+                .fromUriString("https://github.com/login/oauth/access_token")
+                .queryParam("client_id", githubClientId)
+                .queryParam("client_secret", githubClientSecret)
+                .queryParam("code", code)
+                .encode()
+                .build().toUri();
+        RequestEntity<Void> requestEntity =
+                RequestEntity.post(uri)
+                        .header("Accept", "application/json").build();
+        // restTemplate 으로 POST 요청하여 access token 을 얻는다.
+        ResponseEntity<GithubLoginDTO> response =
+                restTemplate.exchange(requestEntity, GithubLoginDTO.class);
+        String githubAccessToken = response.getBody().getAccess_token();
+
+        // access token 을 사용하여 사용자의 로그인 정보 획득
+        String getUserUrl = "https://api.github.com/user";
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + githubAccessToken);
+        HttpEntity<String> requestUser = new HttpEntity<>(null, headers);
+        ResponseEntity<GithubUserDTO> githubResponse = restTemplate.exchange(getUserUrl, HttpMethod.GET, requestUser, GithubUserDTO.class);
+        GithubUserDTO githubUser = githubResponse.getBody();
+
+        // 깃허브는 이메일 정보는 따로 요청해야 한다...
+        String getEmailUrl = "https://api.github.com/user/emails";
+        HttpEntity<String> requestEmail = new HttpEntity<>(null, headers);
+        ResponseEntity<List<GithubEmailDTO>> emailResponse = restTemplate.exchange(getEmailUrl, HttpMethod.GET, requestEmail, new ParameterizedTypeReference<List<GithubEmailDTO>>() {});
+        List<GithubEmailDTO> emails = emailResponse.getBody();
+        String primaryEmail = emails.isEmpty() ? "이메일 없음" : emails.get(0).getEmail();
+
+        // 깃허브 사용자 정보가 디비에 있는지 확인
+        if(githubUser != null) {
+            String username = githubUser.getName();
+            String email = primaryEmail;
+            String role = "USER";
+
+            User user = userMapper.findByUsername(username);
+            if(user == null) {
+                user = User.builder()
+                        .nickname(username)
+                        .email(email)
+                        .platform("github")
+                        .roles(role)
+                        .build();
+                userMapper.insertOauthUser(user);
+                log.info("새로운 oauth2 유저를 등록했습니다 : {}", user);
+            }
+
+            Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.info("oauth2 유저가 인증되었습니다 = {}", authentication);
+
+            return authentication;
+        } else {
+            log.info("깃허브 사용자의 정보를 확인할 수 없습니다.");
             return null;
         }
     }

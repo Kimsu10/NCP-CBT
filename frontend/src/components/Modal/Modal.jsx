@@ -192,6 +192,14 @@ const Modal = ({ type, closeModal }) => {
       state;
   };
 
+  // 깃허브 로그인 페이지로 전송
+  const doGitLogin = () => {
+    window.location.href =
+      "https://github.com/login/oauth/authorize?client_id=" +
+      process.env.REACT_APP_GITHUB_CLIENT_ID +
+      "&scope=user:email";
+  };
+
   return (
     <ModalContainer>
       <ModalContent>
@@ -225,7 +233,7 @@ const Modal = ({ type, closeModal }) => {
                   border: "none",
                 }}
               />
-              <GithubLogin>
+              <GithubLogin type="button" onClick={() => doGitLogin()}>
                 <img src="/images/github.png" alt="github-icon" />
                 <span> GitHub Login</span>
               </GithubLogin>

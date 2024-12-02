@@ -14,9 +14,11 @@ const Main = () => {
   const state = urlParams.get("state");
 
   useEffect(() => {
-    if (code !== null) {
-      console.log("code?", code !== null);
+    if (code !== null && state !== null) {
       handleNaverLogin(code, state);
+    }
+    if (code !== null && state === null) {
+      handleGithubLogin(code);
     }
   }, []);
 
@@ -27,6 +29,33 @@ const Main = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ code, state }),
+    });
+
+    if (response.status === 400) {
+      navigate("/");
+      alert("사용자 정보가 없습니다. 로그인을 다시 시도해주세요.");
+    }
+
+    if (response.status === 200) {
+      // accessToken을 세션 스토리지에 저장 (추후 변경 가능성 있음)
+      const data = await response.headers.get("Authorization");
+      const accessToken = data.split(" ")[1];
+      sessionStorage.setItem("accessToken", accessToken);
+      navigate("/");
+      window.location.reload();
+    } else {
+      console.error("Failed to fetch token");
+    }
+  };
+
+  // 깃허브 로그인 핸들러
+  const handleGithubLogin = async code => {
+    const response = await fetch("http://localhost:8080/login/github", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ code }),
     });
 
     if (response.status === 400) {
