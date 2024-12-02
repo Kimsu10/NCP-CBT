@@ -1,6 +1,7 @@
 package kr.kh.backend.mapper;
 
 import kr.kh.backend.dto.BookmarkDTO;
+import kr.kh.backend.dto.PracticeComplaintsDTO;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -21,6 +22,14 @@ public interface PracticeMapper {
     @Delete("DELETE FROM bookmarks WHERE id = #{bookmarkId}")
     void deleteBookmark(Long bookmarkId);
 
+    // 문제 오류 신고시 추가
+    @Insert("INSERT INTO question_complaints (subject_id, title, comment, user_id, subject_question_id) " +
+            "VALUES (#{subjectId}, #{title}, #{content}, #{userId}, #{subjectQuestionId})")
+    void addComplaint(PracticeComplaintsDTO practiceComplaintsDTO);
 
+
+    // 중복 신고 여부 확인
+    @Select("SELECT * FROM question_complaints WHERE user_id = #{userId} AND subject_question_id = #{subjectQuestionId}")
+    PracticeComplaintsDTO findComplaintByUserIdAndSubjectQuestionId(Long userId, Long subjectQuestionId);
 }
 

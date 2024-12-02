@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { flexRowBox } from "../../styles/Variables";
@@ -70,7 +70,6 @@ const Modal = ({ type, closeModal }) => {
         },
       );
 
-      console.log(response.data);
       setShowLoginForm(true);
     } catch (err) {
       console.error(
@@ -104,7 +103,8 @@ const Modal = ({ type, closeModal }) => {
       sessionStorage.setItem("accessToken", accessToken);
       sessionStorage.setItem("refreshToken", refreshToken);
 
-      navigate("/");
+      window.location.reload();
+      // navigate("/");
       closeModal();
     } catch (err) {
       console.error(
@@ -179,17 +179,10 @@ const Modal = ({ type, closeModal }) => {
     }
   };
 
-  // 네이버 로그인 페이지로 전송
+  // 네이버 로그인
   const doNaverLogin = () => {
-    let state = encodeURI(process.env.REACT_APP_NAVER_REDIRECT_URI);
-    window.location.href =
-      "https://nid.naver.com/oauth2.0/authorize?response_type=code" +
-      "&client_id=" +
-      process.env.REACT_APP_NAVER_CLIENT_ID +
-      "&redirect_uri=" +
-      process.env.REACT_APP_NAVER_REDIRECT_URI +
-      "&state=" +
-      state;
+    console.log("Naver login function called.");
+    window.location.href = "http://localhost:8080";
   };
 
   // 깃허브 로그인 페이지로 전송

@@ -1,24 +1,24 @@
 import styled from "styled-components";
 
-const CorrectMark = () => {
+const WrongMark = () => {
   return (
     <SVGContainer>
-      <svg viewBox="16 1 70 110">
-        <ellipse cx="50" cy="30" rx="45" ry="30" />
+      <svg viewBox="20 0 70 130">
+        <ellipse cx="50" cy="30" rx="50" ry="1" />
       </svg>
     </SVGContainer>
   );
 };
 
-export default CorrectMark;
+export default WrongMark;
 
 const SVGContainer = styled.div`
   width: 4.5rem;
   height: 5rem;
   position: absolute;
-  top: -1.9rem;
-  left: -2.5rem;
-  transform: rotate(130deg);
+  top: -0.4rem;
+  left: -0.4rem;
+  transform: rotate(-48deg);
 
   svg {
     width: 100%;
@@ -27,11 +27,11 @@ const SVGContainer = styled.div`
 
   ellipse {
     fill: none;
-    stroke: red;
+    stroke: #ff0000d7;
     stroke-width: 4;
     stroke-dasharray: 283;
     stroke-dashoffset: 283;
-    animation: drawEllipse 0.8s ease-in-out forwards;
+    animation: drawEllipse 0.3s ease-in-out forwards;
   }
 
   @keyframes drawEllipse {

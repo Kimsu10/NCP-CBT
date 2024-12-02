@@ -1,11 +1,13 @@
+import axios from "axios";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import styled from "styled-components";
 
 const Main = () => {
   const navigate = useNavigate();
 
   const handleMovePractice = name => {
-    navigate(`/${name}/practice`);
+    navigate(`/${name}`);
   };
 
   // 네이버 로그인 핸들러 (네이버에서 받은 인가코드를 백으로 전송 -> 백에서 인증완료된 JWT 토큰을 받는다)
@@ -86,19 +88,41 @@ const Main = () => {
   // }, []);
 
   return (
-    <>
-      <div>메인페이지</div>
-      {/* 임시 버튼 -> 연습문제로 이동 */}
-      <button className="nca" onClick={() => handleMovePractice("NCA")}>
-        NCA
-      </button>
-      <button className="ncp" onClick={() => handleMovePractice("NCP")}>
-        NCP
-      </button>
-      <button className="nce" onClick={() => handleMovePractice("NCE")}>
-        NCE
-      </button>
-    </>
+    <MainContainer>
+      <h1>메인페이지</h1>
+      <div className="subject-button-box">
+        {/* 임시 설정 - 막 바꾸세시라우 */}
+        <button className="nca" onClick={() => handleMovePractice("NCA")}>
+          NCA
+        </button>
+        <button className="ncp" onClick={() => handleMovePractice("NCP")}>
+          NCP
+        </button>
+        <button className="nce" onClick={() => handleMovePractice("NCE")}>
+          NCE
+        </button>
+      </div>
+    </MainContainer>
   );
 };
 export default Main;
+
+// 임시 설정 - 막 바꾸세오
+const MainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 6rem 0;
+
+  .subject-button-box {
+    min-width: 34rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  button {
+    width: 10rem;
+  }
+`;
