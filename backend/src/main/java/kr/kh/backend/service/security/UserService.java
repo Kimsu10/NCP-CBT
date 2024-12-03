@@ -29,13 +29,7 @@ public class UserService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
-    // 메일관련
-    private static final String AUTH_CODE_PREFIX = "AuthCode ";
     private final UserMapper userMapper;
-    private MailService mailService;
-
-    @Value("${spring.mail.auth-code-expiration-millis}")
-    private long authCodeExpirationMillis;
 
     /**
      * 유저의 로그인 요청으로 들어온 username + password 를 기반으로 검증 진행 후 JWT 토큰 생성
@@ -66,6 +60,20 @@ public class UserService {
         log.info("jwtToken = {}", jwtToken);
 
         return jwtToken;
+    }
+
+    // 사용자 계정 찾기
+    public String findUsernameByEmail(String email) {
+        log.info("findUsernameByEmail email = {}", email);
+
+        String username = userMapper.findUsernameByEmail(email);
+        log.info("username = {}", username);
+
+        if(username == null){
+            throw new IllegalArgumentException("이메일 정보가 없습니다.");
+        }
+        log.info("username = {}", username);
+        return username;
     }
 
 }

@@ -171,4 +171,12 @@ public class UserController {
                 .build();
     }
 
+    // 유저 계정 찾기
+    @GetMapping("/form/find-account")
+    public ResponseEntity<?> findAccount(@RequestParam String email){
+        log.info("GET/form/findAccount {}", email);
+
+        String username = userService.findUsernameByEmail(email);
+        return ResponseEntity.ok(username);
+    }
 }

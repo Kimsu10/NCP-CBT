@@ -38,7 +38,6 @@ public interface UserMapper {
     @Select("SELECT COUNT(*) = 1 FROM user WHERE email = #{email}")
     boolean isEmailExisted(String email);
 
-    // 이메일 인증 테스트 중
     // 이메일 인증 코드 저장
     @Insert("INSERT INTO email_verification (email, auth_code, expiration_time) " +
             "VALUES (#{email}, #{authCode}, #{expirationTime})")
@@ -57,4 +56,7 @@ public interface UserMapper {
     @Delete("DELETE FROM email_verification WHERE email = #{email}")
     void deleteEmailVerification(String email);
 
+    // 계정 찾기
+    @Select("SELECT nickname FROM user WHERE email = #{email}")
+    String findUsernameByEmail(String email);
 }
