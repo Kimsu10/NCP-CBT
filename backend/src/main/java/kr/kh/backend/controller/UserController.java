@@ -121,6 +121,8 @@ public class UserController {
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge(60 * 60 * 24); // 쿠키 유효기간 1일
+        refreshTokenCookie.setSecure(false); // 개발환경에서 쿠키가 전송되었는지 확인하기 위해 false 로 설정
+        refreshTokenCookie.setSameSite("None");
         response.addCookie(refreshTokenCookie);
 
         return ResponseEntity.ok()

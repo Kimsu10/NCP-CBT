@@ -34,4 +34,8 @@ public interface UserMapper {
 //    트큰의 username으로 user_id 죄회
     @Select("SELECT id FROM user WHERE nickname = #{username}")
     Long findUserIdByUsername(String username);
+
+    // 우리 user_id 는 int 아니었나용...
+    @Select("SELECT id FROM user WHERE nickname = #{username}")
+    int findId(String nickname);
 }
