@@ -7,10 +7,14 @@ import axios from "axios";
 const Modal = ({ type, closeModal }) => {
   const navigate = useNavigate();
   const [showLoginForm, setShowLoginForm] = useState(false);
-  const [isUsernameAvailable, setIsUsernameAvailable] = useState(null);
-  const [isEmailAvailable, setIsEmailAvailable] = useState(null);
-  const [showCheckCode, setShowCheckCode] = useState(false);
-  const [isEmailVerified, setIsEmailVerified] = useState(null);
+  // 내가 왜 변수명을 이렇게 헷갈리게 적어서...ㅠ
+  const [isEmailAvailable, setIsEmailAvailable] = useState(null); // 이메일 중복확인 및 인증코드 요청
+  const [isRequestBlocked, setIsRequestBlocked] = useState(false); // 이메일 인증 코드 버튼 막기
+  const [remainingTime, setRemainingTime] = useState(0); // 이메일 인증시 시간 제한
+  const [showCheckCode, setShowCheckCode] = useState(false); // 이메일 인증시 코드 입력칸 활성화
+  const [isEmailVerified, setIsEmailVerified] = useState(null); // 이메일 인증 여부
+  const [isUsernameAvailable, setIsUsernameAvailable] = useState(null); // 닉네임 중복확인
+
   const [formData, setFormData] = useState({
     email: "",
     username: "",
@@ -57,7 +61,8 @@ const Modal = ({ type, closeModal }) => {
     isPasswordMatch &&
     isEmailValid &&
     isEmailAvailable === true &&
-    isUsernameAvailable === true;
+    isUsernameAvailable === true &&
+    isEmailVerified === true;
 
   // 회원가입
   const handleRegister = async e => {
@@ -163,9 +168,25 @@ const Modal = ({ type, closeModal }) => {
       return;
     }
 
+    setIsEmailAvailable(null); // 다시 요청되게
+    setIsRequestBlocked(true); // 요청시 막기
+    setRemainingTime(180);
+
+    // 3분 타이머
+    const interval = setInterval(() => {
+      setRemainingTime(prevTime => {
+        if (prevTime <= 1) {
+          clearInterval(interval);
+          setIsRequestBlocked(false);
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+
     try {
       const response = await fetch(
-        `http://localhost:8080/email/send-code?email=${encodeURIComponent(email)}`,
+        `http://localhost:8080/form/email-code?email=${encodeURIComponent(email)}`,
         {
           method: "GET",
         },
@@ -182,7 +203,7 @@ const Modal = ({ type, closeModal }) => {
           console.error("이메일 인증 코드 요청 에러:", data);
         }
       } else {
-        setIsEmailAvailable(true);
+        setShowCheckCode(true);
         alert("인증 코드가 발송되었습니다. 이메일을 확인해주세요.");
       }
     } catch (err) {
@@ -203,7 +224,8 @@ const Modal = ({ type, closeModal }) => {
       });
 
       if (response.ok) {
-        setIsEmailVerified(true);
+        setIsEmailVerified(true); // 이제 해야함
+        setIsEmailAvailable(true); // 성공
         alert("이메일 인증 성공!");
       } else {
         const errorMessage = await response.text();
@@ -283,7 +305,6 @@ const Modal = ({ type, closeModal }) => {
               password={password}
               confirmPassword={confirmPassword}
               handleInputChange={handleInputChange}
-              isFormValid={isRegisterFormValid}
               getBorderColor={getBorderColor}
               verifyEmail={verifyEmail}
               handleCheckNick={handleCheckNick}
@@ -292,6 +313,10 @@ const Modal = ({ type, closeModal }) => {
               isEmailAvailable={isEmailAvailable}
               isEmailValid={isEmailValid}
               showCheckCode={showCheckCode}
+              isEmailVerified={isEmailVerified}
+              isRequestBlocked={isRequestBlocked}
+              remainingTime={remainingTime}
+              isRegisterFormValid={isRegisterFormValid}
             />
           </form>
         )}
@@ -307,7 +332,6 @@ const RegisterForm = ({
   confirmPassword,
   code,
   handleInputChange,
-  isFormValid,
   getBorderColor,
   isEmailValid,
   handleCheckNick,
@@ -315,43 +339,65 @@ const RegisterForm = ({
   handleCheckEmail,
   isEmailAvailable,
   verifyEmail,
+  isEmailVerified,
   showCheckCode,
+  isRequestBlocked,
+  remainingTime,
+  isRegisterFormValid,
 }) => {
   return (
     <RegisterFormContainer>
       <h2 className="modal-title">회원가입</h2>
-      <input
-        type="email"
-        name="email"
-        placeholder="이메일"
-        value={email}
-        onChange={handleInputChange}
-        style={{
-          borderColor: email.length > 0 && !isEmailValid ? "red" : "",
-        }}
-      />
-      <CheckEmail
-        onClick={handleCheckEmail}
-        style={{ color: isEmailAvailable === true ? "green" : "red" }}
-      >
-        {isEmailAvailable === null
-          ? "인증 요청"
-          : isEmailAvailable
-            ? "사용 가능"
-            : "인증 요청"}
+      <CheckEmail>
+        <input
+          type="email"
+          name="email"
+          className="email-input"
+          placeholder="이메일"
+          value={email}
+          onChange={handleInputChange}
+          style={{
+            borderColor: email.length > 0 && !isEmailValid ? "red" : "",
+          }}
+          disabled={isEmailVerified}
+        />
+        <span
+          className="checkEmail-btn"
+          onClick={
+            !isEmailVerified && !isRequestBlocked ? handleCheckEmail : null
+          }
+          disabled={isEmailVerified}
+          style={{
+            color: isEmailAvailable === true ? "green" : "red",
+            cursor: isEmailAvailable === true ? "not-allowed" : "pointer",
+          }}
+        >
+          {isEmailAvailable === null
+            ? isRequestBlocked
+              ? `${Math.floor(remainingTime / 60)}:${(remainingTime % 60).toString().padStart(2, "0")}`
+              : "인증 요청"
+            : isEmailAvailable
+              ? "사용 가능"
+              : "인증 요청"}
+        </span>
       </CheckEmail>
       {showCheckCode && (
         <CheckCode>
           <input
             type="text"
             name="code"
+            className="insert-code"
             placeholder="인증 코드"
             value={code}
             onChange={handleInputChange}
           />
-          <button type="button" onClick={verifyEmail}>
-            확인
-          </button>
+          <span
+            className="checkCode-btn"
+            onClick={verifyEmail}
+            style={{ color: isEmailVerified === true ? "green" : "red" }}
+          >
+            {isEmailVerified === null ? "인증 확인" : "인증 완료"}
+          </span>
         </CheckCode>
       )}
       <input
@@ -391,7 +437,7 @@ const RegisterForm = ({
           borderColor: getBorderColor(confirmPassword),
         }}
       />
-      <button type="submit" disabled={!isFormValid}>
+      <button type="submit" disabled={!isRegisterFormValid}>
         회원가입
       </button>
     </RegisterFormContainer>
@@ -508,31 +554,53 @@ const RegisterFormContainer = styled.div`
   }
 `;
 
-const CheckEmail = styled.span`
-  color: red;
-  font-size: 0.8rem;
-  width: 4rem;
-  position: absolute;
-  top: 29%;
-  right: 9%;
-  cursor: pointer;
-  padding: 0.5rem;
+// 이메일 중복 확인
+const CheckEmail = styled.div`
+  position: relative;
 
-  &:hover {
-    color: blue;
+  .email-input {
+    width: 100%;
+  }
+
+  .checkEmail-btn {
+    color: red;
+    font-size: 0.8rem;
+    width: 4rem;
+    position: absolute;
+    top: 8%;
+    right: 0%;
+    cursor: pointer;
+    padding: 0.5rem;
   }
 `;
 
+// 이메일 인증 번호 입력
 const CheckCode = styled.div`
-  width: 4rem;
+  position: relative;
+
+  .insert-code {
+    width: 100%;
+  }
+
+  .checkCode-btn {
+    width: 4rem;
+    font-size: 0.8rem;
+    color: red;
+    position: absolute;
+    top: 8%;
+    right: 0;
+    cursor: pointer;
+    padding: 0.5rem;
+  }
 `;
 
+// 닉네임 중복확인
 const CheckNick = styled.span`
   color: red;
   font-size: 0.8rem;
   width: 4rem;
   position: absolute;
-  top: 42%;
+  top: 49%;
   right: 9%;
   padding: 0.5rem;
   cursor: pointer;

@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 @Builder
 public class EmailVerification {
 
-    private Long id;
     private String email;
     private String authCode;
     private LocalDateTime expirationTime;

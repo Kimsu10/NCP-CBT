@@ -55,7 +55,7 @@ public class EmailVerificationService {
     }
 
     public EmailVerificationDTO verifyCode(String email, String authCode) {
-        EmailVerification emailVerification = userMapper.findByEmail(email);
+        EmailVerification emailVerification = userMapper.findByVerifiedEmail(email);
 
         if (emailVerification == null) {
             throw new IllegalArgumentException("can't find email verification code");

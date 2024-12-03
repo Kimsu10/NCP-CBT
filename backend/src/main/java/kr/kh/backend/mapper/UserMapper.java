@@ -46,7 +46,7 @@ public interface UserMapper {
 
     // Email로 이메일 인증 조회
     @Select("SELECT * FROM email_verification WHERE email = #{email}")
-    EmailVerification findByEmail(String email);
+    EmailVerification findByVerifiedEmail(String email);
 
     // 인증 코드와 이메일 확인
     @Select("SELECT COUNT(*) = 1 FROM email_verification " +
