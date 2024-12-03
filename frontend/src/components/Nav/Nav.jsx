@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import Modal from "../Modal/Modal";
+import AuthModal from "../Modal/AuthModal";
 import { useNavigate, useParams } from "react-router-dom";
 
 const Nav = ({ username }) => {
@@ -130,7 +130,11 @@ const Nav = ({ username }) => {
         )}
       </ControllerBox>
       {isModalOpen && (
-        <Modal type={modalType} closeModal={closeModal} openModal={openModal} />
+        <AuthModal
+          type={modalType}
+          closeModal={closeModal}
+          openModal={openModal}
+        />
       )}
     </NavBody>
   );

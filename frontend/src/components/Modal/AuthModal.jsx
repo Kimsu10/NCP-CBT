@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { flexRowBox } from "../../styles/Variables";
 import axios from "axios";
 
-const Modal = ({ type, closeModal }) => {
+const AuthModal = ({ type, closeModal }) => {
   const navigate = useNavigate();
   const [showLoginForm, setShowLoginForm] = useState(false);
   // 내가 왜 변수명을 이렇게 헷갈리게 적어서...ㅠ
@@ -253,9 +253,11 @@ const Modal = ({ type, closeModal }) => {
   };
 
   return (
-    <ModalContainer>
-      <ModalContent>
-        <CloseModalButton onClick={closeModal}>X</CloseModalButton>
+    <AuthModalContainer>
+      <AuthModalContent>
+        <span className="closeAuthModalButton" onClick={closeModal}>
+          X
+        </span>
         {showLoginForm || type === "login" ? (
           <form onSubmit={handleLogin}>
             <LoginForm>
@@ -274,7 +276,11 @@ const Modal = ({ type, closeModal }) => {
                 value={password}
                 onChange={handleInputChange}
               />
-              <button type="submit" disabled={!isLoginValid}>
+              <button
+                type="submit"
+                className="login-btn"
+                disabled={!isLoginValid}
+              >
                 로그인
               </button>
               <span className="find-button"> 계정/비밀번호 찾기</span>
@@ -320,8 +326,8 @@ const Modal = ({ type, closeModal }) => {
             />
           </form>
         )}
-      </ModalContent>
-    </ModalContainer>
+      </AuthModalContent>
+    </AuthModalContainer>
   );
 };
 
@@ -400,22 +406,26 @@ const RegisterForm = ({
           </span>
         </CheckCode>
       )}
-      <input
-        type="text"
-        name="username"
-        placeholder="닉네임(계정)"
-        value={username}
-        onChange={handleInputChange}
-      />
-      <CheckNick
-        onClick={handleCheckNick}
-        style={{ color: isUsernameAvailable === true ? "green" : "red" }}
-      >
-        {isUsernameAvailable === null
-          ? "중복확인"
-          : isUsernameAvailable
-            ? "사용 가능"
-            : "사용 불가"}
+      <CheckNick>
+        <input
+          type="text"
+          className="insert-nick"
+          name="username"
+          placeholder="닉네임(계정)"
+          value={username}
+          onChange={handleInputChange}
+        />
+        <span
+          className="checkNick-btn"
+          onClick={handleCheckNick}
+          style={{ color: isUsernameAvailable === true ? "green" : "red" }}
+        >
+          {isUsernameAvailable === null
+            ? "중복확인"
+            : isUsernameAvailable
+              ? "사용 가능"
+              : "사용 불가"}
+        </span>
       </CheckNick>
       <input
         type="password"
@@ -444,9 +454,9 @@ const RegisterForm = ({
   );
 };
 
-export default Modal;
+export default AuthModal;
 
-const ModalContainer = styled.div`
+const AuthModalContainer = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -457,9 +467,13 @@ const ModalContainer = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 999;
+
+  button {
+    width: 100%;
+  }
 `;
 
-const ModalContent = styled.div`
+const AuthModalContent = styled.div`
   background: white;
   padding: 2rem;
   border-radius: 12px;
@@ -467,21 +481,22 @@ const ModalContent = styled.div`
   width: 100%;
   position: relative;
   text-align: center;
-`;
 
-const CloseModalButton = styled.button`
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: black;
+  .closeAuthModalButton {
+    position: absolute;
+    top: 3%;
+    right: 5%;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    color: black;
 
-  &:hover {
-    color: ${props => props.theme.subColor};
-    box-shadow: none;
+    &:hover {
+      color: ${props => props.theme.subColor};
+      box-shadow: none;
+    }
   }
 `;
 
@@ -595,13 +610,21 @@ const CheckCode = styled.div`
 `;
 
 // 닉네임 중복확인
-const CheckNick = styled.span`
-  color: red;
-  font-size: 0.8rem;
-  width: 4rem;
-  position: absolute;
-  top: 49%;
-  right: 9%;
-  padding: 0.5rem;
-  cursor: pointer;
+const CheckNick = styled.div`
+  position: relative;
+
+  .insert-nick {
+    width: 100%;
+  }
+
+  .checkNick-btn {
+    color: red;
+    font-size: 0.8rem;
+    width: 4rem;
+    position: absolute;
+    top: 8%;
+    right: 0;
+    padding: 0.5rem;
+    cursor: pointer;
+  }
 `;
