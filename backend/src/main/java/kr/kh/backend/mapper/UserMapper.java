@@ -14,6 +14,9 @@ public interface UserMapper {
     @Select("SELECT * FROM user WHERE nickname = #{username}")
     User findByUsername(String username);
 
+    @Select("SELECT * FROM user WHERE email = #{email}")
+    User findByEmail(String email);
+
     // 일반 로그인 insert
     @Insert("INSERT INTO user(email, nickname, password, roles) " +
             "VALUES (#{email}, #{username}, #{password}, #{roles})")

@@ -144,4 +144,31 @@ public class UserController {
                 .build();
     }
 
+    // 깃허브 로그인
+    @PostMapping("/login/github")
+    public ResponseEntity<?> loginGithub(@RequestBody OauthLoginDTO oauthLoginDTO, HttpServletResponse response) {
+        log.info("깃허브 로그인 컨트롤러");
+
+        // 네이버에서 사용자 정보 조회
+        Authentication authentication = oauth2UserService.getGithubUser(oauthLoginDTO.getCode());
+        if(authentication == null) {
+            return ResponseEntity.status(400).build();
+        }
+
+        // JWT 토큰 생성
+        JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
+
+        // 토큰 넣어서 전송
+        // refresh token 은 쿠키 (HttpOnly) 로 전송
+        Cookie refreshTokenCookie = new Cookie("refreshToken", jwtToken.getRefreshToken());
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(60 * 60 * 24); // 쿠키 유효기간 1일
+        response.addCookie(refreshTokenCookie);
+
+        return ResponseEntity.ok()
+                .header("Authorization", "Bearer " + jwtToken.getAccessToken())
+                .build();
+    }
+
 }
