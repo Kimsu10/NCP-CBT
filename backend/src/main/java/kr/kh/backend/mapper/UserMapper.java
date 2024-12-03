@@ -59,4 +59,6 @@ public interface UserMapper {
     // 계정 찾기
     @Select("SELECT nickname FROM user WHERE email = #{email}")
     String findUsernameByEmail(String email);
+
+
 }

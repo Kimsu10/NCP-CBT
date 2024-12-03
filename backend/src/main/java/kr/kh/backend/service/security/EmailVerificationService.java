@@ -1,6 +1,7 @@
 package kr.kh.backend.service.security;
 
 import kr.kh.backend.domain.EmailVerification;
+import kr.kh.backend.domain.User;
 import kr.kh.backend.dto.EmailVerificationDTO;
 import kr.kh.backend.mapper.UserMapper;
 import kr.kh.backend.service.MailService;
@@ -23,6 +24,7 @@ import java.util.Random;
 public class EmailVerificationService {
     private final UserMapper userMapper;
     private final MailService mailService;
+    private static final int AUTH_CODE_LENGTH = 6;
 
     @Value("${spring.mail.auth-code-expiration-millis}")
     private long authCodeExpirationMillis;
@@ -35,14 +37,11 @@ public class EmailVerificationService {
             throw new IllegalArgumentException("email already exists");
         }
 
-        // 인증 코드 생성
         String authCode = createAuthCode();
         String title = "[NCBT] 인증 번호";
 
-        // 기존 인증 데이터 삭제
         userMapper.deleteEmailVerification(email);
 
-        // 새 인증 데이터 삽입
         EmailVerification emailVerification = EmailVerification.builder()
                 .email(email)
                 .authCode(authCode)
@@ -50,10 +49,10 @@ public class EmailVerificationService {
                 .build();
         userMapper.insertEmailVerification(emailVerification);
 
-        // 이메일 발송
         mailService.sendEmail(email, title, "인증번호: " + authCode);
     }
 
+    // 이메일 인증 코드 확인
     public EmailVerificationDTO verifyCode(String email, String authCode) {
         EmailVerification emailVerification = userMapper.findByVerifiedEmail(email);
 
@@ -71,7 +70,6 @@ public class EmailVerificationService {
             throw new IllegalArgumentException("email verification is invalid");
         }
 
-        // 인증 성공 시 데이터 삭제
         userMapper.deleteEmailVerification(email);
 
         return new EmailVerificationDTO(
@@ -81,11 +79,12 @@ public class EmailVerificationService {
         );
     }
 
+    // 인증 코드 생성
     private String createAuthCode() {
         try {
             Random random = SecureRandom.getInstanceStrong();
             StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < AUTH_CODE_LENGTH; i++) {
                 builder.append(random.nextInt(10));
             }
             return builder.toString();
@@ -94,4 +93,50 @@ public class EmailVerificationService {
             throw new IllegalStateException("Failed to generate secure number", e);
         }
     }
+
+    // 닉네임응으로 이메일 조회 후 인증번호 요청
+    public void sendAuthCodeByNickname(String nickname) {
+        log.info("sendAuthCodeByNickname - nickname: {}", nickname);
+
+        User user = userMapper.findByUsername(nickname);
+        if (user == null) {
+            throw new IllegalArgumentException("cannot find user by nickname(username)");
+        }
+
+        String email = user.getEmail();
+
+        String authCode = createAuthCode();
+        String title = "[NCBT] 인증 번호";
+
+        userMapper.deleteEmailVerification(email);
+
+        EmailVerification emailVerification = EmailVerification.builder()
+                .email(email)
+                .authCode(authCode)
+                .expirationTime(LocalDateTime.now().plus(authCodeExpirationMillis, ChronoUnit.MILLIS))
+                .build();
+        userMapper.insertEmailVerification(emailVerification);
+
+        mailService.sendEmail(email,  title, "인증번호: " + authCode);
+    }
+
+    // 이메일 존재하는경우 인증번호 요청 -> 기존의 로직을 쓰면 중복확인으로 걸림
+    public void sendAuthCodeByEmail(String email) {
+        log.info("Sending email verification code to {}", email);
+
+        String authCode = createAuthCode();
+        String title = "[NCBT] 인증 번호";
+
+        userMapper.deleteEmailVerification(email);
+
+        EmailVerification emailVerification = EmailVerification.builder()
+                .email(email)
+                .authCode(authCode)
+                .expirationTime(LocalDateTime.now().plus(authCodeExpirationMillis, ChronoUnit.MILLIS))
+                .build();
+        userMapper.insertEmailVerification(emailVerification);
+
+        mailService.sendEmail(email, title, "인증번호: " + authCode);
+    }
+
 }

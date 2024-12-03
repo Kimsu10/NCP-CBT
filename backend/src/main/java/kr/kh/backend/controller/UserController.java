@@ -179,4 +179,23 @@ public class UserController {
         String username = userService.findUsernameByEmail(email);
         return ResponseEntity.ok(username);
     }
+
+    // 유저 계정 또는 이메일로 이메일 인증하기
+    @PostMapping("/form/send-code")
+    public ResponseEntity<String> sendAuthCode(
+            @RequestParam(required = false) String nickname,
+            @RequestParam(required = false) String email) {
+        log.info("POST /form/send-code - nickname: {}, email: {}", nickname, email);
+
+        if (nickname != null) {
+            emailVerificationService.sendAuthCodeByNickname(nickname);
+        } else if (email != null) {
+            emailVerificationService.sendAuthCodeByEmail(email);
+        } else {
+            return ResponseEntity.badRequest().body("nickname 또는 email 중 하나는 필수입니다.");
+        }
+
+        return ResponseEntity.ok("인증 코드가 이메일로 전송되었습니다.");
+    }
+
 }
