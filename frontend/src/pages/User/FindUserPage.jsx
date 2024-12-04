@@ -95,6 +95,7 @@ const FindUserPage = () => {
           <input
             type="email"
             className="insert-email"
+            placeholder="이메일"
             value={email}
             onChange={e => setEmail(e.target.value)}
           />
@@ -115,7 +116,7 @@ const FindUserPage = () => {
           <p>계정 또는 이메일을 입력해주세요</p>
           <input
             type="text"
-            placeholder="닉네임 또는 이메일"
+            placeholder="계정 또는 이메일"
             value={identifier}
             onChange={e => setIdentifier(e.target.value)}
             className="insert-identifier"
@@ -176,6 +177,7 @@ const FindUserPageBody = styled.div`
 
   @media ${device.mobile} {
     flex-direction: column;
+    height: auto;
   }
 `;
 
@@ -197,7 +199,7 @@ const FindAccountSection = styled.div`
     justify-content: center;
     gap: 2rem;
     border-radius: 12px;
-    border: 1px solid gray;
+    box-shadow: 2px 2px 3px 2px lightgray;
 
     .insert-email {
       width: 70%;
@@ -212,7 +214,9 @@ const FindAccountSection = styled.div`
 
   @media ${device.mobile} {
     border-right: none; //수직선 제서
-    border-bottom: 1px solid black; // 수평선 추가
+    border-bottom: 1px solid gray; // 수평선 추가
+    margin-top: 4rem;
+    padding-bottom: 3rem;
   }
 `;
 
@@ -232,7 +236,7 @@ const FindPasswordSection = styled.div`
     justify-content: center;
     gap: 2rem;
     border-radius: 12px;
-    border: 1px solid gray;
+    box-shadow: 2px 2px 3px 2px lightgray;
 
     .insert-authcode,
     .insert-identifier {
@@ -245,13 +249,17 @@ const FindPasswordSection = styled.div`
       width: 70%;
     }
   }
+
+  @media ${device.mobile} {
+    margin: 2rem;
+  }
 `;
 
 // 수직선을 따로 긋는게 나을까 영역만큼만 긋는게 나을까
 const VerticalDivider = styled.div`
   width: 1px;
   min-height: 34rem;
-  background-color: black;
+  background-color: gray;
 
   @media ${device.mobile} {
     /* width: 100%; //수평선 변경
