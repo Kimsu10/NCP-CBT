@@ -59,5 +59,5 @@ public interface UserMapper {
 
     // 비밀번호 재설정
     @Update("UPDATE user SET password = #{password} WHERE nickname = #{username}")
-    void updatePassword(@Param("username") Long userId, @Param("password") String password);
+    void updatePassword(@Param("username") Long username, @Param("password") String password);
 }

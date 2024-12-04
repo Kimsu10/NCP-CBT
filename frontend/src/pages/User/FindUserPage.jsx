@@ -1,12 +1,19 @@
 import styled, { css } from "styled-components";
 import { device } from "../../styles/theme";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import PwdModal from "../../components/Modal/PwdModal";
 
 const FindUserPage = () => {
   const [email, setEmail] = useState("");
   const [account, setAccount] = useState("");
   const [identifier, setIdentifier] = useState("");
   const [message, setMessage] = useState("");
+  const [authCodeBox, seteAuthCodeBox] = useState(false);
+
+  const [PwdModalOpen, SetPwdModalOpen] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleFindAccount = async () => {
     if (!email) {
@@ -40,7 +47,7 @@ const FindUserPage = () => {
     }
   };
 
-  // 비밀전호 찾기 인증번호 요청
+  // 비밀번호 찾기 인증번호 요청
   const handleSendAuthCode = async () => {
     if (!identifier) {
       alert("닉네임 또는 이메일을 입력해주세요.");
@@ -49,7 +56,7 @@ const FindUserPage = () => {
 
     try {
       const params = new URLSearchParams();
-      const isEmail = identifier.includes("@"); // 이메일 여부 확인
+      const isEmail = identifier.includes("@");
       if (isEmail) {
         params.append("email", identifier);
       } else {
@@ -65,13 +72,16 @@ const FindUserPage = () => {
 
       if (response.ok) {
         const result = await response.text();
-        setMessage(result); // 성공 메시지 설정
+        seteAuthCodeBox(true);
+        setMessage(result);
       } else {
         const error = await response.text();
-        setMessage(`에러: ${error}`); // 에러 메시지 설정
+        seteAuthCodeBox(false);
+        setMessage(`에러: ${error}`);
       }
     } catch (error) {
       console.error("Error sending auth code:", error);
+      seteAuthCodeBox(false);
       setMessage("인증 코드 요청 중 오류가 발생했습니다.");
     }
   };
@@ -91,7 +101,11 @@ const FindUserPage = () => {
           <button className="find-account-button" onClick={handleFindAccount}>
             계정 찾기
           </button>
-          {account && <h2>찾은 계정: {account}</h2>}
+          {account && (
+            <h2>
+              찾은 계정: <span className="result-message">{account}</span>
+            </h2>
+          )}
         </div>
       </FindAccountSection>
       <VerticalDivider />
@@ -106,12 +120,42 @@ const FindUserPage = () => {
             onChange={e => setIdentifier(e.target.value)}
             className="insert-identifier"
           />
-          <button className="find-password-button" onClick={handleSendAuthCode}>
-            인증 번호 보내기
-          </button>
-          {message && <p>{message}</p>}
+          {message && <p className="result-message">{message}</p>}
+          {authCodeBox && (
+            <input
+              type="text"
+              placeholder="인증 코드를 입력해주세요"
+              className="insert-authcode"
+            />
+          )}
+          {!authCodeBox ? (
+            <button
+              className="find-password-button"
+              onClick={handleSendAuthCode}
+            >
+              인증 번호 보내기
+            </button>
+          ) : (
+            <button
+              className="move-find-password-button"
+              onClick={() => SetPwdModalOpen(true)}
+            >
+              인증하기
+            </button>
+          )}
         </div>
       </FindPasswordSection>
+      {PwdModalOpen && (
+        <PwdModal
+          onClose={() => SetPwdModalOpen(false)} // 모달 닫기
+          onSubmit={newPassword => {
+            // 비밀번호 설정 처리 로직
+            console.log("새 비밀번호:", newPassword);
+            SetPwdModalOpen(false);
+          }}
+          identifier={identifier}
+        />
+      )}
     </FindUserPageBody>
   );
 };
@@ -124,6 +168,10 @@ const FindUserPageBody = styled.div`
   justify-content: center;
   min-width: 34rem;
   height: 80vh;
+
+  .result-message {
+    color: #2389fd;
+  }
 
   @media ${device.mobile} {
     flex-direction: column;
@@ -185,12 +233,13 @@ const FindPasswordSection = styled.div`
     border-radius: 12px;
     border: 1px solid gray;
 
+    .insert-authcode,
     .insert-identifier {
       width: 70%;
       height: 2.4rem;
       padding: 0 0.5rem;
     }
-
+    .move-find-password-button,
     .find-password-button {
       width: 70%;
     }
