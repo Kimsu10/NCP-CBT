@@ -5,6 +5,8 @@ import { useState } from "react";
 const FindUserPage = () => {
   const [email, setEmail] = useState("");
   const [account, setAccount] = useState("");
+  const [identifier, setIdentifier] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleFindAccount = async () => {
     if (!email) {
@@ -38,6 +40,42 @@ const FindUserPage = () => {
     }
   };
 
+  // 비밀전호 찾기 인증번호 요청
+  const handleSendAuthCode = async () => {
+    if (!identifier) {
+      alert("닉네임 또는 이메일을 입력해주세요.");
+      return;
+    }
+
+    try {
+      const params = new URLSearchParams();
+      const isEmail = identifier.includes("@"); // 이메일 여부 확인
+      if (isEmail) {
+        params.append("email", identifier);
+      } else {
+        params.append("nickname", identifier);
+      }
+
+      const response = await fetch(
+        `http://localhost:8080/form/send-code?${params.toString()}`,
+        {
+          method: "POST",
+        },
+      );
+
+      if (response.ok) {
+        const result = await response.text();
+        setMessage(result); // 성공 메시지 설정
+      } else {
+        const error = await response.text();
+        setMessage(`에러: ${error}`); // 에러 메시지 설정
+      }
+    } catch (error) {
+      console.error("Error sending auth code:", error);
+      setMessage("인증 코드 요청 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <FindUserPageBody>
       <FindAccountSection>
@@ -59,10 +97,19 @@ const FindUserPage = () => {
       <VerticalDivider />
       <FindPasswordSection>
         <div className="find-password-container">
-          <h1>비밀번호 재설정</h1>
+          <h1>비밀번호 찾기</h1>
           <p>계정 또는 이메일을 입력해주세요</p>
-          <input type="text" className="insert-account" />
-          <button className="find-password-button">인증 번호 보내기</button>
+          <input
+            type="text"
+            placeholder="닉네임 또는 이메일"
+            value={identifier}
+            onChange={e => setIdentifier(e.target.value)}
+            className="insert-identifier"
+          />
+          <button className="find-password-button" onClick={handleSendAuthCode}>
+            인증 번호 보내기
+          </button>
+          {message && <p>{message}</p>}
         </div>
       </FindPasswordSection>
     </FindUserPageBody>
@@ -138,7 +185,7 @@ const FindPasswordSection = styled.div`
     border-radius: 12px;
     border: 1px solid gray;
 
-    .insert-account {
+    .insert-identifier {
       width: 70%;
       height: 2.4rem;
       padding: 0 0.5rem;

@@ -3,10 +3,7 @@ package kr.kh.backend.mapper;
 import kr.kh.backend.domain.EmailVerification;
 import kr.kh.backend.domain.User;
 import kr.kh.backend.dto.security.LoginDTO;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface UserMapper {
@@ -60,5 +57,7 @@ public interface UserMapper {
     @Select("SELECT nickname FROM user WHERE email = #{email}")
     String findUsernameByEmail(String email);
 
-
+    // 비밀번호 재설정
+    @Update("UPDATE user SET password = #{password} WHERE nickname = #{username}")
+    void updatePassword(@Param("username") Long userId, @Param("password") String password);
 }

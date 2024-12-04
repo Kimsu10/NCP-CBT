@@ -117,7 +117,7 @@ public class EmailVerificationService {
                 .build();
         userMapper.insertEmailVerification(emailVerification);
 
-        mailService.sendEmail(email,  title, "인증번호: " + authCode);
+        mailService.sendEmail(email, title, "인증번호: " + authCode);
     }
 
     // 이메일 존재하는경우 인증번호 요청 -> 기존의 로직을 쓰면 중복확인으로 걸림
