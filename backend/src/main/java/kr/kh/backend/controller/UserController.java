@@ -11,10 +11,14 @@ import kr.kh.backend.service.security.Oauth2UserService;
 import kr.kh.backend.service.security.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.Duration;
 
 @RestController
 @Slf4j
@@ -117,13 +121,21 @@ public class UserController {
 
         // 토큰 넣어서 전송
         // refresh token 은 쿠키 (HttpOnly) 로 전송
-        Cookie refreshTokenCookie = new Cookie("refreshToken", jwtToken.getRefreshToken());
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(60 * 60 * 24); // 쿠키 유효기간 1일
-        refreshTokenCookie.setSecure(false); // 개발환경에서 쿠키가 전송되었는지 확인하기 위해 false 로 설정
-        refreshTokenCookie.setSameSite("None");
-        response.addCookie(refreshTokenCookie);
+//        ResponseCookie refreshTokenCookie = ResponseCookie
+//                .from("refreshToken", jwtToken.getRefreshToken())
+//                .domain("localhost")
+//                .path("/")
+//                .httpOnly(true)
+//                .secure(false)
+//                .maxAge(Duration.ofDays(1))
+//                .sameSite("Strict")
+//                .build();
+        Cookie refreshCookie = new Cookie("refreshToken", jwtToken.getRefreshToken());
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setMaxAge(24 * 60 * 60);
+        refreshCookie.setSecure(false);
+        refreshCookie.setPath("/");
+        response.addCookie(refreshCookie);
 
         return ResponseEntity.ok()
                 .header("Authorization", "Bearer " + jwtToken.getAccessToken())

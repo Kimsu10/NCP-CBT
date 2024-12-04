@@ -66,6 +66,7 @@ const Main = () => {
     if (response.status === 200) {
       // accessToken을 세션 스토리지에 저장 (추후 변경 가능성 있음)
       const data = await response.headers.get("Authorization");
+      console.log(response.headers.getSetCookie);
       const accessToken = data.split(" ")[1];
       sessionStorage.setItem("accessToken", accessToken);
       navigate("/");
