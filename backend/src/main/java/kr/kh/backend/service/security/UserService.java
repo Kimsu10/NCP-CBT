@@ -82,14 +82,13 @@ public class UserService {
 
     // 비밀번호 재설정
     public void changePassword(String username, String password) {
-        // 비밀번호 암호화 (예: BCrypt)
         String encryptedPassword = passwordEncoder.encode(password);
 
         userMapper.updatePassword(username, encryptedPassword);
     }
 
     // 비밀번호 암호화
-    private String encryptPassword(String password) {
-        return new BCryptPasswordEncoder().encode(password);
-    }
+//    private String encryptPassword(String password) {
+//        return new BCryptPasswordEncoder().encode(password);
+//    }
 }

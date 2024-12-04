@@ -8,8 +8,10 @@ import kr.kh.backend.service.MailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -30,7 +32,6 @@ public class EmailVerificationService {
     private long authCodeExpirationMillis;
 
     public void sendCodeToEmail(String email) {
-        log.info("Sending email verification code to {}", email);
 
         // 이메일 중복 확인
         if (userMapper.isEmailExisted(email)) {
@@ -54,20 +55,22 @@ public class EmailVerificationService {
 
     // 이메일 인증 코드 확인
     public EmailVerificationDTO verifyCode(String email, String authCode) {
+
+        try {
         EmailVerification emailVerification = userMapper.findByVerifiedEmail(email);
 
         if (emailVerification == null) {
-            throw new IllegalArgumentException("can't find email verification code");
+            throw new IllegalArgumentException("이메일 인증 코드가 존재하지 않습니다. 다시 요청해주세요");
         }
 
         boolean isExpired = emailVerification.getExpirationTime().isBefore(LocalDateTime.now());
         if (isExpired) {
-            throw new IllegalArgumentException("email verification is expired");
+            throw new IllegalArgumentException("인증 코드의 유효시간이 만료되었습니다. 다시 요청해주세요");
         }
 
         boolean isValid = emailVerification.getAuthCode().equals(authCode);
         if (!isValid) {
-            throw new IllegalArgumentException("email verification is invalid");
+            throw new IllegalArgumentException("인증코드가 올바르지 않습니다.");
         }
 
         userMapper.deleteEmailVerification(email);
@@ -77,6 +80,11 @@ public class EmailVerificationService {
                 emailVerification.getAuthCode(),
                 emailVerification.getExpirationTime()
         );
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred", e);
+        }
     }
 
     // 인증 코드 생성
@@ -140,4 +148,3 @@ public class EmailVerificationService {
     }
 
 }
-// 여기 db 3분마다 데이터 지우도록 로직 변경해야함

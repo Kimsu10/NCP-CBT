@@ -14,7 +14,6 @@ const AuthModal = ({ type, closeModal }) => {
   const [showCheckCode, setShowCheckCode] = useState(false); // 이메일 인증시 코드 입력칸 활성화
   const [isEmailVerified, setIsEmailVerified] = useState(null); // 이메일 인증 여부
   const [isUsernameAvailable, setIsUsernameAvailable] = useState(null); // 닉네임 중복확인
-  const [message, setMessage] = useState("");
 
   const [formData, setFormData] = useState({
     email: "",

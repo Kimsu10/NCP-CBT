@@ -1,27 +1,38 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { device } from "../../styles/theme";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import PwdModal from "../../components/Modal/PwdModal";
 
 const FindUserPage = () => {
   const [email, setEmail] = useState("");
   const [account, setAccount] = useState("");
-  const [identifier, setIdentifier] = useState("");
   const [message, setMessage] = useState("");
   const [authCodeBox, seteAuthCodeBox] = useState(false);
-
   const [PwdModalOpen, SetPwdModalOpen] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(0);
+  const [isRequestBlocked, setIsRequestBlocked] = useState(false);
 
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    identifier: "",
+    code: "",
+  });
+
+  const handleInputChange = e => {
+    const { name, value } = e.target;
+
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const { identifier, code } = formData;
 
   const handleFindAccount = async () => {
     if (!email) {
       alert("이메일을 입력해주세요.");
       return;
     }
-
-    console.log(email);
 
     try {
       const response = await fetch(
@@ -74,6 +85,20 @@ const FindUserPage = () => {
         const result = await response.text();
         seteAuthCodeBox(true);
         setMessage(result);
+
+        setIsRequestBlocked(true);
+        setRemainingTime(180);
+
+        const interval = setInterval(() => {
+          setRemainingTime(prevTime => {
+            if (prevTime <= 1) {
+              clearInterval(interval);
+              setIsRequestBlocked(false);
+              return 0;
+            }
+            return prevTime - 1;
+          });
+        }, 1000);
       } else {
         const error = await response.text();
         seteAuthCodeBox(false);
@@ -83,6 +108,61 @@ const FindUserPage = () => {
       console.error("Error sending auth code:", error);
       seteAuthCodeBox(false);
       setMessage("인증 코드 요청 중 오류가 발생했습니다.");
+    }
+  };
+
+  // 인증 확인
+  const verifyPwdCode = async () => {
+    try {
+      const params = new URLSearchParams();
+      const isEmail = identifier.includes("@");
+
+      if (isEmail) {
+        params.append("email", identifier);
+      } else {
+        params.append("username", identifier);
+      }
+
+      if (!code) {
+        alert("인증코드를 입력하세요");
+        return;
+      }
+      params.append("authCode", code);
+
+      setIsRequestBlocked(true);
+      setRemainingTime(180);
+
+      const interval = setInterval(() => {
+        setRemainingTime(prevTime => {
+          if (prevTime <= 1) {
+            clearInterval(interval);
+            setIsRequestBlocked(false);
+            return 0;
+          }
+          return prevTime - 1;
+        });
+      }, 1000);
+
+      const response = await fetch(
+        `http://localhost:8080/form/verify-pwd-code?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (response.ok) {
+        SetPwdModalOpen(true);
+      } else {
+        const errorMessage = await response.text();
+        const match = errorMessage.match(/"([^"]+)"/);
+        alert(match[1]);
+      }
+    } catch (err) {
+      console.error("이메일 인증 에러:", err.message);
+      alert("서버와의 연결에 실패했습니다.");
     }
   };
 
@@ -116,30 +196,50 @@ const FindUserPage = () => {
           <p>계정 또는 이메일을 입력해주세요</p>
           <input
             type="text"
+            name="identifier"
             placeholder="계정 또는 이메일"
             value={identifier}
-            onChange={e => setIdentifier(e.target.value)}
+            onChange={handleInputChange}
             className="insert-identifier"
           />
           {message && <p className="result-message">{message}</p>}
           {authCodeBox && (
-            <input
-              type="text"
-              placeholder="인증 코드를 입력해주세요"
-              className="insert-authcode"
-            />
+            <div className="insert-pwd-code-box">
+              <input
+                type="text"
+                name="code"
+                placeholder="인증 코드를 입력해주세요"
+                className="insert-authcode"
+                value={code}
+                onChange={handleInputChange}
+              />
+              {remainingTime > 0 ? (
+                <span className="remaining-time">
+                  {Math.floor(remainingTime / 60)}:
+                  {(remainingTime % 60).toString().padStart(2, "0")}
+                </span>
+              ) : (
+                <span
+                  className="resend-code-button"
+                  onClick={handleSendAuthCode}
+                >
+                  다시 받기
+                </span>
+              )}
+            </div>
           )}
           {!authCodeBox ? (
             <button
               className="find-password-button"
               onClick={handleSendAuthCode}
+              disabled={isRequestBlocked}
             >
               인증 번호 보내기
             </button>
           ) : (
             <button
               className="move-find-password-button"
-              onClick={() => SetPwdModalOpen(true)}
+              onClick={verifyPwdCode}
             >
               인증하기
             </button>
@@ -148,10 +248,8 @@ const FindUserPage = () => {
       </FindPasswordSection>
       {PwdModalOpen && (
         <PwdModal
-          onClose={() => SetPwdModalOpen(false)} // 모달 닫기
-          onSubmit={newPassword => {
-            // 비밀번호 설정 처리 로직
-            console.log("새 비밀번호:", newPassword);
+          onClose={() => SetPwdModalOpen(false)}
+          onSubmit={() => {
             SetPwdModalOpen(false);
           }}
           identifier={identifier}
@@ -238,15 +336,38 @@ const FindPasswordSection = styled.div`
     border-radius: 12px;
     box-shadow: 2px 2px 3px 2px lightgray;
 
-    .insert-authcode,
     .insert-identifier {
       width: 70%;
       height: 2.4rem;
       padding: 0 0.5rem;
     }
+
     .move-find-password-button,
     .find-password-button {
       width: 70%;
+    }
+
+    .insert-pwd-code-box {
+      display: flex;
+      position: relative;
+      width: 70%;
+      align-items: center;
+      justify-content: space-between;
+
+      .insert-authcode {
+        height: 2.4rem;
+        padding: 0 0.5rem;
+        width: 100%;
+      }
+      .resend-code-button,
+      .remaining-time {
+        position: absolute;
+        color: red;
+        font-size: 0.8rem;
+        top: 30%;
+        right: 4%;
+        cursor: pointer;
+      }
     }
   }
 

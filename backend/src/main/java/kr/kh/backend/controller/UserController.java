@@ -214,7 +214,7 @@ public class UserController {
         return ResponseEntity.ok(username);
     }
 
-    // 유저 계정 또는 이메일로 이메일 인증하기
+    // 유저 계정 또는 이메일로 이메일 인증 코드 요청
     @PostMapping("/form/send-code")
     public ResponseEntity<String> sendAuthCode(
             @RequestParam(required = false) String nickname,
@@ -253,4 +253,25 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("비밀번호 변경에 실패했습니다.");
         }
     }
+
+    // 비밀번호 재설정 코드 인증
+    @GetMapping("/form/verify-pwd-code")
+    public ResponseEntity<String> verifyAuthCode(
+            @RequestParam(required = false) String username,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String authCode) {
+
+        if (authCode == null ) {
+            return ResponseEntity.badRequest().body("인증코드를 입력하세요");
+        }
+
+        if (username != null) {
+            String findEmail = userMapper.findEmailByUsername(username);
+            emailVerificationService.verifyCode(findEmail, authCode);
+        } else if (email != null) {
+            emailVerificationService.verifyCode(email, authCode);
+        }
+        return ResponseEntity.ok("인증 완료");
+    }
+
 }
