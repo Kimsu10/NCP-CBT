@@ -14,12 +14,14 @@ import kr.kh.backend.service.security.Oauth2UserService;
 import kr.kh.backend.service.security.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,12 +39,44 @@ public class UserController {
 
     // 회원가입
     @PostMapping("/form/register")
-    public void register(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<String> register(@RequestBody LoginDTO loginDTO) {
         log.info("register : {}", loginDTO.toString());
+        String inputPassword = loginDTO.getPassword();
+        String inputUsername = loginDTO.getUsername();
+        String inputEmail = loginDTO.getEmail();
+
+        if (inputPassword == null || inputPassword.trim().isEmpty() ||
+            inputUsername == null || inputUsername.trim().isEmpty() ||
+            inputEmail == null || inputEmail.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("빈 칸을 채워주세요.");
+        }
+
+        if (inputPassword.length() <= 8 || !inputPassword.matches(".*[!@#$%^&*(),.?\":{}|<>].*")) {
+            return ResponseEntity.badRequest().body("8자리 이상 특수문자를 1개 이상 포함해주세요.");
+        }
+
+        try {
+        if (userMapper.isUsernameExisted(inputUsername)) {
+            return ResponseEntity.badRequest().body("이미 가입된 유저입니다. (아이디 중복)");
+        }
+
+        if (userMapper.isEmailExisted(inputEmail)) {
+            return ResponseEntity.badRequest().body("이미 가입된 유저입니다. (이메일 중복)");
+        }
+
         // 비밀번호 인코딩 후 저장
         String password = passwordEncoder.encode(loginDTO.getPassword());
         loginDTO.setPassword(password);
         userMapper.insertUser(loginDTO);
+
+        return ResponseEntity.ok("회원가입 성공.");
+        } catch (DataAccessException e) {
+            log.error("중복된 데이터 삽입 시도: {}", e.getMessage());
+            return ResponseEntity.badRequest().body("중복된 데이터가 있습니다.");
+        } catch (Exception e) {
+            log.error("회원가입 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원가입 중 오류가 발생했습니다.");
+        }
     }
 
     // 로그인
@@ -192,10 +226,31 @@ public class UserController {
         } else if (email != null) {
             emailVerificationService.sendAuthCodeByEmail(email);
         } else {
-            return ResponseEntity.badRequest().body("nickname 또는 email 중 하나는 필수입니다.");
+            return ResponseEntity.badRequest().body("nickname 또는 email 중 하나를 입력하세요.");
         }
 
         return ResponseEntity.ok("인증 코드가 이메일로 전송되었습니다.");
     }
 
+    // 비밀번호 재설정
+    @PatchMapping("/form/renewPassword")
+    public ResponseEntity<String> renewPassword(@RequestBody Map<String, String> request) {
+        String username = request.get("username");
+        String newPassword = request.get("password");
+
+        if (newPassword == null || newPassword.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("새로운 비밀번호를 입력하세요.");
+        }
+
+        if (newPassword.length() <= 8 || !newPassword.matches(".*[!@#$%^&*(),.?\":{}|<>].*")) {
+            return ResponseEntity.badRequest().body("8자리 이상 특수문자를 1개 이상 포함해주세요.");
+        }
+
+        try {
+            userService.changePassword(username, newPassword);
+            return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("비밀번호 변경에 실패했습니다.");
+        }
+    }
 }

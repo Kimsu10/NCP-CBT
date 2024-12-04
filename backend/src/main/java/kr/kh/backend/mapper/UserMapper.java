@@ -24,7 +24,7 @@ public interface UserMapper {
             "VALUES (#{email}, #{nickname}, #{roles}, #{platform})")
     void insertOauthUser(User user);
 
-    @Select("SELECT COUNT(*) = 1 FROM user WHERE nickname = #{username}")
+    @Select("SELECT COUNT(*) > 0 FROM user WHERE nickname = #{username}")
     boolean isUsernameExisted(String username);
 
     // 트큰의 username으로 user_id 조회
@@ -32,7 +32,7 @@ public interface UserMapper {
     Long findUserIdByUsername(String username);
 
     // 이메일 중복 확인
-    @Select("SELECT COUNT(*) = 1 FROM user WHERE email = #{email}")
+    @Select("SELECT COUNT(*) > 0 FROM user WHERE email = #{email}")
     boolean isEmailExisted(String email);
 
     // 이메일 인증 코드 저장
@@ -59,5 +59,9 @@ public interface UserMapper {
 
     // 비밀번호 재설정
     @Update("UPDATE user SET password = #{password} WHERE nickname = #{username}")
-    void updatePassword(@Param("username") Long username, @Param("password") String password);
+    void updatePassword(@Param("username") String username, @Param("password") String password);
+
+    // 사용자 비밀번호 찾기
+    @Select("SELECT password FROM user WHERE nickname = #{username}")
+    String findPasswordByUsername(String username);
 }

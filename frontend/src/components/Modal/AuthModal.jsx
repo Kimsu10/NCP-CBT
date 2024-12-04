@@ -14,6 +14,7 @@ const AuthModal = ({ type, closeModal }) => {
   const [showCheckCode, setShowCheckCode] = useState(false); // 이메일 인증시 코드 입력칸 활성화
   const [isEmailVerified, setIsEmailVerified] = useState(null); // 이메일 인증 여부
   const [isUsernameAvailable, setIsUsernameAvailable] = useState(null); // 닉네임 중복확인
+  const [message, setMessage] = useState("");
 
   const [formData, setFormData] = useState({
     email: "",
@@ -85,6 +86,7 @@ const AuthModal = ({ type, closeModal }) => {
         "register user error:",
         err.response ? err.response.data : err.message,
       );
+      alert(err.response.data);
     }
   };
 
@@ -112,8 +114,8 @@ const AuthModal = ({ type, closeModal }) => {
 
       sessionStorage.setItem("accessToken", accessToken);
 
-      window.location.reload();
-      // navigate("/");
+      // window.location.reload();
+      navigate("/"); // Q. 메인으로 이동하는게 더 좋을까?
       closeModal();
     } catch (err) {
       console.error(
@@ -168,11 +170,10 @@ const AuthModal = ({ type, closeModal }) => {
       return;
     }
 
-    setIsEmailAvailable(null); // 다시 요청되게
-    setIsRequestBlocked(true); // 요청시 막기
+    setIsEmailAvailable(null);
+    setIsRequestBlocked(true);
     setRemainingTime(180);
 
-    // 3분 타이머
     const interval = setInterval(() => {
       setRemainingTime(prevTime => {
         if (prevTime <= 1) {
@@ -193,10 +194,12 @@ const AuthModal = ({ type, closeModal }) => {
       );
 
       if (!response.ok) {
-        const data = await response.json();
+        const data = await response.text();
         if (response.status === 400) {
           setIsEmailAvailable(false);
           alert(data || "이미 사용 중인 이메일입니다.");
+          clearInterval(interval);
+          setIsRequestBlocked(false);
         } else {
           alert("서버와의 연결에 실패했습니다.");
           setShowCheckCode(true);
@@ -209,6 +212,8 @@ const AuthModal = ({ type, closeModal }) => {
     } catch (err) {
       console.error("이메일 인증 코드 요청 에러:", err.message);
       alert("서버와의 연결에 실패했습니다.");
+      clearInterval(interval);
+      setIsRequestBlocked(false);
     }
   };
 
@@ -571,6 +576,10 @@ const RegisterFormContainer = styled.div`
       background-color: lightgray;
       cursor: not-allowed;
     }
+  }
+
+  .server-message {
+    color: red;
   }
 `;
 
