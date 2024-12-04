@@ -10,8 +10,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +33,7 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
     private final UserMapper userMapper;
-
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * 유저의 로그인 요청으로 들어온 username + password 를 기반으로 검증 진행 후 JWT 토큰 생성
@@ -77,5 +80,16 @@ public class UserService {
         return username;
     }
 
+    // 비밀번호 재설정
+    public void changePassword(String username, String password) {
+        // 비밀번호 암호화 (예: BCrypt)
+        String encryptedPassword = passwordEncoder.encode(password);
 
+        userMapper.updatePassword(username, encryptedPassword);
+    }
+
+    // 비밀번호 암호화
+    private String encryptPassword(String password) {
+        return new BCryptPasswordEncoder().encode(password);
+    }
 }

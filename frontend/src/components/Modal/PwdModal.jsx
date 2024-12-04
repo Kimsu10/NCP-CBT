@@ -4,6 +4,7 @@ import styled from "styled-components";
 const SetPwdModal = ({ onClose, onSubmit, identifier }) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -14,7 +15,7 @@ const SetPwdModal = ({ onClose, onSubmit, identifier }) => {
     }
 
     const response = await fetch("http://localhost:8080/form/renewPassword", {
-      method: "POST",
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
@@ -24,12 +25,14 @@ const SetPwdModal = ({ onClose, onSubmit, identifier }) => {
       }),
     });
 
+    const resMessage = await response.text();
+
     if (response.ok) {
       alert("비밀번호가 성공적으로 변경되었습니다.");
       onSubmit(newPassword);
       onClose();
     } else {
-      alert("비밀번호 변경에 실패했습니다.");
+      setMessage(resMessage);
     }
   };
 
@@ -54,6 +57,7 @@ const SetPwdModal = ({ onClose, onSubmit, identifier }) => {
             placeholder="새 비밀번호 확인"
             onChange={e => setConfirmPassword(e.target.value)}
           />
+          {message && <p className="server-message">{message}</p>}
           <div className="button-control-box">
             <button type="submit">비밀번호 변경</button>
             <button type="button" onClick={onClose}>
@@ -103,6 +107,12 @@ const ModalContent = styled.div`
     padding: 0.5rem;
     margin: 0.5rem 0;
     width: 100%;
+  }
+
+  .server-message {
+    margin-top: 1rem;
+    color: red;
+    text-align: center;
   }
 
   .button-control-box {

@@ -140,3 +140,4 @@ public class EmailVerificationService {
     }
 
 }
+// 여기 db 3분마다 데이터 지우도록 로직 변경해야함

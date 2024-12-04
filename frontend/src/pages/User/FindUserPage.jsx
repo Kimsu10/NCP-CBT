@@ -166,6 +166,7 @@ const FindUserPageBody = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  padding-top: 4rem;
   min-width: 34rem;
   height: 80vh;
 
