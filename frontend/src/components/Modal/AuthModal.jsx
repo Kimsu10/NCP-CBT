@@ -283,7 +283,12 @@ const AuthModal = ({ type, closeModal }) => {
               >
                 로그인
               </button>
-              <span className="find-button"> 계정/비밀번호 찾기</span>
+              <span
+                className="find-button"
+                onClick={() => navigate("/find-account")}
+              >
+                계정/비밀번호 찾기
+              </span>
               <hr
                 style={{
                   backgroundColor: "lightGray",

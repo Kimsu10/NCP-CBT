@@ -1,3 +1,15 @@
+const sizes = {
+  mobile: "780px",
+  tablet: "1024px",
+  desktop: "1200px",
+};
+
+export const device = {
+  mobile: `(max-width: ${sizes.mobile})`,
+  tablet: `(max-width: ${sizes.tablet})`,
+  desktop: `(max-width: ${sizes.desktop})`,
+};
+
 const theme = {
   black: `#000000`,
   white: "#FFFFFF",

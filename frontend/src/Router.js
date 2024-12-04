@@ -14,6 +14,7 @@ import TestMatch from "./pages/TestMatch/TestMatch";
 import MatchResult from "./pages/TestMatch/MatchResult";
 import MatchWaiting from "./pages/TestMatch/MatchWaiting";
 import Quiz from "./pages/TestMatch/Quiz";
+import FindUserPage from "./pages/User/FindUserPage";
 
 const Router = () => {
   const [username, setUsername] = useState("");
@@ -73,6 +74,10 @@ const Router = () => {
         <Route
           path="/quiz/:selectedName/:roomName/result"
           element={<PageWrapper username={username} Component={MatchResult} />}
+        />
+        <Route
+          path="/find-account"
+          element={<PageWrapper Component={FindUserPage} />}
         />
       </Routes>
       <Footer />
