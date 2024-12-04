@@ -1,11 +1,16 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import Slider from "react-slick";
+import styled from "styled-components";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import useResponsive from "../../hooks/useResponsive";
 
 const Main = () => {
   const navigate = useNavigate();
 
   const handleMovePractice = name => {
-    navigate(`/${name}/practice`);
+    navigate(`/${name}`);
   };
 
   // 네이버 로그인 핸들러 (네이버에서 받은 인가코드를 백으로 전송 -> 백에서 인증완료된 JWT 토큰을 받는다)
@@ -86,20 +91,146 @@ const Main = () => {
   //   corsTest();
   // }, []);
 
+  // Slider 세팅 (lazyload)
+  const settings = {
+    dots: true,
+    lazyload: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    waitForAnimate: false,
+    autoplay: true,
+    autoplaySpeed: 3000,
+  };
+
+  // 반응형
+  const { windowWidth, isMobile, isTablet, isDesktop, getDeviceType } =
+    useResponsive();
+
   return (
     <>
-      <div>메인페이지</div>
-      {/* 임시 버튼 -> 연습문제로 이동 */}
-      <button className="nca" onClick={() => handleMovePractice("NCA")}>
-        NCA
-      </button>
-      <button className="ncp" onClick={() => handleMovePractice("NCP")}>
-        NCP
-      </button>
-      <button className="nce" onClick={() => handleMovePractice("NCE")}>
-        NCE
-      </button>
+      <SlideContainer>
+        <Slider {...settings}>
+          <div>
+            <img
+              src="../../../../images/NAVER-NCBT.png"
+              style={{ width: "100%" }}
+            />
+          </div>
+          <div>
+            <a
+              href="https://bizschool.naver.com/online/courses/76?order=RECENT"
+              target="_blank"
+            >
+              <img
+                src="../../../../images/NAVER-edu-link.png"
+                style={{ width: "100%" }}
+              />
+            </a>
+          </div>
+          <div>
+            <a href="https://edu.ncloud.com/certi" target="_blank">
+              <img
+                src="../../../../images/NAVER-test-link.png"
+                style={{ width: "100%" }}
+              />
+            </a>
+          </div>
+        </Slider>
+      </SlideContainer>
+      {isMobile && (
+        <MobileContainer>
+          <div className="subject-button-box">
+            <button className="nca" onClick={() => handleMovePractice("NCA")}>
+              NCA
+            </button>
+            <button className="ncp" onClick={() => handleMovePractice("NCP")}>
+              NCP
+            </button>
+            <button className="nce" onClick={() => handleMovePractice("NCE")}>
+              1 on 1
+            </button>
+          </div>
+        </MobileContainer>
+      )}
+      {isTablet && (
+        <DesktopContainer>
+          <div className="subject-button-box">
+            <button className="nca" onClick={() => handleMovePractice("NCA")}>
+              NCA
+            </button>
+            <button className="ncp" onClick={() => handleMovePractice("NCP")}>
+              NCP
+            </button>
+            <button className="nce" onClick={() => handleMovePractice("NCE")}>
+              1 on 1
+            </button>
+          </div>
+        </DesktopContainer>
+      )}
+      {isDesktop && (
+        <DesktopContainer>
+          <div className="subject-button-box">
+            <button className="nca" onClick={() => handleMovePractice("NCA")}>
+              NCA
+            </button>
+            <button className="ncp" onClick={() => handleMovePractice("NCP")}>
+              NCP
+            </button>
+            <button className="nce" onClick={() => handleMovePractice("NCE")}>
+              1 on 1
+            </button>
+          </div>
+        </DesktopContainer>
+      )}
     </>
   );
 };
 export default Main;
+
+const SlideContainer = styled.div`
+  margin: 5rem 0;
+`;
+
+const MobileContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 5rem 0;
+
+  .subject-button-box {
+    min-width: 40rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  button {
+    width: 10rem;
+    background-color: #02c95f;
+    font-size: 1rem;
+    margin: 1rem 0;
+  }
+`;
+
+const DesktopContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 5rem 0;
+
+  .subject-button-box {
+    min-width: 50rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  button {
+    width: 15rem;
+    background-color: #02c95f;
+    font-size: 3rem;
+  }
+`;

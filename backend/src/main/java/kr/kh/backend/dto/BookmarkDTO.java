@@ -11,3 +11,14 @@ public class BookmarkDTO {
     private int userId;
 
 }
+
+/* Post - body
+    {
+    "subjectId": 1,
+    "questionId": 8
+    }
+*/
+
+/* GET - parameter
+    /bookmarks?questionId=19
+*/

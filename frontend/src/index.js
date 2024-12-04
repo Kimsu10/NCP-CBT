@@ -14,5 +14,6 @@ root.render(
       <GlobalStyle />
       <Router />
     </ThemeProvider>
+    ,
   </React.StrictMode>,
 );
