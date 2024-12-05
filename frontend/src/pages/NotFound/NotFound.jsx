@@ -10,7 +10,8 @@ const NotFound = () => {
     const token = sessionStorage.getItem("accessToken");
 
     if (token) {
-      navigate(`/${param.name}/practice`);
+      // navigate(`/${param.name}`); // 널 어떻게 처리하면 좋을까
+      return;
     }
   }, []);
 

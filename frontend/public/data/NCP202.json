@@ -1485,7 +1485,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "3번 항목이 옳지 않습니다. 일반적으로 클라우드 서비스에서 Sub Account(서브 계정)도 적절한 권한이 부여되면 Cloud Insight와 같은 모니터링 도구를 사용할 수 있습니다. 이는 팀 내에서 역할 분담을 통한 효율적인 리소스 관리를 위해 중요한 기능입니다."
   },
   {
     "id": 363,
@@ -1509,7 +1509,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "Cloud DB for MySQL에서 Slow Query Count는 1초 이상 실행되는 쿼리의 개수를 나타냅니다. 이는 데이터베이스 성능 최적화에 중요한 지표로, 실행 시간이 긴 쿼리를 식별하고 개선하는 데 도움을 줍니다."
   },
   {
     "id": 364,
@@ -1533,7 +1533,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "Aurora는 일반적으로 클래식 플랫폼의 Preinstall Image로 제공되지 않습니다. Aurora는 AWS에서 개발한 클라우드 네이티브 데이터베이스로, 네이버 클라우드 플랫폼의 클래식 환경에서는 주로 MariaDB, Redis, MSSQL 등의 더 일반적인 DBMS를 제공합니다."
   },
   {
     "id": 365,
@@ -1581,7 +1581,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "Cloud DB for MySQL에서 3번 항목이 옳지 않습니다. 기본 제공되는 50GB 디스크는 운영체제용이 아니라 데이터베이스 데이터 저장용입니다. 이 디스크는 요금에 포함되며, 필요에 따라 추가 증설이 가능합니다. 운영체제는 별도로 관리되며, 사용자가 직접 접근하거나 관리할 수 없는 관리형 데이터베이스 서비스의 특성을 반영합니다."
   },
   {
     "id": 367,
@@ -1605,7 +1605,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "Cloud DB for MySQL에서는 일반적으로 Connections(연결 수), Slow Query(느린 쿼리), Replication(복제 상태) 등을 모니터링하고 이벤트를 설정할 수 있습니다. 하지만 Backup(백업)은 보통 자동으로 수행되는 작업이며, 일반적으로 실시간 모니터링 이벤트 항목으로 제공되지 않습니다. 백업 상태는 별도의 관리 인터페이스에서 확인하는 경우가 많습니다."
   },
   {
     "id": 368,
@@ -1653,7 +1653,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "Cloud Activity Tracer에 대한 설명 중 옳지 않은 것은 3번입니다. Cloud Activity Tracer는 일반적으로 독립적으로 동작하며, CLA(Cloud Log Analytics)와의 연동이 반드시 필요한 것은 아닙니다. 이 서비스는 계정 활동 로그를 자동으로 수집하고 기록하며, 에이전트 설치 없이도 사용할 수 있습니다. 또한 로그 필터링 기능을 제공하여 사용자가 필요한 정보를 쉽게 찾을 수 있게 합니다."
   },
   {
     "id": 370,
@@ -1677,7 +1677,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "Cloud DB for MySQL에 대한 설명 중 정확한 것은 3번입니다. 대부분의 관리형 데이터베이스 서비스는 장애나 중요 이벤트 발생 시 사용자에게 이메일과 SMS로 신속하게 알림을 제공합니다. 이는 시스템 관리자가 빠르게 대응할 수 있도록 하는 중요한 기능입니다. 다른 옵션들은 정확한 수치나 세부사항에서 오류가 있거나, 일반적인 Cloud DB for MySQL 서비스의 특성과 일치하지 않습니다."
   },
   {
     "id": 371,
@@ -1701,7 +1701,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "RUA(Real User Analytics)는 실제 사용자의 웹 페이지 접속 데이터를 수집하여 다양한 측면에서 분석해주는 서비스입니다. 이 서비스는 사용자의 국가, 브라우저, 기기 등에 따른 페이지 로드 속도와 페이지뷰 수를 분석하여 웹사이트 성능 최적화와 사용자 경험 개선에 도움을 줍니다."
   },
   {
     "id": 372,
@@ -1773,7 +1773,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "네이버 클라우드 플랫폼에서는 현재 Cloud DB for Oracle을 직접적인 관리형 서비스로 제공하지 않습니다. PostgreSQL, MySQL, MariaDB는 일반적으로 많은 클라우드 제공업체에서 지원하는 오픈소스 데이터베이스로, 네이버 클라우드 플랫폼에서도 관리형 서비스로 제공됩니다. Oracle 데이터베이스는 라이선스 및 관리 복잡성 때문에 일부 클라우드 제공업체에서만 직접 서비스로 제공하고 있습니다."
   },
   {
     "id": 375,
@@ -1797,7 +1797,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "Cloud DB for MySQL에서는 사용자가 백업 시간을 직접 설정할 수 있으므로, 2번 설명이 틀렸습니다. 백업 시간을 사용자가 원하는 시점으로 지정하여 자동 백업을 수행할 수 있습니다."
   },
   {
     "id": 376,
@@ -1821,7 +1821,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "/28 서브넷 마스크는 4비트(16개 IP)를 호스트 ID로 사용하므로, 210.118.23.32부터 210.118.23.47까지가 해당 네트워크의 IP 대역입니다."
   },
   {
     "id": 377,
@@ -1845,7 +1845,7 @@
       }
     ],
     "answer": [1, 4],
-    "explanation": ""
+    "explanation": "VPC 환경의 로드밸런서는 Private Subnet에만 생성 가능하고, 성능은 Large 타입 기준 최대 35만 CPS까지 지원하므로 1번과 4번이 잘못된 설명입니다."
   },
   {
     "id": 378,
@@ -1869,7 +1869,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "ACG(Access Control Group)는 Inbound와 Outbound 모두에 대해 룰 적용이 가능하므로 4번 설명이 틀렸습니다."
   },
   {
     "id": 379,
@@ -1893,7 +1893,7 @@
       }
     ],
     "answer": [2, 4],
-    "explanation": ""
+    "explanation": "Private Subnet으로 격리된 네트워크 구성이 가능하고, Network Interface의 Secondary IP로 HA 구성이 가능하므로 2번과 4번이 맞습니다. (Private Subnet의 외부 연결은 NAT Gateway를 사용하며, 서버당 공인 IP는 1개만 할당 가능)"
   },
   {
     "id": 380,
@@ -1917,7 +1917,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "VPC 환경에서는 반드시 Target Group을 생성해야만 로드밸런서에 서버를 연결할 수 있으므로, 3번 설명이 틀렸습니다."
   },
   {
     "id": 381,
@@ -1941,7 +1941,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "VOD Transcoder는 비디오 변환에 초점을 맞춘 서비스로 캡션 기능은 제공하지 않으므로, 1번 설명이 틀렸습니다."
   },
   {
     "id": 382,
@@ -1965,7 +1965,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "ARP(Address Resolution Protocol)는 IP 주소를 물리적 네트워크 주소인 MAC 주소로 변환하는 프로토콜입니다."
   },
   {
     "id": 383,
@@ -1989,7 +1989,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "Network Interface의 Secondary IP 기능을 통해 HA(고가용성) 솔루션 구성에 필요한 보조 IP 기능을 제공합니다."
   },
   {
     "id": 384,
@@ -2037,7 +2037,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "Cloud DB for MS-SQL에서는 재시작, 삭제, 모니터링은 가능하지만 DB Server 일시 정지 기능은 제공하지 않습니다."
   },
   {
     "id": 386,
@@ -2085,7 +2085,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "Standby Master는 자동으로 Master로 변경되지 않고 수동으로 Failover를 통해 Master로 변경해야 하므로, 2번 설명이 틀렸습니다."
   },
   {
     "id": 388,
@@ -2109,7 +2109,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "Organization은 NCP의 모범 사례에 따라 리소스를 프로비저닝할 수 있도록 실시간 지침을 제공하며, 리소스 관리와 비용 관리를 효율적으로 할 수 있게 해주는 관리 상품입니다."
   },
   {
     "id": 389,
@@ -2205,7 +2205,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "Real User Analytics(RUA)는 URL 등록만으로 웹 페이지의 응답 속도와 동작 상태를 실시간 모니터링하고, 사용자의 행동 패턴을 분석하여 시나리오를 작성할 수 있는 서비스입니다."
   },
   {
     "id": 393,
@@ -2229,7 +2229,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "Cloud DB for Redis는 4개의 CPU 코어를 제공합니다."
   },
   {
     "id": 394,
@@ -2469,7 +2469,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "Live Station은 생성된 채널에 대해 유지 비용이 발생하므로 3번이 틀린 설명입니다."
   },
   {
     "id": 404,
@@ -2493,7 +2493,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "WMS(Web service Monitoring System)에서 urlprefix 필터링 옵션을 사용하면 입력한 로그를 포함하는 모든 로그를 필터링할 수 있습니다."
   },
   {
     "id": 405,
@@ -2685,7 +2685,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "Kubernetes Service는 보안상의 이유로 Private Subnet에만 생성이 가능하며, Public Subnet에는 위치시킬 수 없습니다."
   },
   {
     "id": 413,
@@ -2829,7 +2829,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "Cloud DB for MySQL의 High-memory 타입에서 제공하는 가장 높은 VM 사양은 32vCPU, 256GB입니다."
   },
   {
     "id": 419,
@@ -2949,7 +2949,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "WMS(Web service Monitoring System)에서 url prefix 옵션을 사용하면 입력한 로그를 포함하는 모든 로그를 필터링할 수 있습니다."
   },
   {
     "id": 424,
@@ -2973,7 +2973,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "네이버 클라우드 플랫폼에서는 각 계정당 최대 3개의 VPC를 생성할 수 있습니다."
   },
   {
     "id": 425,
@@ -3069,7 +3069,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "Cloud Insight는 모니터링 서비스이며, 나머지 Cloud Connect, IPSEC VPN, SSL VPN은 모두 외부망과의 통신을 위한 네트워크 연결 서비스입니다."
   },
   {
     "id": 430,
@@ -3117,7 +3117,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "이더넷의 최대 MTU(Maximum Transmission Unit) 크기는 1500 바이트입니다. 이는 이더넷 프레임이 한 번에 전송할 수 있는 최대 데이터 크기를 의미하며, 네트워크 성능과 효율성에 중요한 역할을 합니다."
   },
   {
     "id": 431,
@@ -3141,7 +3141,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "Live Station 상품에서 다른 플랫폼에 동시 송출하는 기능은 'Re-stream'이라고 합니다. 이 기능은 하나의 라이브 스트림을 여러 플랫폼에 동시에 방송할 수 있게 해주어, 콘텐츠 제작자의 시청자 도달 범위를 확대하고 효율성을 높입니다."
   },
   {
     "id": 432,
@@ -3189,7 +3189,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "Live Station의 Output Protocol에서 RTSP는 일반적으로 사용되지 않습니다. HLS, MPEG-DASH, RTMP는 라이브 스트리밍에 널리 사용되는 프로토콜인 반면, RTSP는 주로 실시간 스트리밍 제어에 사용되며 Live Station의 일반적인 출력 프로토콜로는 적합하지 않습니다."
   },
   {
     "id": 434,
@@ -3213,7 +3213,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "네이버 클라우드 플랫폼의 GTM(Global Traffic Manager)에 대한 설명 중 잘못된 것은 '도메인 리소스에 대한 헬스체크 설정이 가능하다'입니다. 실제로 GTM은 IP 기반 리소스에 대해서만 헬스체크를 제공하며, 도메인 리소스에 대해서는 헬스체크 설정이 불가능합니다. 이는 GTM의 주요 특징 중 하나로, IP 기반 트래픽 관리와 로드밸런싱에 초점을 맞추고 있습니다."
   },
   {
     "id": 435,
@@ -3237,7 +3237,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "CDN(Content Delivery Network)에서 콘텐츠에 대한 접근을 제한하는 데 사용될 수 있는 것은 'Secure-Token'입니다. Secure-Token은 인증된 사용자만이 콘텐츠에 접근할 수 있도록 하는 보안 메커니즘으로, URL에 암호화된 토큰을 포함시켜 무단 접근을 방지합니다. 이를 통해 콘텐츠 제공자는 자신의 콘텐츠를 보호하고 접근을 제어할 수 있습니다."
   },
   {
     "id": 436,
@@ -3261,7 +3261,7 @@
       }
     ],
     "answer": [2, 4],
-    "explanation": ""
+    "explanation": "ACG(Access Control Group)와 Network ACL에 대한 설명 중 잘못된 것은 2번과 4번입니다. ACG는 서버당 최대 3개까지만 적용 가능합니다. (4개가 아님) ACG는 서버 단위로 적용되고, Network ACL은 서브넷 단위로 적용됩니다. (설명과 반대) 이 두 가지 설명은 ACG와 Network ACL의 실제 특성과 다릅니다. 이러한 차이점을 이해하는 것은 네트워크 보안 구성에 중요합니다."
   },
   {
     "id": 437,
@@ -3357,7 +3357,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "Network Load Balancer는 별도의 설정 없이 클라이언트의 실제 IP를 확인할 수 있습니다. 이는 Network Load Balancer가 OSI 모델의 4계층(전송 계층)에서 작동하여 패킷을 그대로 전달하기 때문입니다. 따라서 원본 클라이언트 IP 주소가 보존되어 백엔드 서버에서 직접 확인할 수 있습니다."
   },
   {
     "id": 441,
@@ -3381,7 +3381,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "하나의 VPC(Virtual Private Cloud)에서 생성 가능한 최대 ACG(Access Control Group) 수는 500개입니다. 이 제한은 네트워크 보안 관리의 복잡성을 제어하면서도 대규모 환경에서 충분한 유연성을 제공합니다. ACG는 인스턴스 수준의 방화벽 역할을 하며, 이러한 높은 제한은 다양한 보안 요구사항을 가진 복잡한 네트워크 구성을 지원합니다."
   },
   {
     "id": 442,
@@ -3405,7 +3405,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "CDN 서비스에서 캐싱된 콘텐츠의 원본 서버 변경 여부를 확인하는 주기를 지정하는 것은 'Cache Expiry'입니다. 이 설정은 콘텐츠의 신선도를 유지하는 데 중요한 역할을 합니다. Cache Expiry를 통해 CDN은 설정된 주기마다 원본 서버를 확인하여 콘텐츠 업데이트 여부를 판단하고, 필요 시 캐시를 갱신합니다. 이로써 사용자에게 항상 최신 콘텐츠를 제공하면서도 서버 부하를 줄일 수 있습니다."
   },
   {
     "id": 443,
@@ -3429,7 +3429,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "네이버 클라우드 CDN+에 대한 설명 중 잘못된 것은 1번입니다.  실제로, 네이버 클라우드 CDN+는 오리진(원본 서버)으로 Object Storage뿐만 아니라 다양한 소스를 사용할 수 있습니다. 이는 다음과 같은 이유로 중요합니다: 1. 유연성: 사용자는 자신의 웹 서버, 애플리케이션 서버, 또는 다른 스토리지 솔루션을 오리진으로 사용할 수 있습니다. 2. 다양한 사용 사례: 정적 콘텐츠뿐만 아니라 동적 콘텐츠도 CDN을 통해 제공할 수 있습니다. 3. 기존 인프라와의 통합: 사용자의 기존 인프라를 CDN과 쉽게 통합할 수 있습니다. 이러한 유연성은 CDN 서비스의 중요한 특징이며, 다양한 고객 요구를 충족시킬 수 있게 합니다."
   },
   {
     "id": 444,
@@ -3453,7 +3453,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "Cloud DB for MS-SQL에서 수행할 수 없는 작업은 'DB Server 일시 정지 기능'입니다. 일반적으로 클라우드 데이터베이스 서비스에서는 서버의 완전한 중지나 재시작은 가능하지만, '일시 정지' 기능은 제공되지 않습니다. 이는 데이터베이스의 일관성과 가용성을 유지하기 위함입니다. 재시작, 삭제, 모니터링 등의 기능은 일반적으로 제공되어 데이터베이스 관리와 운영에 필요한 기본적인 작업들을 수행할 수 있게 합니다."
   },
   {
     "id": 445,
@@ -3501,7 +3501,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "Cloud Insight 상품에 대한 설명 중 올바르지 않은 것은 3번 '사용자가 별도로 agent 설치를 해야 한다'입니다.  실제로 Cloud Insight는 대부분의 경우 에이전트 없이 작동하는 관리형 모니터링 서비스입니다. 주요 특징은 다음과 같습니다: 1. 자동 모니터링: 대부분의 클라우드 리소스에 대해 자동으로 모니터링을 수행합니다. 2. 에이전트 불필요: 사용자가 별도로 에이전트를 설치할 필요가 없습니다. 3. 통합 모니터링: VPC와 Classic 플랫폼의 리소스를 모두 모니터링할 수 있습니다. 4. 알림 기능: 설정된 임계값에 따라 알람을 받을 수 있습니다. 5. 사용자 정의: 통보 대상자 설정 등 사용자 지정 기능을 제공합니다. 이러한 특징들로 인해 Cloud Insight는 사용자 친화적이고 효율적인 모니터링 솔루션으로 평가받고 있습니다."
   },
   {
     "id": 447,
@@ -3549,7 +3549,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "Organization은 여러 계정을 중앙에서 관리하고 비용을 통합적으로 처리할 수 있게 해주는 네이버 클라우드 플랫폼의 서비스입니다. 주요 기능은 다음과 같습니다: 1. 통합 결제: 모든 하위 계정의 비용을 한 곳에서 결제할 수 있습니다. 2. 중앙 비용 관리: 모든 계정의 비용을 한 눈에 확인하고 관리할 수 있습니다. 3. 정책 관리: 각 계정별로 사용 가능한 서비스와 그 한도를 설정할 수 있습니다. 4. 계정 관리: 여러 계정을 효율적으로 관리할 수 있습니다. 이 서비스는 대규모 기업이나 복잡한 프로젝트를 관리하는 조직에 특히 유용하며, 비용 관리와 보안 정책 적용을 간소화합니다."
   },
   {
     "id": 449,
@@ -3573,7 +3573,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "SSL VPN은 로컬 PC에 클라이언트를 설치하여 내부 네트워크에 접근하는 방식이며, Cloud DB for MySQL 서버 접근에는 직접적으로 사용되지 않습니다. 다른 옵션들은 Cloud DB 접근에 대한 올바른 설명입니다."
   },
   {
     "id": 450,
@@ -3597,7 +3597,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "CLA(Content Delivery Network)는 주로 정적 콘텐츠 전송을 가속화하는 서비스로, Cloud DB, Image Optimizer, Object Storage와 같은 데이터 저장 및 처리 서비스와 자동 연계됩니다. 반면 서버(Server)는 CLA와 직접적인 자동 연계가 없어 정답으로 적절합니다."
   },
   {
     "id": 451,
@@ -3621,7 +3621,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "CLA(Content Delivery Network)에서 로그를 영구 보관하기 위해서는 Export Log 옵션을 사용해야 합니다. 이 옵션을 통해 CLA에서 발생한 로그를 Object Storage에 저장할 수 있어, 장기간 보관이 가능하고 필요시 분석에 활용할 수 있습니다."
   },
   {
     "id": 452,
@@ -3645,7 +3645,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "네이버 클라우드 플랫폼의 DB 서버 특징 중 올바르지 않은 것은 설치형 DB의 HA 구성에 관한 설명입니다. 설치형 DB의 경우, 클릭 한 번으로 HA 구성이 가능하지 않으며, 일반적으로 더 복잡한 설정 과정이 필요합니다. 다른 옵션들은 Cloud DB 서비스의 실제 특징을 올바르게 설명하고 있습니다."
   },
   {
     "id": 453,
@@ -3669,7 +3669,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "Cloud Activity Tracer는 네이버 클라우드 플랫폼에서 서브 계정들의 활동 내역을 추적하고 모니터링하는 서비스입니다. 이 서비스를 통해 메인 계정 관리자는 서브 계정들이 수행한 모든 작업과 변경 사항을 상세히 확인할 수 있어, 보안 관리와 감사에 유용합니다."
   },
   {
     "id": 454,
@@ -3693,7 +3693,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "Organization은 네이버 클라우드 플랫폼에서 여러 계정을 효과적으로 관리할 수 있는 서비스입니다. 이 서비스를 통해 기업은 모든 계정의 비용을 통합 결제하고, 중앙에서 비용을 확인할 수 있으며, 각 계정별로 사용 가능한 상품과 한도를 정책으로 설정하여 관리할 수 있습니다. 이는 대규모 조직의 클라우드 리소스 관리를 간소화하고 비용 통제를 용이하게 합니다."
   },
   {
     "id": 455,
@@ -3717,7 +3717,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "CLA (Cloud Log Analytics)에 대한 설명 중 잘못된 것은 4번 항목입니다. 일반적으로 연계 상품이 해지되더라도 CLA에 저장된 데이터는 자동으로 삭제되지 않습니다. CLA는 독립적인 서비스로, 데이터의 보존과 관리는 사용자의 설정에 따라 이루어집니다. 연계 상품 해지 시 자동 삭제는 데이터의 중요성과 규정 준수 요구사항을 고려할 때 적절하지 않은 정책입니다."
   },
   {
     "id": 456,
@@ -3741,7 +3741,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "서브넷 마스크 /15는 첫 15비트가 네트워크 부분을 나타냅니다. 이는 2^17(131,072)개의 IP 주소를 제공합니다. 10.0.0.0/15의 IP 주소 범위는 다음과 같습니다: 시작 IP: 10.0.0.0 끝 IP: 10.1.255.255 이 범위는 10.0.0.0부터 10.1.255.255까지의 모든 IP 주소를 포함하며, 총 131,072개의 사용 가능한 IP 주소를 제공합니다."
   },
   {
     "id": 457,
@@ -3765,7 +3765,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "Live Station Storage에서 원본 영상을 저장하고 현재 라이브 중인 영상을 과거로 되돌려 볼 수 있는 기능은 'Recording' 옵션을 통해 설정할 수 있습니다. 이 옵션을 활성화하면 라이브 스트림을 녹화하여 저장하고, DVR(Digital Video Recording) 기능을 사용할 수 있어 최대 6시간 전까지의 영상을 시청자가 되돌려 볼 수 있게 됩니다."
   },
   {
     "id": 458,
@@ -3789,7 +3789,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "GRM(Global Route Manager)의 로드밸런싱 타입 중 Weighted 방식은 각 리소스에 가중치를 할당하여 트래픽을 분산하는 방법입니다. 이 방식을 사용하면 관리자가 각 서버나 리소스의 처리 능력에 따라 가중치를 설정할 수 있어, 더 높은 성능의 서버에 더 많은 트래픽을 할당하는 등 효율적인 부하 분산이 가능합니다."
   },
   {
     "id": 459,
@@ -3837,7 +3837,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "로드밸런서에 SSL 인증서를 추가하기 위해 연동해야 하는 서비스는 Certificate Manager입니다. 이 서비스는 SSL/TLS 인증서를 중앙에서 관리하고 배포할 수 있게 해주며, 로드밸런서와 같은 다양한 클라우드 리소스에 인증서를 쉽게 적용할 수 있도록 합니다. Certificate Manager를 통해 인증서 갱신과 관리가 간소화되어 보안 설정이 더욱 효율적으로 이루어집니다."
   },
   {
     "id": 461,
@@ -3884,8 +3884,8 @@
         "text": "모니터링은 초 단위로 가능하다."
       }
     ],
-    "answer": 2,
-    "explanation": ""
+    "answer": 3,
+    "explanation": "WMS는 전 세계 여러 지역에서 웹사이트의 가용성과 응답 속도를 모니터링할 수 있는 서비스입니다."
   },
   {
     "id": 463,
@@ -3909,7 +3909,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "네이버 클라우드 플랫폼의 Hadoop Cluster는 HDFS, YARN, Hive, Presto, Ranger 등을 기본 컴포넌트로 제공하지만, Tajo는 포함되어 있지 않습니다."
   },
   {
     "id": 464,
@@ -3925,7 +3925,7 @@
       },
       {
         "num": 3,
-        "text": "Ambar"
+        "text": "Ambari"
       },
       {
         "num": 4,
@@ -3933,7 +3933,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "Apache Ambari는 Hadoop 클러스터를 위한 웹 기반 관리 도구로, 네이버 클라우드 플랫폼의 Hadoop Cluster에서 클러스터 구성, 관리, 모니터링을 위해 제공됩니다."
   },
   {
     "id": 465,
@@ -3957,7 +3957,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "VPC 환경의 Cloud DB는 멀티 존(Zone) 기능은 지원하지만, 멀티 리전(Region) 기능은 제공하지 않습니다. Private Subnet 생성 시 Public 도메인 생성이 불가하며, ACG(Access Control Group)는 자동 생성됩니다."
   },
   {
     "id": 466,
@@ -3981,7 +3981,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "Cloud DB for MySQL에서 DB 서버 스펙 변경 시, 마스터와 스탠바이 DB 모두의 스펙이 동시에 변경됩니다. 마스터만 변경되는 것이 아닙니다."
   },
   {
     "id": 467,
@@ -4005,7 +4005,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "Cloud Log Analytics는 특정 템플릿 로그에 한정되지 않고, Custom Log 기능을 통해 사용자가 원하는 다양한 로그를 수집하고 분석할 수 있습니다."
   },
   {
     "id": 468,
@@ -4029,7 +4029,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "Sub Account(서브 계정)은 비밀번호 만료일 설정 기능을 제공하지 않습니다. 다른 보기들은 모두 서브 계정의 올바른 특징들입니다."
   },
   {
     "id": 469,
@@ -4053,7 +4053,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "Cloud Advisor는 네이버 클라우드 플랫폼의 베스트 프랙티스를 기반으로 사용자의 클라우드 환경을 분석하고 최적화 방안을 제시하는 서비스입니다."
   },
   {
     "id": 470,
@@ -4101,7 +4101,7 @@
       }
     ],
     "answer": [1, 4],
-    "explanation": ""
+    "explanation": "Live Station에서는 기본적으로 HLS & DASH 프로토콜이 출력 프로토콜로 지정되며(1번), 채널 생성 중일 때는 '준비' 상태로 표시됩니다(4번). CDN 사용은 선택사항이며(2번 오답), Custom 화질 지정은 이미 제공되는 기능입니다(3번 오답)."
   },
   {
     "id": 472,
@@ -4125,7 +4125,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "VPC 환경의 로드밸런서에서 Small, Medium, Large 성능 구분의 기준은 초당 연결 수(Connections Per Second, CPS)입니다. 이는 로드밸런서가 초당 처리할 수 있는 새로운 연결의 수를 의미합니다."
   },
   {
     "id": 473,
@@ -4149,7 +4149,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "CDN 서비스의 원본 서버로는 Object Storage를 설정할 수 있습니다. Archive Storage, Block Storage, NAS는 CDN의 원본 서버로 직접 설정할 수 없습니다."
   },
   {
     "id": 474,
@@ -4173,7 +4173,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "로드밸런서의 기본 분배 알고리즘으로는 Round-robin이 적용됩니다. Round-robin은 요청을 순차적으로 각 서버에 균등하게 분배하는 가장 기본적이고 단순한 방식입니다."
   },
   {
     "id": 475,
@@ -4197,7 +4197,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "CDN 캐시에서 HIT는 요청된 콘텐츠가 캐시 서버에 이미 저장되어 있어 원본 서버에 접근하지 않고 즉시 응답할 수 있는 상태를 의미합니다."
   },
   {
     "id": 476,
@@ -4245,7 +4245,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "VOD Transcoder는 일반적으로 MP4 포맷으로 변환하는데, MP4는 웹 스트리밍과 모바일 기기 호환성이 뛰어나 가장 널리 사용되는 동영상 포맷입니다."
   },
   {
     "id": 478,
@@ -4269,7 +4269,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "Application Load Balancer(ALB)는 Layer 7에서 동작하며 HTTP/2.0을 지원하는 고급 로드밸런서로, 웹 애플리케이션에 최적화된 기능을 제공합니다."
   },
   {
     "id": 479,
@@ -4317,7 +4317,7 @@
       }
     ],
     "answer": [1, 4],
-    "explanation": ""
+    "explanation": "Cloud Hadoop의 스토리지로는 Object Storage와 Block Storage가 주로 사용됩니다. Object Storage는 대용량 데이터 처리에 적합하고, Block Storage는 높은 I/O 성능이 필요한 경우에 활용됩니다."
   },
   {
     "id": 481,
@@ -4341,7 +4341,7 @@
       }
     ],
     "answer": 4,
-    "explanation": ""
+    "explanation": "Private 서브넷의 외부 통신을 위해서는 NAT Gateway가 필요하며, NACL(Network Access Control List)의 아웃바운드 규칙을 수정하여 NAT Gateway로 트래픽을 라우팅하도록 설정해야 합니다."
   },
   {
     "id": 482,
@@ -4413,7 +4413,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "네이버 클라우드 플랫폼의 Hadoop Cluster에는 Impala가 포함되어 있지 않습니다. Impala는 Cloudera에서 개발한 SQL 쿼리 엔진으로, 네이버 클라우드의 기본 Hadoop 구성에는 포함되지 않습니다."
   },
   {
     "id": 485,
@@ -4437,7 +4437,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "/var/log/dmesg는 Linux 시스템의 부팅 과정에서 발생하는 커널 메시지와 시스템 부팅 메시지를 기록하는 로그 파일입니다."
   },
   {
     "id": 486,
@@ -4461,7 +4461,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "Traceroute는 ICMP 프로토콜과 TTL(Time To Live) 값을 이용하여 목적지까지의 네트워크 경로와 각 홉(hop)에서의 지연 시간을 확인할 수 있는 리눅스 네트워크 진단 도구입니다."
   },
   {
     "id": 487,
@@ -4485,7 +4485,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "Cloud Log Analytics(CLA)에서 Export Log 기능을 사용하면 로그를 Object Storage에 영구 보관할 수 있어, 장기 보관이 필요한 로그 데이터를 안전하게 저장할 수 있습니다."
   },
   {
     "id": 488,
@@ -4509,7 +4509,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "VPC 환경에서 하나의 NIC당 추가할 수 있는 Secondary IP의 개수는 3개로 제한되지 않습니다. 실제로는 더 많은 Secondary IP를 할당할 수 있어 3번 보기가 틀린 설명입니다."
   },
   {
     "id": 489,
@@ -4533,7 +4533,7 @@
       }
     ],
     "answer": 2,
-    "explanation": ""
+    "explanation": "/23 서브넷 마스크는 2개의 연속된 /24 네트워크를 포함하므로, 192.168.31.0/23은 192.168.30.0부터 192.168.31.255까지의 IP 범위를 갖습니다."
   },
   {
     "id": 490,
@@ -4557,7 +4557,7 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "VOD Transcoder에서는 job 생성 후 설정 변경이 불가능합니다. 생성 시 정확한 설정이 중요하며, 변경이 필요할 경우 새로운 job을 만들어야 합니다."
   },
   {
     "id": 491,
@@ -4581,7 +4581,7 @@
       }
     ],
     "answer": [1, 2, 3],
-    "explanation": ""
+    "explanation": "Sub account는 정책(policy)을 통해 권한을 관리하고, 2차 인증과 일시정지 기능을 제공합니다. 단, 비밀번호 만료일은 사용자가 변경할 수 있어 4번 선택지는 틀립니다."
   },
   {
     "id": 492,
@@ -4605,7 +4605,7 @@
       }
     ],
     "answer": 3,
-    "explanation": ""
+    "explanation": "Cloud DB for MySQL의 High-memory 타입에서 제공하는 최고 VM 사양은 32CPU와 256GB 메모리입니다. 이는 대용량 데이터베이스 작업에 적합한 높은 성능과 메모리 용량을 제공합니다."
   },
   {
     "id": 493,
@@ -4629,6 +4629,6 @@
       }
     ],
     "answer": 1,
-    "explanation": ""
+    "explanation": "Cloud Activity Tracer는 Console 활동뿐만 아니라 API 호출 등 다양한 클라우드 활동 로그를 수집합니다. 따라서 1번 선택지가 잘못되었습니다. 이 서비스는 포괄적인 활동 모니터링을 제공하여 보안과 감사에 중요한 역할을 합니다."
   }
 ]

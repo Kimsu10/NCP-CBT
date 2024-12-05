@@ -72,7 +72,7 @@ public class PracticeService {
             if (existingBookmark != null) {
                 return ResponseEntity.ok(questionId);
             } else {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.notFound().build(); //여기를 204로 하자
             }
 
         } catch (Exception e) {
