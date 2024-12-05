@@ -78,6 +78,7 @@ public class JwtTokenProvider {
         // refresh token 생성 : access token 의 갱신을 위해 사용된다. (1주일)
         Date refreshExpiration = new Date(now + 1000 * 60 * 60 * 24 * 7);
         String refreshToken = Jwts.builder()
+                .setSubject(authentication.getName())
                 .setExpiration(refreshExpiration)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -148,7 +149,7 @@ public class JwtTokenProvider {
     /**
      * 토큰 갱신 : 액세스 토큰을 새로 발행하여 Authentication 객체에 다시 세팅
      */
-    public String updateAccessToken(Authentication authentication) {
+    public String refreshAccessToken(Authentication authentication) {
         log.info("Updadte JWT token = {}", authentication);
         // 유저 권한 가져오기
         String authorities = authentication.getAuthorities().stream()
@@ -168,6 +169,8 @@ public class JwtTokenProvider {
                 .compact();
         log.info("generated access Token = {}", accessToken);
 
+        setAuthenticationInSecurityContext(authentication, accessToken);
+
         return accessToken;
     }
 
@@ -185,7 +188,7 @@ public class JwtTokenProvider {
     /**
      * 액세스 토큰 유효성 검사
      */
-    public boolean validateToken(String accessToken, String refreshToken, Authentication authentication) {
+    public boolean validateToken(String accessToken) {
         log.info("do validate Token ! access token: {}", accessToken);
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken);
@@ -194,13 +197,6 @@ public class JwtTokenProvider {
             log.info("Invalid JWT token, {}", e);
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT token, {}", e);
-
-            // 액세스 토큰 만료시 리프레시 토큰을 확인하고, 리프레시 토큰이 유효하면 토큰을 새로 발행.
-            if(validateRefreshToken(refreshToken)) {
-                String newToken = updateAccessToken(authentication);
-                setAuthenticationInSecurityContext(authentication, newToken);
-            }
-
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT token, {}", e);
         } catch (IllegalArgumentException e) {

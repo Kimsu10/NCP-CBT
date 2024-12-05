@@ -6,6 +6,7 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -25,6 +26,7 @@ public class JwtAuthFilter extends GenericFilterBean {
         log.info("do JWT Filter ! request = {}", request);
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
         String path = ((HttpServletRequest) request).getRequestURI();
 
         // 모든 로그인 요청에 대해 예외 처리 (필터를 통과시킴)
@@ -36,19 +38,24 @@ public class JwtAuthFilter extends GenericFilterBean {
 
         // Request Header 에서 access-token 추출
         String accessToken = resolveToken((HttpServletRequest) request);
-        log.info("token is null ? {}", accessToken);
+        log.info("accessT$oken is null ? {}", accessToken);
 
         // Cookie 에서 refresh-token 추출
         String refreshToken = getCookie((HttpServletRequest) request);
         log.info("refreshToken is null ? {}", refreshToken);
 
         // validate Token 으로 유효성 검사
-        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
-        if(accessToken != null && jwtTokenProvider.validateToken(accessToken, refreshToken, authentication)) {
-            log.info("validate token");
-            // 토큰이 유효할 경우 토큰에서 Authentication 객체를 가져와서 SecurityContext 에 저장
+        if(accessToken != null && jwtTokenProvider.validateToken(accessToken)) {
+            // 액세스 토큰이 유효한 경우
+            log.info("validate token : {}", accessToken);
+            Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("set Authentication to SecurityContextHolder");
+        } else if (refreshToken != null && jwtTokenProvider.validateRefreshToken(refreshToken)) {
+            // 액세스 토큰이 없거나 혹은 유효하지 않지만 리프레시 토큰이 유효한 경우
+            log.info("validate refresh token : {}", refreshToken);
+        } else {
+            // 둘다 유효하지 않은 경우
+            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Both access token and refresh token are invalid");
         }
 
         log.info("success JWT Filter ! SecurityContextHolder = {}", SecurityContextHolder.getContext());
