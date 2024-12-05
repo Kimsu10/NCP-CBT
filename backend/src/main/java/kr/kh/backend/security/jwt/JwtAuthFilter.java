@@ -50,13 +50,14 @@ public class JwtAuthFilter extends GenericFilterBean {
             log.info("validate token : {}", accessToken);
             Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } else if (refreshToken != null && jwtTokenProvider.validateRefreshToken(refreshToken)) {
-            // 액세스 토큰이 없거나 혹은 유효하지 않지만 리프레시 토큰이 유효한 경우
-            log.info("validate refresh token : {}", refreshToken);
-        } else {
-            // 둘다 유효하지 않은 경우
-            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Both access token and refresh token are invalid");
         }
+//        else if (refreshToken != null && jwtTokenProvider.validateRefreshToken(refreshToken)) {
+//            // 액세스 토큰이 없거나 혹은 유효하지 않지만 리프레시 토큰이 유효한 경우
+//            log.info("validate refresh token : {}", refreshToken);
+//        } else {
+//            // 둘다 유효하지 않은 경우
+//            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Both access token and refresh token are invalid");
+//        }
 
         log.info("success JWT Filter ! SecurityContextHolder = {}", SecurityContextHolder.getContext());
         chain.doFilter(request, response);
