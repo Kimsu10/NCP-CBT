@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import kr.kh.backend.dto.EmailVerificationDTO;
+import kr.kh.backend.domain.User;
 import kr.kh.backend.dto.oauth2.OauthLoginDTO;
 import kr.kh.backend.dto.security.JwtToken;
 import kr.kh.backend.dto.security.LoginDTO;
@@ -16,14 +17,19 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
+
+import java.time.Duration;
 
 @RestController
 @Slf4j
@@ -165,16 +171,18 @@ public class UserController {
         // JWT 토큰 생성
         JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
 
-        // 토큰 넣어서 전송
-        // refresh token 은 쿠키 (HttpOnly) 로 전송
-        Cookie refreshTokenCookie = new Cookie("refreshToken", jwtToken.getRefreshToken());
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(60 * 60 * 24); // 쿠키 유효기간 1일
-        response.addCookie(refreshTokenCookie);
+        // HttpOnly 쿠키에 리프레시 토큰 넣어서 전송
+        Cookie refreshCookie = new Cookie("refreshToken", jwtToken.getRefreshToken());
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setMaxAge(24 * 60 * 60);
+        refreshCookie.setSecure(false);
+        refreshCookie.setPath("/");
+        response.addCookie(refreshCookie);
 
         return ResponseEntity.ok()
                 .header("Authorization", "Bearer " + jwtToken.getAccessToken())
+                .header("Set-Cookie", "refreshToken=" + jwtToken.getRefreshToken()
+                        + "; Path=/; HttpOnly; Max-Age=86400; SameSite=Lax" )
                 .build();
     }
 
@@ -192,13 +200,26 @@ public class UserController {
         // JWT 토큰 생성
         JwtToken jwtToken = jwtTokenProvider.generateToken(authentication);
 
-        // 토큰 넣어서 전송
-        // refresh token 은 쿠키 (HttpOnly) 로 전송
-        Cookie refreshTokenCookie = new Cookie("refreshToken", jwtToken.getRefreshToken());
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(60 * 60 * 24); // 쿠키 유효기간 1일
-        response.addCookie(refreshTokenCookie);
+        // HttpOnly 쿠키에 리프레시 토큰 넣어서 전송
+        Cookie refreshCookie = new Cookie("refreshToken", jwtToken.getRefreshToken());
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setMaxAge(24 * 60 * 60);
+        refreshCookie.setSecure(false);
+        refreshCookie.setPath("/");
+        response.addCookie(refreshCookie);
+
+        return ResponseEntity.ok()
+                .header("Authorization", "Bearer " + jwtToken.getAccessToken())
+                .header("Set-Cookie", "refreshToken=" + jwtToken.getRefreshToken()
+                        + "; Path=/; HttpOnly; Max-Age=86400; SameSite=Lax" )
+                .build();
+    }
+
+    // 토큰 갱신
+    @PostMapping("/refreshToken")
+    public ResponseEntity<?> refreshToken(@RequestBody JwtToken jwtToken) {
+        log.info("액세스 토큰 갱신 요청 : 액세스 {}, 리프레시 {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
+
 
         return ResponseEntity.ok()
                 .header("Authorization", "Bearer " + jwtToken.getAccessToken())

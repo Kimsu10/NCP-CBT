@@ -4,7 +4,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -24,6 +26,7 @@ public class JwtAuthFilter extends GenericFilterBean {
         log.info("do JWT Filter ! request = {}", request);
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
         String path = ((HttpServletRequest) request).getRequestURI();
 
         // 모든 로그인 요청에 대해 예외 처리 (필터를 통과시킴)
@@ -33,17 +36,26 @@ public class JwtAuthFilter extends GenericFilterBean {
             return;
         }
 
-        // Request Header 에서 JWT 토큰 추출
-        String token = resolveToken((HttpServletRequest) request);
-        log.info("token is null ? {}", token);
+        // Request Header 에서 access-token 추출
+        String accessToken = resolveToken((HttpServletRequest) request);
+        log.info("accessT$oken is null ? {}", accessToken);
+
+        // Cookie 에서 refresh-token 추출
+        String refreshToken = getCookie((HttpServletRequest) request);
+        log.info("refreshToken is null ? {}", refreshToken);
 
         // validate Token 으로 유효성 검사
-        if(token != null && jwtTokenProvider.validateToken(token)) {
-            log.info("validate token");
-            // 토큰이 유효할 경우 토큰에서 Authentication 객체를 가져와서 SecurityContext 에 저장
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
+        if(accessToken != null && jwtTokenProvider.validateToken(accessToken)) {
+            // 액세스 토큰이 유효한 경우
+            log.info("validate token : {}", accessToken);
+            Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("set Authentication to SecurityContextHolder");
+        } else if (refreshToken != null && jwtTokenProvider.validateRefreshToken(refreshToken)) {
+            // 액세스 토큰이 없거나 혹은 유효하지 않지만 리프레시 토큰이 유효한 경우
+            log.info("validate refresh token : {}", refreshToken);
+        } else {
+            // 둘다 유효하지 않은 경우
+            httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Both access token and refresh token are invalid");
         }
 
         log.info("success JWT Filter ! SecurityContextHolder = {}", SecurityContextHolder.getContext());
@@ -51,7 +63,7 @@ public class JwtAuthFilter extends GenericFilterBean {
     }
 
     /**
-     * 토큰 추출 : 주어진 HttpServletRequest 의 Authorization 헤더에서 Bearer 접두사로 시작하는 토큰을 추출하여 반환
+     * 액세스 토큰 추출 : 주어진 HttpServletRequest 의 Authorization 헤더에서 Bearer 접두사로 시작하는 토큰을 추출하여 반환
      */
     private String resolveToken(HttpServletRequest request) {
         log.info("resolveToken request = {}", request);
@@ -60,7 +72,23 @@ public class JwtAuthFilter extends GenericFilterBean {
             log.info("bearerToken = {}", bearerToken);
             return bearerToken.substring(7);
         }
-        log.info("Token null");
+        log.info("Access Token null");
         return null;
+    }
+
+    /**
+     * 리프레시 토큰 추출 : HttpOnly 쿠키에서 'refreshToken' 이름의 쿠키를 추출하여 반환
+     */
+    private String getCookie(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("refreshToken")) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        log.info("Refresh Token null");
+        return "Refresh Token null";
     }
 }

@@ -6,6 +6,7 @@ import styled from "styled-components";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import useResponsive from "../../hooks/useResponsive";
+import useTokenFunction from "../../hooks/useTokenFunction";
 
 const Main = () => {
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ const Main = () => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({ code, state }),
     });
 
@@ -47,6 +49,8 @@ const Main = () => {
       const data = await response.headers.get("Authorization");
       const accessToken = data.split(" ")[1];
       sessionStorage.setItem("accessToken", accessToken);
+      // 쿠키도 추가해야해 !!!!!
+      response.headers.get("Set-Cookie");
       navigate("/");
       window.location.reload();
     } else {
@@ -61,6 +65,7 @@ const Main = () => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({ code }),
     });
 
@@ -74,6 +79,9 @@ const Main = () => {
       const data = await response.headers.get("Authorization");
       const accessToken = data.split(" ")[1];
       sessionStorage.setItem("accessToken", accessToken);
+      // 쿠키도 추가해야해 !!!!!
+      response.headers.get("Set-Cookie");
+
       navigate("/");
       window.location.reload();
     } else {

@@ -31,6 +31,10 @@ public interface UserMapper {
     @Select("SELECT id FROM user WHERE nickname = #{username}")
     Long findUserIdByUsername(String username);
 
+    // 우리 user_id 는 int 아니었나용...
+    @Select("SELECT id FROM user WHERE nickname = #{username}")
+    int findId(String nickname);
+
     // 이메일 중복 확인
     @Select("SELECT COUNT(*) > 0 FROM user WHERE email = #{email}")
     boolean isEmailExisted(String email);
