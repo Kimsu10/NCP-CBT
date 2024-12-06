@@ -204,11 +204,11 @@ const Practice = () => {
         handleBookmark={handleBookmark}
         isComplaintModal={isComplaintModal}
       />
-      <ProblemBox key={currentIdx} data-aos={animation}>
-        {currentIdx > 2 ? (
-          <NotFound />
-        ) : currentQuestion ? (
-          <div>
+      {currentIdx > 2 ? (
+        <NotFound />
+      ) : currentQuestion ? (
+        <>
+          <ProblemBox key={currentIdx} data-aos={animation}>
             <BookmarkButton
               onClick={handleBookmark}
               $isBookmarked={isBookmarked}
@@ -324,11 +324,12 @@ const Practice = () => {
                 </ExplanationText>
               </ExplanationBox>
             )}
-          </div>
-        ) : (
-          <span>문제가 없습니다.</span>
-        )}
-      </ProblemBox>
+          </ProblemBox>
+        </>
+      ) : (
+        <span>문제가 없습니다.</span>
+      )}
+      {/* </ProblemBox> */}
       {currentIdx > 2 ? (
         ""
       ) : (
