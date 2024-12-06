@@ -21,4 +21,14 @@ export const absoluteCenter = css`
 export const fullSize = css`
   width: 100%;
   height: 100%;
+
+  .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 90vh;
+  }
+
+  footer {
+    margin-top: auto;
+  }
 `;

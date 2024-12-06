@@ -7,7 +7,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import useResponsive from "../../hooks/useResponsive";
 import useTokenFunction from "../../hooks/useTokenFunction";
-
+import { fullSize } from "../../styles/Variables";
 const Main = () => {
   const navigate = useNavigate();
 
@@ -117,31 +117,42 @@ const Main = () => {
     useResponsive();
 
   return (
-    <>
+    <MainContainer>
       <SlideContainer>
         <Slider {...settings}>
           <div>
             <img
               src="../../../../images/NAVER-NCBT.png"
               style={{ width: "100%" }}
+              className="slide-img"
+              alt="slide-img"
             />
           </div>
           <div>
             <a
               href="https://bizschool.naver.com/online/courses/76?order=RECENT"
               target="_blank"
+              rel="noreferrer"
             >
               <img
                 src="../../../../images/NAVER-edu-link.png"
                 style={{ width: "100%" }}
+                className="slide-img"
+                alt="slide-img"
               />
             </a>
           </div>
           <div>
-            <a href="https://edu.ncloud.com/certi" target="_blank">
+            <a
+              href="https://edu.ncloud.com/certi"
+              target="_blank"
+              rel="noreferrer"
+            >
               <img
                 src="../../../../images/NAVER-test-link.png"
                 style={{ width: "100%" }}
+                className="slide-img"
+                alt="slide-img"
               />
             </a>
           </div>
@@ -210,13 +221,18 @@ const Main = () => {
           </div>
         </DesktopContainer>
       )}
-    </>
+    </MainContainer>
   );
 };
 export default Main;
 
+const MainContainer = styled.div`
+  min-height: 70.9vh;
+`;
+
 const SlideContainer = styled.div`
   margin: 5rem 0;
+  min-height: 10rem;
 `;
 
 const MobileContainer = styled.div`
