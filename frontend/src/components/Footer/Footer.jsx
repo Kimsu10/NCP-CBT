@@ -86,7 +86,7 @@ const FooterBody = styled.div`
       height: 3rem;
       font-size: 1.2rem;
       position: absolute;
-      top: -120%;
+      top: -7rem;
       right: 0;
       display: none;
     }

@@ -53,9 +53,9 @@ export default NotFound;
 
 const WhoAreYou = styled.div`
   width: 100%;
-  height: 100%;
-  margin: 2rem;
-  padding: 2rem 0;
+  height: auto;
+  min-height: 67vh;
+  margin: 4rem 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -115,12 +115,13 @@ const WhoAreYou = styled.div`
 
   .button-container {
     display: flex;
-    width: 50%;
+    width: 24rem;
     justify-content: center;
     gap: 2rem;
 
     button {
       width: 12rem;
+      font-size: 1.1rem;
     }
   }
 `;
