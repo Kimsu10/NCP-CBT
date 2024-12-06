@@ -3,12 +3,15 @@ import styled from "styled-components";
 import AuthModal from "../Modal/AuthModal";
 import { useNavigate, useParams } from "react-router-dom";
 
-const Nav = ({ username }) => {
+const Nav = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
   const [isListOpen, setIsListOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [username, setUsername] = useState(
+    sessionStorage.getItem("username") || "",
+  );
   const [isToken, setIsToken] = useState(null);
   const token = sessionStorage.getItem("accessToken");
   const navigate = useNavigate();
@@ -17,8 +20,12 @@ const Nav = ({ username }) => {
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem("accessToken");
+    const storedUsername = sessionStorage.getItem("username");
     if (storedToken) {
       setIsToken(storedToken);
+    }
+    if (storedUsername) {
+      setUsername(storedUsername);
     }
   }, [token]);
 
@@ -42,6 +49,7 @@ const Nav = ({ username }) => {
 
   const logout = () => {
     sessionStorage.removeItem("accessToken");
+    sessionStorage.removeItem("username", username);
     window.location.reload();
   };
 
@@ -88,7 +96,7 @@ const Nav = ({ username }) => {
                 </Username>
                 {isProfileOpen && (
                   <ProfileMenu>
-                    <UserProfile>내 정보</UserProfile>
+                    {/* <UserProfile>내 정보</UserProfile> 나중에 추가작업시*/}
                     <LogoutButton onClick={logout}>로그아웃</LogoutButton>
                   </ProfileMenu>
                 )}

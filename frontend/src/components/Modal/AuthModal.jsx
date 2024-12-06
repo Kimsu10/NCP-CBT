@@ -7,7 +7,6 @@ import axios from "axios";
 const AuthModal = ({ type, closeModal }) => {
   const navigate = useNavigate();
   const [showLoginForm, setShowLoginForm] = useState(false);
-  // 내가 왜 변수명을 이렇게 헷갈리게 적어서...ㅠ
   const [isEmailAvailable, setIsEmailAvailable] = useState(null); // 이메일 중복확인 및 인증코드 요청
   const [isRequestBlocked, setIsRequestBlocked] = useState(false); // 이메일 인증 코드 버튼 막기
   const [remainingTime, setRemainingTime] = useState(0); // 이메일 인증시 시간 제한
@@ -112,10 +111,9 @@ const AuthModal = ({ type, closeModal }) => {
       const { accessToken } = response.data;
 
       sessionStorage.setItem("accessToken", accessToken);
-
-      // window.location.reload();
-      navigate("/"); // Q. 메인으로 이동하는게 더 좋을까?
+      sessionStorage.setItem("username", username);
       closeModal();
+      navigate("/");
     } catch (err) {
       console.error(
         "login error:",
@@ -228,8 +226,8 @@ const AuthModal = ({ type, closeModal }) => {
       });
 
       if (response.ok) {
-        setIsEmailVerified(true); // 이제 해야함
-        setIsEmailAvailable(true); // 성공
+        setIsEmailVerified(true);
+        setIsEmailAvailable(true);
         alert("이메일 인증 성공!");
       } else {
         const errorMessage = await response.text();
@@ -284,6 +282,7 @@ const AuthModal = ({ type, closeModal }) => {
                 type="submit"
                 className="login-btn"
                 disabled={!isLoginValid}
+                onClick={() => navigate("/")}
               >
                 로그인
               </button>

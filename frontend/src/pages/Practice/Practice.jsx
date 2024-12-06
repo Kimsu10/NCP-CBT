@@ -329,7 +329,6 @@ const Practice = () => {
       ) : (
         <span>문제가 없습니다.</span>
       )}
-      {/* </ProblemBox> */}
       {currentIdx > 2 ? (
         ""
       ) : (
