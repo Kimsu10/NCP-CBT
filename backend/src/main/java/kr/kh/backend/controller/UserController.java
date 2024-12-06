@@ -138,14 +138,22 @@ public class UserController {
                 .build();
     }
 
-    // 토큰 갱신
+    // 토큰 재발급
     @PostMapping("/refreshToken")
-    public ResponseEntity<?> refreshToken(@RequestBody JwtToken jwtToken) {
-        log.info("액세스 토큰 갱신 요청 : 액세스 {}, 리프레시 {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
+    public ResponseEntity<?> refreshToken(HttpServletResponse response) {
+        JwtToken newJwtToken = jwtTokenProvider.generateToken(SecurityContextHolder.getContext().getAuthentication());
 
+        Cookie refreshCookie = new Cookie("refreshToken", newJwtToken.getRefreshToken());
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setMaxAge(24 * 60 * 60);
+        refreshCookie.setSecure(false);
+        refreshCookie.setPath("/");
+        response.addCookie(refreshCookie);
 
         return ResponseEntity.ok()
-                .header("Authorization", "Bearer " + jwtToken.getAccessToken())
+                .header("Authorization", "Bearer " + newJwtToken.getAccessToken())
+                .header("Set-Cookie", "refreshToken=" + newJwtToken.getRefreshToken()
+                        + "; Path=/; HttpOnly; Max-Age=86400; SameSite=Lax" )
                 .build();
     }
 

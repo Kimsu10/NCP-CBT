@@ -17,10 +17,43 @@ const Nav = ({ username }) => {
 
   useEffect(() => {
     const storedToken = sessionStorage.getItem("accessToken");
+
     if (storedToken) {
       setIsToken(storedToken);
+    } else {
+      handleUpdateToken();
     }
-  }, [token]);
+  }, []);
+
+  const handleUpdateToken = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/refreshToken", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }).catch(err => console.log(err));
+
+      if (response.ok) {
+        const newAccessToken = response.headers.get("Authorization");
+        console.log(newAccessToken);
+        const accessToken = newAccessToken.split(" ")[1];
+        sessionStorage.setItem("accessToken", accessToken);
+        response.headers.get("Set-Cookie");
+
+        // navigate("/");
+        window.location.reload();
+      }
+
+      if (response.status === 401) {
+        alert("사용자 정보가 만료되었습니다. 다시 로그인 해주세요.");
+        navigate("/");
+      }
+    } catch (error) {
+      console.log("요청 중 오류가 발생했습니다", error);
+    }
+  };
 
   const openModal = type => {
     setModalType(type);

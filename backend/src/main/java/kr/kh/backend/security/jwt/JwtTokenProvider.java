@@ -3,6 +3,7 @@ package kr.kh.backend.security.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import kr.kh.backend.domain.Token;
 import kr.kh.backend.domain.TokenStatus;
 import kr.kh.backend.dto.security.JwtToken;
@@ -82,17 +83,18 @@ public class JwtTokenProvider {
                 .setExpiration(refreshExpiration)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+        log.info("generated refresh Token = {}", refreshToken);
 
         // refreshs token 디비에 저장
         int userId = userMapper.findId(authentication.getName());
         Token token = new Token();
         token.setToken(refreshToken);
-        token.setId(userId);
+        token.setUserId(userId);
         token.setStatus(TokenStatus.VALID);
         token.setExpirationDate(refreshExpiration);
         int result = tokenMapper.saveToken(token);
 
-        log.info("generated refresh Token = {}, 저장 완료 ? {}", refreshToken, result == 1 ? "YES" : "NO");
+        log.info("리프레시 토큰 저장 완료 ? {}", refreshToken, result == 1 ? "YES" : "NO");
 
         return JwtToken.builder()
                 .grantType("Bearer")
@@ -147,10 +149,10 @@ public class JwtTokenProvider {
     }
 
     /**
-     * 토큰 갱신 : 액세스 토큰을 새로 발행하여 Authentication 객체에 다시 세팅
+     * 토큰 재발급 : 액세스 토큰을 새로 발행한다.
      */
     public String refreshAccessToken(Authentication authentication) {
-        log.info("Updadte JWT token = {}", authentication);
+        log.info("NEW access token = {}", authentication);
         // 유저 권한 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -167,22 +169,8 @@ public class JwtTokenProvider {
                 .setExpiration(accessExpiration)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
-        log.info("generated access Token = {}", accessToken);
-
-        setAuthenticationInSecurityContext(authentication, accessToken);
 
         return accessToken;
-    }
-
-    private void setAuthenticationInSecurityContext(Authentication authentication, String newAccessToken) {
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(
-                        authentication.getPrincipal(),
-                        newAccessToken,
-                        authentication.getAuthorities()
-                );
-
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
     /**
@@ -213,19 +201,20 @@ public class JwtTokenProvider {
         try {
             // 서명 검증
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(refreshToken);
+            log.info("리프레시 토큰 서명 검증 : {}", Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(refreshToken));
 
             // 디비에서 검증
-            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(refreshToken).getBody();
-            String username = claims.getSubject();
-            Token token = tokenMapper.getTokenByUserId(userMapper.findId(username));
+            Token token = tokenMapper.getTokenByToken(refreshToken);
 
             if(token != null) {
+                log.info("리프레시 토큰 디비 검증 : {}", token.getStatus());
                 if(token.getStatus() == TokenStatus.USED || token.getExpirationDate().before(new Date()) ) {
                     return false;
                 }
 
                 token.setStatus(TokenStatus.USED);
-                tokenMapper.saveToken(token);
+                int result = tokenMapper.updateToken(token);
+                log.info("토큰 사용처리 완료 ? {}", result == 1 ? "YES" : "NO");
 
                 return true;
             }
@@ -234,10 +223,34 @@ public class JwtTokenProvider {
 
         } catch (ExpiredJwtException e) {
             log.info("Expired refresh token, {}", e);
-            return false;
+        } catch (SecurityException | MalformedJwtException e) {
+            log.info("Invalid JWT token, {}", e);
+        } catch (UnsupportedJwtException e) {
+            log.info("Unsupported JWT token, {}", e);
+        } catch (IllegalArgumentException e) {
+            log.info("JWT claims string is empty, {}", e);
         } catch (Exception e) {
-            log.info("Invalid refresh token, {}", e);
-            return false;
+            log.info("Invalid refresh token, {}", e.getMessage());
+        }
+        return false;
+    }
+
+    /**
+     * Authentication 객체 생성
+     */
+    public Authentication createAuthentication(String refreshToken) {
+        log.info("Create Authentication for refresh token");
+        try {
+            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(refreshToken).getBody();
+            String username = claims.getSubject();
+            kr.kh.backend.domain.User user = userMapper.findByUsername(username);
+
+            // UserDetails를 Authentication 객체로 변환 후 SecurityContextHolder 에 저장
+            Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+            return authentication;
+        } catch (Exception e) {
+            log.info("Exception when create authentication for refresh token", e.getMessage());
+            return null;
         }
     }
 

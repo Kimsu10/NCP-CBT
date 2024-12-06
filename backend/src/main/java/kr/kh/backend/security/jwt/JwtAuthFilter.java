@@ -1,5 +1,7 @@
 package kr.kh.backend.security.jwt;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -53,12 +55,14 @@ public class JwtAuthFilter extends GenericFilterBean {
         } else if (refreshToken != null && jwtTokenProvider.validateRefreshToken(refreshToken)) {
             // 액세스 토큰이 없거나 혹은 유효하지 않지만 리프레시 토큰이 유효한 경우
             log.info("validate refresh token : {}", refreshToken);
+            Authentication authentication = jwtTokenProvider.createAuthentication(refreshToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
             // 둘다 유효하지 않은 경우
             httpResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Both access token and refresh token are invalid");
         }
 
-        log.info("success JWT Filter ! SecurityContextHolder = {}", SecurityContextHolder.getContext());
+        log.info("Result of JWT Filter ! SecurityContextHolder = {}", SecurityContextHolder.getContext());
         chain.doFilter(request, response);
     }
 
@@ -91,4 +95,5 @@ public class JwtAuthFilter extends GenericFilterBean {
         log.info("Refresh Token null");
         return "Refresh Token null";
     }
+
 }
