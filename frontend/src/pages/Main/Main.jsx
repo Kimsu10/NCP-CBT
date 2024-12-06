@@ -156,7 +156,13 @@ const Main = () => {
             <button className="ncp" onClick={() => handleMovePractice("NCP")}>
               NCP
             </button>
-            <button className="nce" onClick={() => handleMovePractice("quiz")}>
+            <button
+              className="nce"
+              onClick={() =>
+                // handleMovePractice("quiz")
+                alert("현재 개발중입니다")
+              }
+            >
               quiz
             </button>
           </div>
@@ -171,7 +177,13 @@ const Main = () => {
             <button className="ncp" onClick={() => handleMovePractice("NCP")}>
               NCP
             </button>
-            <button className="nce" onClick={() => handleMovePractice("quiz")}>
+            <button
+              className="nce"
+              onClick={() =>
+                // handleMovePractice("quiz")
+                alert("현재 개발중입니다")
+              }
+            >
               quiz
             </button>
           </div>
@@ -186,7 +198,13 @@ const Main = () => {
             <button className="ncp" onClick={() => handleMovePractice("NCP")}>
               NCP
             </button>
-            <button className="quiz" onClick={() => handleMovePractice("quiz")}>
+            <button
+              className="quiz"
+              onClick={() =>
+                // handleMovePractice("quiz")
+                alert("현재 개발중입니다")
+              }
+            >
               Quiz
             </button>
           </div>

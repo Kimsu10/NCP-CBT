@@ -11,24 +11,24 @@ const Quiz = ({ username }) => {
   const [roomToJoin, setRoomToJoin] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const typeButtonsRef = useRef(null);
-  // const socketRef = useRef(null);
+  const socketRef = useRef(null);
   const modalRef = useRef(null);
   const navigate = useNavigate();
   const token = sessionStorage.getItem("accessToken");
 
-  // useEffect(() => {
-  //   socketRef.current = io("http://localhost:4000", {
-  //     path: "/quiz",
-  //     withCredentials: true,
-  //     auth: {
-  //       token: sessionStorage.getItem("accessToken"),
-  //     },
-  //   });
+  useEffect(() => {
+    socketRef.current = io("http://localhost:4000", {
+      path: "/quiz",
+      withCredentials: true,
+      auth: {
+        token: sessionStorage.getItem("accessToken"),
+      },
+    });
 
-  //   return () => {
-  //     socketRef.current.disconnect();
-  //   };
-  // }, []);
+    return () => {
+      socketRef.current.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     // 이벤트 등록
