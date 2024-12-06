@@ -28,6 +28,7 @@ const Practice = () => {
   const [isTokenValid, setIsTokenValid] = useState(true);
 
   const token = sessionStorage.getItem("accessToken");
+  console.log(currentIdx);
 
   useEffect(() => {
     AOS.init({
@@ -51,10 +52,6 @@ const Practice = () => {
   const subjectId = getSubjectId(param.name);
 
   useEffect(() => {
-    if (!token) {
-      navigate(`/${subjectName}/who-are-you`);
-    }
-
     const fetchData = async () => {
       try {
         const response = await axios.get(`/data/${subjectName}.json`);
@@ -193,7 +190,7 @@ const Practice = () => {
       <ProgressBarContainer>
         <Progress width={progressBar} />
       </ProgressBarContainer>
-      <ControlExplain />
+      {currentIdx > 2 ? "" : <ControlExplain />}
       <KeyboardController
         handleOptionChange={handleOptionChange}
         selectedOptions={selectedOptions}
@@ -208,14 +205,19 @@ const Practice = () => {
         isComplaintModal={isComplaintModal}
       />
       <ProblemBox key={currentIdx} data-aos={animation}>
-        <BookmarkButton onClick={handleBookmark} $isBookmarked={isBookmarked}>
-          <i className="bi bi-bookmark-star-fill"></i> 북마크
-        </BookmarkButton>
-        <ComplaintButton onClick={handleModal}>
-          <i className="bi bi-bell-fill"></i> 오류신고
-        </ComplaintButton>
-        {currentQuestion ? (
+        {currentIdx > 2 ? (
+          <NotFound />
+        ) : currentQuestion ? (
           <div>
+            <BookmarkButton
+              onClick={handleBookmark}
+              $isBookmarked={isBookmarked}
+            >
+              <i className="bi bi-bookmark-star-fill"></i> 북마크
+            </BookmarkButton>
+            <ComplaintButton onClick={handleModal}>
+              <i className="bi bi-bell-fill"></i> 오류신고
+            </ComplaintButton>
             <QuestionWrapper>
               <QuestionText>
                 Q.{currentIdx + 1} &nbsp;
@@ -324,33 +326,35 @@ const Practice = () => {
             )}
           </div>
         ) : (
-          <NotFound />
+          <span>문제가 없습니다.</span>
         )}
       </ProblemBox>
-
-      <ButtonContainer>
-        <PrevButton
-          onClick={() => {
-            handlePreviousQuestion();
-            document.activeElement.blur();
-          }}
-          disabled={currentIdx === 0}
-        >
-          이전 문제
-        </PrevButton>
-        <CurrentPage>
-          {currentIdx + 1} / {totalPage}
-        </CurrentPage>
-        <NextButton
-          onClick={() => {
-            handleNextQuestion();
-            document.activeElement.blur();
-          }}
-        >
-          다음 문제
-        </NextButton>
-      </ButtonContainer>
-
+      {currentIdx > 2 ? (
+        ""
+      ) : (
+        <ButtonContainer>
+          <PrevButton
+            onClick={() => {
+              handlePreviousQuestion();
+              document.activeElement.blur();
+            }}
+            disabled={currentIdx === 0}
+          >
+            이전 문제
+          </PrevButton>
+          <CurrentPage>
+            {currentIdx + 1} / {totalPage}
+          </CurrentPage>
+          <NextButton
+            onClick={() => {
+              handleNextQuestion();
+              document.activeElement.blur();
+            }}
+          >
+            다음 문제
+          </NextButton>
+        </ButtonContainer>
+      )}
       {isComplaintModal && (
         <ComplaintModal
           modalTitle="문제 오류 신고"
@@ -380,12 +384,12 @@ const PracticeBody = styled.div`
 `;
 
 const ProblemBox = styled.div`
-  width: 60%;
+  width: 50%;
   min-width: 30rem;
   min-height: 36vh;
   max-height: auto;
   padding: 2rem;
-  margin-top: 2rem;
+  margin: 2rem 0;
   background-color: ${props => props.theme.white};
   border-radius: 12px;
   box-shadow: 2px 2px 2px 2px lightgray;
@@ -484,7 +488,7 @@ const ButtonContainer = styled.div`
   gap: 1rem;
   align-items: center;
   justify-content: space-between;
-  width: 60%;
+  width: 50%;
   min-width: 30rem;
 `;
 

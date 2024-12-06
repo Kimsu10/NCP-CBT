@@ -54,7 +54,8 @@ export default NotFound;
 const WhoAreYou = styled.div`
   width: 100%;
   height: 100%;
-  padding: 6rem 0 4rem 0;
+  margin: 2rem;
+  padding: 2rem 0;
   display: flex;
   flex-direction: column;
   align-items: center;
