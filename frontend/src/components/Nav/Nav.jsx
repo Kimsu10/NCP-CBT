@@ -9,21 +9,32 @@ const Nav = ({ username }) => {
   const [isListOpen, setIsListOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [isToken, setIsToken] = useState(null);
-  const token = sessionStorage.getItem("accessToken");
+  const [isToken, setIsToken] = useState(false);
   const navigate = useNavigate();
 
   const { name: subjectName } = useParams();
 
-  useEffect(() => {
-    const storedToken = sessionStorage.getItem("accessToken");
+  const getAccessToken = () => {
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) return null;
 
-    if (storedToken) {
-      setIsToken(storedToken);
-    } else {
-      handleUpdateToken();
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      const exp = payload.exp * 1000;
+      const currentTime = new Date().getTime();
+
+      if (currentTime > exp) {
+        sessionStorage.removeItem("accessToken");
+        return null;
+      }
+
+      return token;
+    } catch (error) {
+      console.error("토큰 검증 중 오류:", error);
+      sessionStorage.removeItem("accessToken");
+      return null;
     }
-  }, []);
+  };
 
   const handleUpdateToken = async () => {
     try {
@@ -33,27 +44,43 @@ const Nav = ({ username }) => {
           "Content-Type": "application/json",
         },
         credentials: "include",
-      }).catch(err => console.log(err));
+      });
 
       if (response.ok) {
         const newAccessToken = response.headers.get("Authorization");
-        console.log(newAccessToken);
-        const accessToken = newAccessToken.split(" ")[1];
-        sessionStorage.setItem("accessToken", accessToken);
-        response.headers.get("Set-Cookie");
+        if (newAccessToken) {
+          const accessToken = newAccessToken.split(" ")[1];
 
-        // navigate("/");
-        window.location.reload();
+          sessionStorage.setItem("accessToken", accessToken);
+          response.headers.get("Set-Cookie");
+
+          setIsToken(true);
+          window.location.reload();
+        }
       }
 
       if (response.status === 401) {
-        alert("사용자 정보가 만료되었습니다. 다시 로그인 해주세요.");
-        navigate("/");
+        setIsToken(false);
+        // alert("사용자 정보가 만료되었습니다. 다시 로그인 해주세요.");
+        // navigate("/");
       }
     } catch (error) {
-      console.log("요청 중 오류가 발생했습니다", error);
+      console.error("토큰 갱신 중 오류 발생", error);
+      setIsToken(false);
+      // navigate("/");
     }
   };
+
+  // 로그인 유지를 위한 토큰 검증
+  useEffect(() => {
+    const token = getAccessToken();
+
+    if (token) {
+      setIsToken(true);
+    } else {
+      handleUpdateToken();
+    }
+  }, []);
 
   const openModal = type => {
     setModalType(type);
@@ -74,8 +101,28 @@ const Nav = ({ username }) => {
   };
 
   const logout = () => {
+    navigate("/");
+    setIsToken(false);
     sessionStorage.removeItem("accessToken");
-    window.location.reload();
+    deleteCookie();
+  };
+
+  const deleteCookie = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/form/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        console.log("로그아웃 성공");
+        sessionStorage.removeItem("accessToken");
+        window.location.reload();
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("로그아웃 실패", error);
+    }
   };
 
   useEffect(() => {
@@ -103,7 +150,7 @@ const Nav = ({ username }) => {
       <ControllerBox>
         {windowWidth > 720 && (
           <>
-            {!token ? (
+            {!isToken ? (
               <>
                 <Login onClick={() => openModal("login")}>로그인</Login>
                 <Register onClick={() => openModal("register")}>
@@ -131,7 +178,7 @@ const Nav = ({ username }) => {
         )}
         {windowWidth <= 720 && (
           <>
-            {!token ? (
+            {!isToken ? (
               <>
                 <ListIcon className="bi bi-list" onClick={openList} />
                 {isListOpen && (

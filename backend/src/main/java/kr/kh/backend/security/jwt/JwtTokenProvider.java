@@ -30,6 +30,7 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -76,8 +77,8 @@ public class JwtTokenProvider {
                 .compact();
         log.info("generated access Token = {}", accessToken);
 
-        // refresh token 생성 : access token 의 갱신을 위해 사용된다. (1주일)
-        Date refreshExpiration = new Date(now + 1000 * 60 * 60 * 24 * 7);
+        // refresh token 생성 : access token 의 갱신을 위해 사용된다. (1일)
+        Date refreshExpiration = new Date(now + 1000 * 60 * 60 * 24);
         String refreshToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .setExpiration(refreshExpiration)
@@ -204,11 +205,14 @@ public class JwtTokenProvider {
             log.info("리프레시 토큰 서명 검증 : {}", Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(refreshToken));
 
             // 디비에서 검증
-            Token token = tokenMapper.getTokenByToken(refreshToken);
+            List<Token> tokens = tokenMapper.getTokenByToken(refreshToken);
 
-            if(token != null) {
+            if(tokens != null) {
+                Token token = tokens.get(0);
                 log.info("리프레시 토큰 디비 검증 : {}", token.getStatus());
-                if(token.getStatus() == TokenStatus.USED || token.getExpirationDate().before(new Date()) ) {
+                if(token.getStatus() == TokenStatus.USED ||
+                        token.getStatus() == TokenStatus.EXPIRED ||
+                        token.getExpirationDate().before(new Date()) ) {
                     return false;
                 }
 
@@ -219,6 +223,7 @@ public class JwtTokenProvider {
                 return true;
             }
 
+            log.info("리프레쉬 토큰이 DB에 존재하지 않습니다");
             return false;
 
         } catch (ExpiredJwtException e) {

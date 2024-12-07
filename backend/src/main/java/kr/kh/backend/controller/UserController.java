@@ -1,6 +1,7 @@
 package kr.kh.backend.controller;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.kh.backend.domain.User;
 import kr.kh.backend.dto.oauth2.OauthLoginDTO;
@@ -45,7 +46,7 @@ public class UserController {
 
     // 로그인
     @PostMapping("/form/login")
-    public JwtToken login(@RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
         log.info("login : {}", loginDTO.toString());
 
         String username = loginDTO.getUsername();
@@ -55,7 +56,46 @@ public class UserController {
         log.info("request username = {}", username);
         log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
-        return jwtToken;
+        // HttpOnly 쿠키에 리프레시 토큰 넣어서 전송
+        Cookie refreshCookie = new Cookie("refreshToken", jwtToken.getRefreshToken());
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setMaxAge(24 * 60 * 60);
+        refreshCookie.setSecure(false);
+        refreshCookie.setPath("/");
+        response.addCookie(refreshCookie);
+
+        return ResponseEntity.ok()
+                .header("Authorization", "Bearer " + jwtToken.getAccessToken())
+                .header("Set-Cookie", "refreshToken=" + jwtToken.getRefreshToken()
+                        + "; Path=/; HttpOnly; Max-Age=86400; SameSite=Lax" )
+                .build();
+    }
+
+    // 로그아웃
+    @PostMapping("/form/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            // DB 에 저장된 리프레쉬 토큰 EXPIRED 처리
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("refreshToken")) {
+                         String refreshToken = cookie.getValue();
+                         userService.logout(refreshToken);
+                    }
+                }
+            }
+
+            // 브라우저 토큰 삭제
+            Cookie cookie = new Cookie("refreshToken", "");
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge(0); // 만료 시간을 0 으로 하여 쿠키 삭제 !!
+            cookie.setPath("/");
+            response.addCookie(cookie);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok().build();
     }
 
     // 닉네임 중복확인

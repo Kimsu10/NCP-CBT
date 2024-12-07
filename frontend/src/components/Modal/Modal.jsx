@@ -95,17 +95,25 @@ const Modal = ({ type, closeModal }) => {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true,
         },
       );
 
-      const { accessToken, refreshToken } = response.data;
+      if (response.status === 400) {
+        navigate("/");
+        alert("사용자 정보가 없습니다. 로그인을 다시 시도해주세요.");
+      }
 
-      sessionStorage.setItem("accessToken", accessToken);
-      sessionStorage.setItem("refreshToken", refreshToken);
+      if (response.status === 200) {
+        const data = await response.headers.get("Authorization");
+        const accessToken = data.split(" ")[1];
+        sessionStorage.setItem("accessToken", accessToken);
+        response.headers.get("Set-Cookie");
 
-      window.location.reload();
-      // navigate("/");
-      closeModal();
+        window.location.reload();
+        navigate("/");
+        closeModal();
+      }
     } catch (err) {
       console.error(
         "login error:",

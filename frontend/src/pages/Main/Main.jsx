@@ -5,7 +5,6 @@ import styled from "styled-components";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import useResponsive from "../../hooks/useResponsive";
-import useTokenFunction from "../../hooks/useTokenFunction";
 
 const Main = () => {
   const navigate = useNavigate();
@@ -51,7 +50,7 @@ const Main = () => {
       // 쿠키도 추가해야해 !!!!!
       response.headers.get("Set-Cookie");
       navigate("/");
-      // window.location.reload();
+      window.location.reload();
     } else {
       console.error("Failed to fetch token");
     }
@@ -82,7 +81,7 @@ const Main = () => {
       response.headers.get("Set-Cookie");
 
       navigate("/");
-      // window.location.reload();
+      window.location.reload();
     } else {
       console.error("Failed to fetch token");
     }
