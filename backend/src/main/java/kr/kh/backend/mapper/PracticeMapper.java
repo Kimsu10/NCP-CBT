@@ -25,7 +25,7 @@ public interface PracticeMapper {
     // 문제 오류 신고시 추가
     @Insert("INSERT INTO question_complaints (subject_id, title, comment, user_id, subject_question_id) " +
             "VALUES (#{subjectId}, #{title}, #{content}, #{userId}, #{subjectQuestionId})")
-    void addComplaint(PracticeComplaintsDTO practiceComplaintsDTO);
+    int addComplaint(PracticeComplaintsDTO practiceComplaintsDTO);
 
 
     // 중복 신고 여부 확인

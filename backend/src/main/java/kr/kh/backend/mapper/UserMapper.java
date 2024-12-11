@@ -5,6 +5,8 @@ import kr.kh.backend.domain.User;
 import kr.kh.backend.dto.security.LoginDTO;
 import org.apache.ibatis.annotations.*;
 
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
 
@@ -68,4 +70,12 @@ public interface UserMapper {
     // 사용자 비밀번호 찾기
     @Select("SELECT password FROM user WHERE nickname = #{username}")
     String findPasswordByUsername(String username);
+
+    // 관리자 계정 찾기
+    @Select("SELECT * FROM user WHERE roles = 'ADMIN'")
+    List<User> findAdminUsers();
+
+    // id 로 사용자 이메일 찾기
+    @Select("SELECT email FROM user WHERE id = #{userId}")
+    String findEmailByUserId(Long userId);
 }

@@ -5,6 +5,7 @@ import kr.kh.backend.dto.PracticeComplaintsDTO;
 import kr.kh.backend.mapper.PracticeMapper;
 import kr.kh.backend.mapper.UserMapper; // 올바른 UserMapper 임포트
 import kr.kh.backend.security.jwt.JwtTokenProvider;
+import kr.kh.backend.service.security.EmailVerificationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ public class PracticeService {
     private final PracticeMapper practiceMapper;
     private final UserMapper userMapper;
     private final JwtTokenProvider jwtTokenProvider;
+    private final EmailVerificationService emailVerificationService;
 
     // 상태 코드와 함께 응답 메시지를 반환
     public ResponseEntity<String> addBookmark(BookmarkDTO bookmarkDTO, String token) {
@@ -106,7 +108,11 @@ public class PracticeService {
                     return ResponseEntity.badRequest().body("이미 해당 문제에 대한 오류 신고가 접수되었습니다.");
                 }
 
-                practiceMapper.addComplaint(practiceComplaintsDTO);
+                // 문제 오류가 접수되면 관리자 계정으로 이메일 알람 발송
+                int result = practiceMapper.addComplaint(practiceComplaintsDTO);
+                if(result == 1) {
+                    emailVerificationService.sendComplaintsToAdmin(practiceComplaintsDTO);
+                }
                 return ResponseEntity.ok("문제 오류가 성공적으로 접수되었습니다.");
 
             }catch (Exception e) {

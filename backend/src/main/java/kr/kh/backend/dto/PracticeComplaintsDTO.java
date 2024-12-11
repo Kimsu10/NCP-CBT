@@ -5,11 +5,13 @@ import lombok.Data;
 @Data
 public class PracticeComplaintsDTO {
 
+    private int id;
     private Long userId;
     private Long subjectId;
     private Long subjectQuestionId;
     private String title;
     private String content;
+    private boolean isSolved;
 
 }
 
