@@ -107,56 +107,63 @@ const NcaMain = () => {
             </button>
             <button>실전 모의고사</button>
           </div>
+          <div style={{ marginTop: "2rem" }}>광고ㅎ</div>
         </MobileContainer>
       )}
       {isTablet && (
         <TabletContainer>
-          <div className="button-box">
-            <h3>NCP200</h3>
-            <button onClick={() => navigate(`/NCP200/practice`)}>
-              연습문제
-            </button>
-            <button>실전 모의고사</button>
-          </div>
-          <div className="button-box">
-            <h3>NCP202</h3>
-            <button onClick={() => navigate(`/NCP202/practice`)}>
-              연습문제
-            </button>
-            <button>실전 모의고사</button>
-          </div>
-          <div className="button-box">
-            <h3>NCP207</h3>
-            <button onClick={() => navigate(`/NCP207/practice`)}>
-              연습문제
-            </button>
-            <button>실전 모의고사</button>
-          </div>
+          <TabletBody>
+            <div className="button-box">
+              <h3>NCP200</h3>
+              <button onClick={() => navigate(`/NCP200/practice`)}>
+                연습문제
+              </button>
+              <button>실전 모의고사</button>
+            </div>
+            <div className="button-box">
+              <h3>NCP202</h3>
+              <button onClick={() => navigate(`/NCP202/practice`)}>
+                연습문제
+              </button>
+              <button>실전 모의고사</button>
+            </div>
+            <div className="button-box">
+              <h3>NCP207</h3>
+              <button onClick={() => navigate(`/NCP207/practice`)}>
+                연습문제
+              </button>
+              <button>실전 모의고사</button>
+            </div>
+          </TabletBody>
+          <AdContainer>광고ㅎ</AdContainer>
         </TabletContainer>
       )}
       {isDesktop && (
         <DesktopContainer>
-          <div className="button-box">
-            <h3>NCP200</h3>
-            <button onClick={() => navigate(`/NCP200/practice`)}>
-              연습문제
-            </button>
-            <button>실전 모의고사</button>
-          </div>
-          <div className="button-box">
-            <h3>NCP202</h3>
-            <button onClick={() => navigate(`/NCP202/practice`)}>
-              연습문제
-            </button>
-            <button>실전 모의고사</button>
-          </div>
-          <div className="button-box">
-            <h3>NCP207</h3>
-            <button onClick={() => navigate(`/NCP207/practice`)}>
-              연습문제
-            </button>
-            <button>실전 모의고사</button>
-          </div>
+          <DesktopBody>
+            <div className="button-box">
+              <h3>NCP200</h3>
+              <button onClick={() => navigate(`/NCP200/practice`)}>
+                연습문제
+              </button>
+              <button>실전 모의고사</button>
+            </div>
+            <div className="button-box">
+              <h3>NCP202</h3>
+              <button onClick={() => navigate(`/NCP202/practice`)}>
+                연습문제
+              </button>
+              <button>실전 모의고사</button>
+            </div>
+            <div className="button-box">
+              <h3>NCP207</h3>
+              <button onClick={() => navigate(`/NCP207/practice`)}>
+                연습문제
+              </button>
+              <button>실전 모의고사</button>
+            </div>
+          </DesktopBody>
+          <AdContainer>광고ㅎ</AdContainer>
         </DesktopContainer>
       )}
     </>
@@ -189,6 +196,11 @@ const MobileContainer = styled.div`
 
 const TabletContainer = styled.div`
   display: flex;
+  flex-direction: column;
+`;
+
+const TabletBody = styled.div`
+  display: flex;
   justify-content: center;
   margin: 3rem 0;
 
@@ -211,6 +223,11 @@ const TabletContainer = styled.div`
 
 const DesktopContainer = styled.div`
   display: flex;
+  flex-direction: column;
+`;
+
+const DesktopBody = styled.div`
+  display: flex;
   justify-content: center;
   margin: 3rem 0;
 
@@ -229,4 +246,9 @@ const DesktopContainer = styled.div`
     font-size: 2rem;
     margin: 0.5rem 0;
   }
+`;
+
+const AdContainer = styled.div`
+  display: flex;
+  justify-content: center;
 `;

@@ -112,6 +112,7 @@ const Main = () => {
               1 on 1
             </button>
           </div>
+          <div style={{ marginTop: "2rem" }}>광고ㅎ</div>
         </MobileContainer>
       )}
       {isTablet && (
@@ -127,6 +128,7 @@ const Main = () => {
               1 on 1
             </button>
           </div>
+          <div style={{ marginTop: "2rem" }}>광고ㅎ</div>
         </DesktopContainer>
       )}
       {isDesktop && (
@@ -142,6 +144,7 @@ const Main = () => {
               1 on 1
             </button>
           </div>
+          <div style={{ marginTop: "2rem" }}>광고ㅎ</div>
         </DesktopContainer>
       )}
     </>

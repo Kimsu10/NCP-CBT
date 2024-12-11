@@ -74,6 +74,7 @@ const NcaMain = () => {
             <button onClick={() => navigate(`/NCA/practice`)}>연습문제</button>
             <button>실전 모의고사</button>
           </div>
+          <div style={{ marginTop: "2rem" }}>광고ㅎ</div>
         </MobileContainer>
       )}
       {isTablet && (
@@ -82,6 +83,7 @@ const NcaMain = () => {
             <Button onClick={() => navigate(`/NCA/practice`)}>연습문제</Button>
             <Button>실전 모의고사</Button>
           </ButtonBox>
+          <div style={{ marginTop: "2rem" }}>광고ㅎ</div>
         </MainContainer>
       )}
       {isDesktop && (
@@ -90,6 +92,7 @@ const NcaMain = () => {
             <Button onClick={() => navigate(`/NCA/practice`)}>연습문제</Button>
             <Button>실전 모의고사</Button>
           </ButtonBox>
+          <div style={{ marginTop: "2rem" }}>광고ㅎ</div>
         </MainContainer>
       )}
     </>
