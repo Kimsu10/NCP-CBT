@@ -1,7 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 const Footer = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const isSponsorPage = location.pathname.startsWith("/sponsor");
+
   return (
     <FooterBody>
       <div className="introduce-box">
@@ -17,8 +22,22 @@ const Footer = () => {
         <span className="send-inquiry">개발자에게 문의하기</span>
       </div>
       <div className="button-box">
-        <button className="sponsor-button">☕️&nbsp;후원하기</button>
-        <button className="mini-sponsor-button">☕️</button>
+        {!isSponsorPage && (
+          <>
+            <button
+              className="sponsor-button"
+              onClick={() => navigate("/sponsor")}
+            >
+              ☕️&nbsp;후원하기
+            </button>
+            <button
+              className="mini-sponsor-button"
+              onClick={() => navigate("/sponsor")}
+            >
+              ☕️
+            </button>
+          </>
+        )}
       </div>
     </FooterBody>
   );
@@ -36,7 +55,6 @@ const FooterBody = styled.div`
   padding: 2.4rem;
   display: flex;
   justify-content: space-between;
-  /* position: absolute; */
   bottom: 0;
 
   .introduce-box {
