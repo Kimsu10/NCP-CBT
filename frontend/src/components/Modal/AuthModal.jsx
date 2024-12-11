@@ -109,13 +109,21 @@ const AuthModal = ({ type, closeModal }) => {
         },
       );
 
-      const { accessToken } = response.data;
+      if (response.status === 400) {
+        navigate("/");
+        alert("사용자 정보가 없습니다. 로그인을 다시 시도해주세요.");
+      }
 
-      sessionStorage.setItem("accessToken", accessToken);
+      if (response.status === 200) {
+        const data = await response.headers.get("Authorization");
+        const accessToken = data.split(" ")[1];
+        sessionStorage.setItem("accessToken", accessToken);
+        response.headers.get("Set-Cookie");
 
-      // window.location.reload();
-      navigate("/"); // Q. 메인으로 이동하는게 더 좋을까?
-      closeModal();
+        window.location.reload();
+        navigate("/");
+        closeModal();
+      }
     } catch (err) {
       console.error(
         "login error:",
@@ -244,8 +252,15 @@ const AuthModal = ({ type, closeModal }) => {
 
   // 네이버 로그인
   const doNaverLogin = () => {
-    console.log("Naver login function called.");
-    window.location.href = "http://localhost:8080";
+    let state = encodeURI(process.env.REACT_APP_NAVER_REDIRECT_URI);
+    window.location.href =
+      "https://nid.naver.com/oauth2.0/authorize?response_type=code" +
+      "&client_id=" +
+      process.env.REACT_APP_NAVER_CLIENT_ID +
+      "&redirect_uri=" +
+      process.env.REACT_APP_NAVER_REDIRECT_URI +
+      "&state=" +
+      state;
   };
 
   // 깃허브 로그인 페이지로 전송

@@ -1,6 +1,7 @@
 package kr.kh.backend.controller;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import kr.kh.backend.dto.EmailVerificationDTO;
@@ -87,7 +88,8 @@ public class UserController {
 
     // 로그인
     @PostMapping("/form/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
+
+    public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
         log.info("login : {}", loginDTO.toString());
 
         String username = loginDTO.getUsername();
@@ -97,18 +99,46 @@ public class UserController {
         log.info("request username = {}", username);
         log.info("jwtToken accessToken = {}, refreshToken = {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
-        Cookie refreshTokenCookie = new Cookie("refreshToken", jwtToken.getRefreshToken());
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+        // HttpOnly 쿠키에 리프레시 토큰 넣어서 전송
+        Cookie refreshCookie = new Cookie("refreshToken", jwtToken.getRefreshToken());
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setMaxAge(24 * 60 * 60);
+        refreshCookie.setSecure(false);
+        refreshCookie.setPath("/");
+        response.addCookie(refreshCookie);
 
-        response.addCookie(refreshTokenCookie);
+        return ResponseEntity.ok()
+                .header("Authorization", "Bearer " + jwtToken.getAccessToken())
+                .header("Set-Cookie", "refreshToken=" + jwtToken.getRefreshToken()
+                        + "; Path=/; HttpOnly; Max-Age=86400; SameSite=Lax" )
+                .build();
+    }
 
-        Map<String, String> tokens = new HashMap<>();
-        tokens.put("accessToken", jwtToken.getAccessToken());
+    // 로그아웃
+    @PostMapping("/form/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            // DB 에 저장된 리프레쉬 토큰 EXPIRED 처리
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("refreshToken")) {
+                         String refreshToken = cookie.getValue();
+                         userService.logout(refreshToken);
+                    }
+                }
+            }
 
-        return ResponseEntity.ok(tokens);
+            // 브라우저 토큰 삭제
+            Cookie cookie = new Cookie("refreshToken", "");
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge(0); // 만료 시간을 0 으로 하여 쿠키 삭제 !!
+            cookie.setPath("/");
+            response.addCookie(cookie);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok().build();
     }
 
     // 닉네임 중복확인
@@ -215,14 +245,22 @@ public class UserController {
                 .build();
     }
 
-    // 토큰 갱신
+    // 토큰 재발급
     @PostMapping("/refreshToken")
-    public ResponseEntity<?> refreshToken(@RequestBody JwtToken jwtToken) {
-        log.info("액세스 토큰 갱신 요청 : 액세스 {}, 리프레시 {}", jwtToken.getAccessToken(), jwtToken.getRefreshToken());
+    public ResponseEntity<?> refreshToken(HttpServletResponse response) {
+        JwtToken newJwtToken = jwtTokenProvider.generateToken(SecurityContextHolder.getContext().getAuthentication());
 
+        Cookie refreshCookie = new Cookie("refreshToken", newJwtToken.getRefreshToken());
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setMaxAge(24 * 60 * 60);
+        refreshCookie.setSecure(false);
+        refreshCookie.setPath("/");
+        response.addCookie(refreshCookie);
 
         return ResponseEntity.ok()
-                .header("Authorization", "Bearer " + jwtToken.getAccessToken())
+                .header("Authorization", "Bearer " + newJwtToken.getAccessToken())
+                .header("Set-Cookie", "refreshToken=" + newJwtToken.getRefreshToken()
+                        + "; Path=/; HttpOnly; Max-Age=86400; SameSite=Lax" )
                 .build();
     }
 

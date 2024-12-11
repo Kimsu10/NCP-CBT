@@ -7,7 +7,6 @@ import "slick-carousel/slick/slick-theme.css";
 import RankChart from "../../components/Charts/RankChart";
 import axios from "axios";
 import useResponsive from "../../hooks/useResponsive";
-import axiosConfig from "../../utils/axiosConfig";
 
 const NcaMain = () => {
   const navigate = useNavigate();
@@ -20,8 +19,8 @@ const NcaMain = () => {
   }, []);
 
   const getRankingData = async () => {
-    const response = await axiosConfig
-      .post(`/ranking/v2`, {
+    const response = await axios
+      .post(`http://localhost:8080/ranking/v2`, {
         title: "NCP",
       })
       .catch(err => {
