@@ -179,7 +179,6 @@ const Exam = () => {
   const handleNextPage = () => {
     if (currentIndex < examData.length - 1) {
       setCurrentIndex(currentIndex + 1);
-      console.log("답안선택", selectedAnswers);
     }
   };
 
@@ -191,7 +190,6 @@ const Exam = () => {
   };
 
   // 결과 계산
-  console.log(examData[currentIndex]);
   const handleGetResult = () => {
     for (let i = 0; i < examData.length; i++) {
       // 답이 배열인 경우 따로 체크
@@ -231,14 +229,11 @@ const Exam = () => {
   };
 
   // 반응형
-  const { windowWidth, isMobile, isTablet, isDesktop, getDeviceType } =
-    useResponsive();
+  const { isMobile, isTablet, isDesktop } = useResponsive();
 
-  return (
-    <>
-      {!isExamStart ? (
-        <ExamWait onStart={handleStart} />
-      ) : (
+  const renderContent = () => {
+    if (isDesktop) {
+      return (
         <MainContainer>
           {modal ? (
             <ResultModal
@@ -304,17 +299,135 @@ const Exam = () => {
               <button onClick={() => setModal(true)}>제출하기</button>
             </div>
           </AnswerContainer>
+          <AdContainer>
+            <div>광고ㅎ</div>
+          </AdContainer>
         </MainContainer>
-      )}
-    </>
+      );
+    }
+
+    if (isTablet) {
+      return (
+        <TabletContainer>
+          {modal ? (
+            <ResultModal
+              setModal={setModal}
+              handleGetResult={handleGetResult}
+            />
+          ) : null}
+          <TabletExamContainer>
+            <TabletExamHead>
+              <div>
+                <p>문제 수 : ( {currentIndex + 1} / 60 )</p>
+              </div>
+              <div>
+                ⏰ 남은 시간 : {min < 10 ? `0${min}` : min} 분{" "}
+                {sec < 10 ? `0${sec}` : sec} 초
+              </div>
+            </TabletExamHead>
+            <h2>
+              {currentIndex + 1}. {currentQuestion.question}
+            </h2>
+            <TabletExamBody>
+              {renderOptions(currentQuestion?.example)}
+            </TabletExamBody>
+            <TabletExamFoot>
+              {currentIndex === 0 ? (
+                <button disabled="disabled" className="disabled">
+                  이전 문제
+                </button>
+              ) : (
+                <button onClick={() => handlePrevPage()}>이전 문제</button>
+              )}
+              {currentIndex === 59 ? (
+                <button disabled="disabled" className="disabled">
+                  다음 문제
+                </button>
+              ) : (
+                <button onClick={() => handleNextPage()}>다음 문제</button>
+              )}
+            </TabletExamFoot>
+          </TabletExamContainer>
+          <TabletAnswerContainer>
+            <div>
+              <button onClick={() => setModal(true)}>제출하기</button>
+            </div>
+          </TabletAnswerContainer>
+          <AdContainer>
+            <div>광고ㅎ</div>
+          </AdContainer>
+        </TabletContainer>
+      );
+    }
+
+    if (isMobile) {
+      return (
+        <MobileContainer>
+          {modal ? (
+            <ResultModal
+              setModal={setModal}
+              handleGetResult={handleGetResult}
+            />
+          ) : null}
+          <TabletExamContainer>
+            <MobileExamHead>
+              <div>
+                ⏰ 남은 시간 : {min < 10 ? `0${min}` : min} 분{" "}
+                {sec < 10 ? `0${sec}` : sec} 초
+              </div>
+            </MobileExamHead>
+            <div>
+              <p>문제 수 : ( {currentIndex + 1} / 60 )</p>
+            </div>
+            <h2>
+              {currentIndex + 1}. {currentQuestion.question}
+            </h2>
+            <TabletExamBody>
+              {renderOptions(currentQuestion?.example)}
+            </TabletExamBody>
+            <TabletExamFoot>
+              {currentIndex === 0 ? (
+                <button disabled="disabled" className="disabled">
+                  이전 문제
+                </button>
+              ) : (
+                <button onClick={() => handlePrevPage()}>이전 문제</button>
+              )}
+              {currentIndex === 59 ? (
+                <button disabled="disabled" className="disabled">
+                  다음 문제
+                </button>
+              ) : (
+                <button onClick={() => handleNextPage()}>다음 문제</button>
+              )}
+            </TabletExamFoot>
+          </TabletExamContainer>
+          <TabletAnswerContainer>
+            <div>
+              <button onClick={() => setModal(true)}>제출하기</button>
+            </div>
+          </TabletAnswerContainer>
+          <AdContainer>
+            <div>광고ㅎ</div>
+          </AdContainer>
+        </MobileContainer>
+      );
+    }
+  };
+
+  return (
+    <ResponsiveContainer>
+      {!isExamStart ? <ExamWait onStart={handleStart} /> : renderContent()}
+    </ResponsiveContainer>
   );
 };
+
+const ResponsiveContainer = styled.div``;
 
 const MainContainer = styled.div`
   margin: 6rem;
   display: grid;
-  grid-template-columns: 6fr 4fr;
-  gap: 1rem;
+  grid-template-columns: 5fr 4fr 1fr;
 `;
 
 const ExamContainer = styled.div`
@@ -322,6 +435,8 @@ const ExamContainer = styled.div`
   grid-template-rows: 3fr 6fr 1fr;
   gap: 1rem;
 `;
+
+const AdContainer = styled.div``;
 
 const ExamHead = styled.div``;
 
@@ -397,6 +512,82 @@ const OptionLabel = styled.label`
 const NumberSpan = styled.span`
   margin-right: 1rem;
   font-size: 1.2rem;
+`;
+
+// 반응형 - 태블릿..
+
+const TabletContainer = styled.div`
+  margin: 6rem;
+  display: flex;
+  flex-direction: column;
+`;
+
+const TabletExamContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const TabletExamHead = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+`;
+
+const TabletExamBody = styled.div`
+  margin: 3rem 0rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+`;
+
+const TabletExamFoot = styled.div`
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+
+  .disabled {
+    background-color: #d1d5db;
+    color: white;
+  }
+
+  button {
+    width: 8rem;
+    background-color: #02c95f;
+    color: white;
+    /* padding: 0.5rem; */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+`;
+
+const TabletAnswerContainer = styled.div`
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  justify-items: center;
+
+  button {
+    width: 7rem;
+    color: white;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+`;
+
+// 반응형 - 모바일
+
+const MobileContainer = styled.div`
+  margin: 6rem 1rem;
+  display: flex;
+  flex-direction: column;
+`;
+
+const MobileExamHead = styled.div`
+  margin-bottom: 1rem;
 `;
 
 export default Exam;

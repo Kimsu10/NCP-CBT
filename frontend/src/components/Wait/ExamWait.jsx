@@ -106,7 +106,7 @@ const ExamWait = ({ onStart }) => {
 };
 
 const MobileContainer = styled.div`
-  margin-top: 6rem;
+  margin: 6rem 0.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
