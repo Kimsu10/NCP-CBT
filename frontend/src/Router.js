@@ -15,6 +15,7 @@ import MatchResult from "./pages/TestMatch/MatchResult";
 import MatchWaiting from "./pages/TestMatch/MatchWaiting";
 import Quiz from "./pages/TestMatch/Quiz";
 import FindUserPage from "./pages/User/FindUserPage";
+import Sponsor from "./components/Ads/Sponsor";
 
 const Router = () => {
   const [username, setUsername] = useState("");
@@ -78,6 +79,12 @@ const Router = () => {
         <Route
           path="/find-account"
           element={<PageWrapper Component={FindUserPage} />}
+        />
+        {/* 이 아래는 후원기능용 테스트 겸 사이즈 확인용  */}
+        <Route
+          path="/sponsor"
+          username={username}
+          element={<PageWrapper Component={Sponsor} />}
         />
       </Routes>
       <Footer />
