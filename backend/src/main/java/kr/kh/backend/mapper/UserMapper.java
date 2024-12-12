@@ -78,4 +78,8 @@ public interface UserMapper {
     // id 로 사용자 이메일 찾기
     @Select("SELECT email FROM user WHERE id = #{userId}")
     String findEmailByUserId(Long userId);
+
+    // email 로 User 객체 찾기
+    @Select("SELECT * FROM user WHERE email = #{email}")
+    User findByEmail(String email);
 }

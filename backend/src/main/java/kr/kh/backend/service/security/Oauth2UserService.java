@@ -3,6 +3,7 @@ package kr.kh.backend.service.security;
 import kr.kh.backend.domain.User;
 import kr.kh.backend.dto.oauth2.*;
 import kr.kh.backend.dto.security.LoginDTO;
+import kr.kh.backend.exception.CustomException;
 import kr.kh.backend.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -73,7 +75,7 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
             String email = naverUser.get("email");
             String role = "USER";
 
-            User user = userMapper.findByUsername(username);
+            User user = userMapper.findByEmail(email);
 
             if(user == null) {
                 user = User.builder()
@@ -84,6 +86,11 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
                         .build();
                 userMapper.insertOauthUser(user);
                 log.info("새로운 oauth2 유저를 등록했습니다 : {}", user);
+            }
+
+            if (user != null && user.getPlatform() == null) {
+                log.info("이미 등록된 이메일입니다.");
+                throw new CustomException("이미 등록된 이메일입니다.", "ERROR CODE 401", HttpStatus.UNAUTHORIZED);
             }
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
@@ -143,7 +150,7 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
             String email = primaryEmail;
             String role = "USER";
 
-            User user = userMapper.findByUsername(username);
+            User user = userMapper.findByEmail(email);
             if(user == null) {
                 user = User.builder()
                         .nickname(username)
@@ -153,6 +160,11 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
                         .build();
                 userMapper.insertOauthUser(user);
                 log.info("새로운 oauth2 유저를 등록했습니다 : {}", user);
+            }
+
+            if (user != null && user.getPlatform() == null) {
+                log.info("이미 등록된 이메일입니다.");
+                throw new CustomException("이미 등록된 이메일입니다.", "ERROR CODE 401", HttpStatus.UNAUTHORIZED);
             }
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
