@@ -43,6 +43,11 @@ const Main = () => {
       alert("사용자 정보가 없습니다. 로그인을 다시 시도해주세요.");
     }
 
+    if (response.status === 401) {
+      navigate("/");
+      alert("이미 등록된 이메일입니다.");
+    }
+
     if (response.status === 200) {
       // accessToken을 세션 스토리지에 저장 (추후 변경 가능성 있음)
       const data = await response.headers.get("Authorization");
@@ -72,6 +77,11 @@ const Main = () => {
     if (response.status === 400) {
       navigate("/");
       alert("사용자 정보가 없습니다. 로그인을 다시 시도해주세요.");
+    }
+
+    if (response.status === 401) {
+      navigate("/");
+      alert("이미 등록된 이메일입니다.");
     }
 
     if (response.status === 200) {
