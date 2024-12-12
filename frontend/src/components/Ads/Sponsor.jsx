@@ -9,11 +9,15 @@ const Sponsor = ({ username }) => {
   const [price, setPrice] = useState([0]);
   const [customerKey, setCustomerKey] = useState("");
   const [isAgreed, setIsAgreed] = useState(false);
-  const amounts = [100, 500, 1000];
+  const amounts = [1, 500, 1000];
   const canRenderWidget = price && isAgreed;
+
+  const baseUrl = process.env.REACT_APP_BASE_URL;
+  console.log(baseUrl);
+
   // 테스트용키
   const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
-  //  const clientKey = process.env.REACT_APP_TOSS_CLIENT_KEY;
+  // const clientKey = process.env.REACT_APP_TOSS_CLIENT_KEY; // -> 아니 왜 인증되지 않은 시크릿 혹은 클라이언트 키라고 뜨지
 
   // 고객키 서버에서 생성후 받아오기 - UUID
   useEffect(() => {
@@ -41,7 +45,7 @@ const Sponsor = ({ username }) => {
   console.log("클라이언트 키 :", clientKey);
   console.log("고객 키 :", customerKey);
 
-  // 1. 클라이언트 키로 SDK 초기화 & 결제 위젯 인스턴스 생성
+  // 1. 클라이언트 키로 SDK 초기화 & 결제 위젯 인스턴스 생성 -> 여기까지 성공
   useEffect(() => {
     if (canRenderWidget) {
       (async () => {
@@ -50,8 +54,11 @@ const Sponsor = ({ username }) => {
           const paymentWidget = await loadPaymentWidget(clientKey, customerKey);
           // DOM이 생성된 이후에 renderPaymentMethods() 메서드로 결제 UI를 렌더링
           // 여러 결제 UI를 만들었다면, variantKey를 결제위젯 어드민에서 확인하고 파라미터로 넘기세요. -> 나는 국내 일반결제 하나니까 안해도 될듯
-          paymentWidget.renderPaymentMethods("#payment-widget", price);
-          paymentWidget.renderAgreement();
+          paymentWidget.renderPaymentMethods("#payment-widget", {
+            value: price,
+            currency: "KRW",
+          });
+
           paymentWidgetRef.current = paymentWidget;
         } catch (err) {
           console.error("결제 위젯 초기화 실패:", err);
@@ -63,19 +70,43 @@ const Sponsor = ({ username }) => {
   // 토스로 결제 요청
   // 결제 요청 전에 orderId와 amount를 서버에 임시 저장해서 결제 무결성을 확인해야함
   // 결제 버튼에 결제 요청 메서드 requestPayment()를 이벤트로 걸어주기
-  // 결제 성공시 succssURL로 이동 실패시 failURL로 이동
+  // 결제 성공시 succssURL로 이동 실패시 failURL로 이동 -> 여기서 CORS에러가 발생 -> 해결
+
   const handlePayment = async () => {
     const paymentWidget = paymentWidgetRef.current;
 
     try {
       if (paymentWidget) {
+        const orderId = nanoid();
+        const amount = price;
+
+        // 서버에 orderId와 amount 저장
+        const response = await fetch(`${baseUrl}/sponsor/create`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            orderId,
+            orderName: `${amount}원`,
+            customerName: username || "익명",
+            customerEmail: "익명",
+            amount,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("서버에 요청을 보낼 수 없습니다.");
+        }
+
+        // Toss 결제 위젯 호출
         await paymentWidget.requestPayment({
-          orderId: nanoid(),
-          orderName: `${price}원`,
-          customerName: `${username}` || "익명",
-          customerEmail: ``,
-          successUrl: `${process.env.REACT_APP_BASE_URL}/success`,
-          failUrl: `${process.env.REACT_APP_BASE_URL}/fail`,
+          orderId,
+          orderName: `${amount}원`,
+          customerName: username || "익명",
+          customerEmail: "익명",
+          successUrl: ` ${window.location.origin}/sponsor/success`,
+          failUrl: `${window.location.origin}/fail`,
         });
       } else {
         console.error("결제 위젯이 초기화되지 않았습니다.");
