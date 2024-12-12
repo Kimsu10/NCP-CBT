@@ -16,6 +16,8 @@ import MatchWaiting from "./pages/TestMatch/MatchWaiting";
 import Quiz from "./pages/TestMatch/Quiz";
 import FindUserPage from "./pages/User/FindUserPage";
 import Sponsor from "./components/Ads/Sponsor";
+import SponsorSuccess from "./components/Ads/SponsorSuccess";
+import SponsorFail from "./components/Ads/SponsorFail";
 
 const Router = () => {
   const [username, setUsername] = useState("");
@@ -85,6 +87,14 @@ const Router = () => {
           path="/sponsor"
           username={username}
           element={<PageWrapper Component={Sponsor} />}
+        />
+        <Route
+          path="/sponsor/success"
+          element={<PageWrapper Component={SponsorSuccess} />}
+        />
+        <Route
+          path="/sponsor/fail"
+          element={<PageWrapper Component={SponsorFail} />}
         />
       </Routes>
       <Footer />
