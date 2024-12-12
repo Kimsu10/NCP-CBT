@@ -28,14 +28,17 @@ const Main = () => {
   }, []);
 
   const handleNaverLogin = async (code, state) => {
-    const response = await fetch("http://localhost:8080/login/naver", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${process.env.REACT_APP_BASE_URL}/login/naver`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ code, state }),
       },
-      credentials: "include",
-      body: JSON.stringify({ code, state }),
-    });
+    );
 
     if (response.status === 400) {
       navigate("/");

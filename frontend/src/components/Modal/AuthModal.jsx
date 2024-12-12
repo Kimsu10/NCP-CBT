@@ -68,8 +68,8 @@ const AuthModal = ({ type, closeModal }) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        `http://localhost:8080/form/register`,
+      await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/form/register`,
         formData,
         {
           headers: {
@@ -98,7 +98,7 @@ const AuthModal = ({ type, closeModal }) => {
       };
 
       const response = await axios.post(
-        "http://localhost:8080/form/login",
+        `${process.env.REACT_APP_BASE_URL}/form/login`,
         loginData,
         {
           headers: {
@@ -139,7 +139,7 @@ const AuthModal = ({ type, closeModal }) => {
     } else {
       try {
         const response = await axios.get(
-          `http://localhost:8080/form/checkNick`,
+          `${process.env.REACT_APP_BASE_URL}/form/checkNick`,
           {
             params: {
               username: formData.username,
@@ -193,7 +193,7 @@ const AuthModal = ({ type, closeModal }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/form/email-code?email=${encodeURIComponent(email)}`,
+        `${process.env.REACT_APP_BASE_URL}/form/email-code?email=${encodeURIComponent(email)}`,
         {
           method: "GET",
         },
@@ -226,13 +226,16 @@ const AuthModal = ({ type, closeModal }) => {
   // email 인증코드 POST 요청
   const verifyEmail = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/form/email-verify`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/form/email-verify`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, authCode: code }),
         },
-        body: JSON.stringify({ email, authCode: code }),
-      });
+      );
 
       if (response.ok) {
         setIsEmailVerified(true);

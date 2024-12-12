@@ -36,7 +36,7 @@ const FindUserPage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/form/find-account?email=${encodeURIComponent(email)}`,
+        `${process.env.REACT_APP_BASE_URL}/form/find-account?email=${encodeURIComponent(email)}`,
         {
           method: "GET",
           headers: {
@@ -75,7 +75,7 @@ const FindUserPage = () => {
       }
 
       const response = await fetch(
-        `http://localhost:8080/form/send-code?${params.toString()}`,
+        `${process.env.REACT_APP_BASE_URL}/form/send-code?${params.toString()}`,
         {
           method: "POST",
         },
@@ -144,7 +144,7 @@ const FindUserPage = () => {
       }, 1000);
 
       const response = await fetch(
-        `http://localhost:8080/form/verify-pwd-code?${params.toString()}`,
+        `${process.env.REACT_APP_BASE_URL}/form/verify-pwd-code?${params.toString()}`,
         {
           method: "GET",
           headers: {

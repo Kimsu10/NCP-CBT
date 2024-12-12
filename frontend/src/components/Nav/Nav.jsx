@@ -14,7 +14,6 @@ const Nav = ({ nick }) => {
     sessionStorage.getItem("username") || "",
   );
 
-  console.log(nick);
   const navigate = useNavigate();
 
   const { name: subjectName } = useParams();
@@ -43,13 +42,16 @@ const Nav = ({ nick }) => {
 
   const handleUpdateToken = async () => {
     try {
-      const response = await fetch("http://localhost:8080/refreshToken", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/refreshToken`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
         },
-        credentials: "include",
-      });
+      );
 
       if (response.ok) {
         const newAccessToken = response.headers.get("Authorization");
@@ -83,7 +85,7 @@ const Nav = ({ nick }) => {
 
     if (token) {
       setIsToken(true);
-    } else {
+    } else if (!token && nick) {
       handleUpdateToken();
     }
 
@@ -120,13 +122,15 @@ const Nav = ({ nick }) => {
 
   const deleteCookie = async () => {
     try {
-      const response = await fetch("http://localhost:8080/form/logout", {
-        method: "POST",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_BASE_URL}/form/logout`,
+        {
+          method: "POST",
+          credentials: "include",
+        },
+      );
 
       if (response.ok) {
-        console.log("로그아웃 성공");
         sessionStorage.removeItem("accessToken");
         window.location.reload();
         navigate("/");

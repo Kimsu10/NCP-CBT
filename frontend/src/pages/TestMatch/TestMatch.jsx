@@ -26,7 +26,7 @@ const TestMatch = ({ username }) => {
 
   // 소켓 연결 설정
   useEffect(() => {
-    const newSocket = io("http://localhost:4000", {
+    const newSocket = io(process.env.WEBSOCKET_URL, {
       path: "/quiz",
       withCredentials: true,
     });

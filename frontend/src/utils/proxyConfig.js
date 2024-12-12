@@ -4,14 +4,14 @@ export default function setupProxy(app) {
   app.use(
     "/",
     createProxyMiddleware({
-      target: "http://localhost:8080",
+      target: `${process.env.REACT_APP_BASE_URL}`,
       changeOrigin: true,
     }),
   );
   app.use(
     "/quiz",
     createProxyMiddleware({
-      target: "http://localhost:4000",
+      target: `${process.env.REACT_APP_SOCKET_URL}`,
       changeOrigin: true,
     }),
   );

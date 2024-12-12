@@ -12,12 +12,6 @@ const SponsorSuccess = () => {
       const amount = searchParams.get("amount");
 
       // 결제 정보를서버로 보내고 서버에서 toss로 결제 승인 API를 호출하는데 Bad Request가 뜬단말이지..
-      console.log("결제 정보:");
-      console.log("paymentType:", paymentType);
-      console.log("orderId:", orderId);
-      console.log("paymentKey:", paymentKey);
-      console.log("amount:", amount);
-      console.log("amount 타입:", typeof amount); // 타입 확인
 
       if (orderId && paymentKey && amount) {
         try {

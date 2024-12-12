@@ -41,9 +41,6 @@ const Sponsor = ({ username }) => {
     fetchCustomerKey();
   }, []);
 
-  console.log("클라이언트 키 :", clientKey);
-  console.log("고객 키 :", customerKey);
-
   // 1. 클라이언트 키로 SDK 초기화 & 결제 위젯 인스턴스 생성 -> 여기까지 성공
   useEffect(() => {
     if (canRenderWidget) {

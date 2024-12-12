@@ -6,57 +6,17 @@ function setupSocket(server) {
   const io = new Server(server, {
     path: "/quiz",
     cors: {
-      origin: ["http://localhost:3000"],
+      origin: [`${process.env.FRONT_URL}`],
       methods: ["GET", "POST"],
       credentials: true,
     },
   });
 
-  console.log(Room);
   const rooms = {};
 
   io.on("connection", (socket) => {
     console.log("✅ client connected with socket.io");
     console.log("Current socket ID:", socket.id);
-
-    // socket.on("createRoom", (data) => {
-    //   const { roomName, selectedName, token } = data;
-
-    //   console.log("roomName is", roomName);
-    //   try {
-    //     const base64Url = token.split(".")[1];
-    //     const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    //     const jsonPayload = decodeURIComponent(
-    //       atob(base64)
-    //         .split("")
-    //         .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-    //         .join("")
-    //     );
-    //     const payload = JSON.parse(jsonPayload);
-    //     const owner = payload.sub;
-
-    //     console.log(
-    //       "방 생성:",
-    //       roomName,
-    //       "과목:",
-    //       selectedName,
-    //       "소유자:",
-    //       owner
-    //     );
-
-    //     socket.join(roomName);
-    //     rooms[roomName] = {
-    //       owner: socket.id,
-    //       selectedName: selectedName,
-    //       users: [{ username: owner, socketId: socket.id }],
-    //     };
-
-    //     const roomUrl = `http://localhost:3000/quiz/${selectedName}/${roomName}`;
-    //     io.to(roomName).emit("roomCreated", { roomName, owner, roomUrl });
-    //   } catch (err) {
-    //     console.error("Invalid token:", err);
-    //   }
-    // });
 
     // 방 생성
     socket.on("createRoom", async (data) => {
@@ -98,7 +58,7 @@ function setupSocket(server) {
 
         await appDataSource.getRepository(Room).save(newRoom);
 
-        const roomUrl = `http://localhost:3000/quiz/${selectedName}/${roomName}`;
+        const roomUrl = `${process.env.FRONT_URL}/quiz/${selectedName}/${roomName}`;
         io.to(roomName).emit("roomCreated", { roomName, ownerId, roomUrl });
       } catch (err) {
         console.error("Create Room Error Occured:", err);
@@ -107,8 +67,6 @@ function setupSocket(server) {
 
     // 방 입장 시
     socket.on("joinRoom", ({ roomName, token }) => {
-      console.log("userToken", token);
-
       let username;
 
       try {
@@ -170,41 +128,6 @@ function setupSocket(server) {
         socket.emit("notAuthorized", "게임을 시작할 권한이 없습니다.");
       }
     });
-
-    //   // 방 삭제 시
-    //   socket.on("deleteRoom", ({ roomName }, callback) => {
-    //     const room = rooms[roomName];
-
-    //     if (room) {
-    //       const clients = io.sockets.adapter.rooms.get(roomName) || [];
-    //       clients.forEach((clientId) => {
-    //         io.sockets.sockets.get(clientId).leave(roomName);
-    //       });
-
-    //       delete rooms[roomName];
-
-    //       console.log(`Room ${roomName} has been deleted.`);
-
-    //       if (callback) callback({ success: true });
-    //     } else {
-    //       if (callback) callback({ success: false, error: "Room not found" });
-    //     }
-    //   });
-
-    //   // 클라이언트가 연결 해제 시
-    //   socket.on("disconnect", () => {
-    //     console.log(`🔌 Disconnected Client ID: ${socket.id}`);
-
-    //     for (const roomName in rooms) {
-    //       if (rooms[roomName].users) {
-    //         rooms[roomName].users = rooms[roomName].users.filter(
-    //           (user) => user.socketId !== socket.id
-    //         );
-    //         io.to(roomName).emit("waitingUsers", rooms[roomName].users);
-    //       }
-    //     }
-    //   });
-    // });
 
     // 방 삭제
     socket.on("deleteRoom", async ({ roomName }, callback) => {

@@ -179,7 +179,6 @@ const Exam = () => {
   const handleNextPage = () => {
     if (currentIndex < examData.length - 1) {
       setCurrentIndex(currentIndex + 1);
-      console.log("답안선택", selectedAnswers);
     }
   };
 
@@ -191,7 +190,6 @@ const Exam = () => {
   };
 
   // 결과 계산
-  console.log(examData[currentIndex]);
   const handleGetResult = () => {
     for (let i = 0; i < examData.length; i++) {
       // 답이 배열인 경우 따로 체크
@@ -217,7 +215,7 @@ const Exam = () => {
       );
       navigate(`/${subjectName}`);
     }
-    console.log("점수?", count);
+
     recordScore();
   };
 

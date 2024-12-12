@@ -10,7 +10,7 @@ const MatchResult = () => {
 
   // Socket연결
   useEffect(() => {
-    const newSocket = io("http://localhost:4000", {
+    const newSocket = io(`${process.env.WEBSOCKET_URL}`, {
       path: "/quiz",
       withCredentials: true,
     });
@@ -40,7 +40,7 @@ const MatchResult = () => {
   // NodeJS 통신
   const fetchTest = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/test");
+      const response = await axios.get(`${process.env.WEBSOCKET_URL}/test`);
       console.log(response.data);
     } catch (error) {
       console.error("GET 요청 실패:", error);

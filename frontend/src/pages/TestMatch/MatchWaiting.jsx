@@ -7,7 +7,6 @@ const MatchWaiting = () => {
   const [participants, setParticipants] = useState([]);
   const param = useParams();
   const roomId = param.roomName;
-  console.log(participants);
 
   useEffect(() => {
     socket.on("waitingUsers", users => {

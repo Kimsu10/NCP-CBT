@@ -18,9 +18,7 @@ const useTokenFunction = () => {
         const newAccessToken = response.data.accessToken;
 
         sessionStorage.setItem("accessToken", newAccessToken);
-        console.log("액세스 토큰 재발행 완료 !");
       } catch (error) {
-        console.log(error);
         navigate(`/${subjectName}/who-are-you`);
       }
     }

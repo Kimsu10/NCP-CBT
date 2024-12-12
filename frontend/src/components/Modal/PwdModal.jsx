@@ -14,16 +14,19 @@ const SetPwdModal = ({ onClose, onSubmit, identifier }) => {
       return;
     }
 
-    const response = await fetch("http://localhost:8080/form/renewPassword", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${process.env.REACT_APP_BASE_URL}/form/renewPassword`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: identifier,
+          password: newPassword,
+        }),
       },
-      body: JSON.stringify({
-        username: identifier,
-        password: newPassword,
-      }),
-    });
+    );
 
     const resMessage = await response.text();
 

@@ -10,12 +10,11 @@ const Admin = () => {
   }, []);
 
   const getAllComplaints = async () => {
-    const response = await axiosConfig.get(`/admin/complaints`).catch(err => {
-      console.log(err);
-    });
+    const response = await axiosConfig
+      .get(`/admin/complaints`)
+      .catch(err => {});
 
     if (response.status === 200) {
-      console.log(response.data);
       setComplaints(response.data);
     }
 

@@ -17,7 +17,7 @@ const Quiz = ({ username }) => {
   const token = sessionStorage.getItem("accessToken");
 
   useEffect(() => {
-    socketRef.current = io("http://localhost:4000", {
+    socketRef.current = io(process.env.WEBSOCKET_URL, {
       path: "/quiz",
       withCredentials: true,
       auth: {

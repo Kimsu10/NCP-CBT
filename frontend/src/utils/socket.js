@@ -1,15 +1,3 @@
-// import io from "socket.io-client";
-
-// const socket = io("http://localhost:4000", {
-//   path: "/quiz",
-//   withCredentials: true,
-//   auth: {
-//     token: sessionStorage.getItem("accessToken"),
-//   },
-// });
-
-// export default socket;
-
 import io from "socket.io-client";
 
 let socket;
@@ -19,7 +7,7 @@ export const connectSocket = () => {
     return; // 이미 연결되어 있으면 새로 연결 X
   }
 
-  socket = io("http://localhost:4000", {
+  socket = io(process.env.WEBSOCKET_URL, {
     path: "/quiz",
     withCredentials: true,
     auth: {

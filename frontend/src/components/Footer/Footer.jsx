@@ -19,14 +19,21 @@ const Footer = () => {
           </Link>
           에서 가능합니다.
         </p>
-        <span className="send-inquiry">개발자에게 문의하기</span>
+        <a
+          href="mailto:neta@gmail.com"
+          className="send-inquiry"
+          style={{ color: "gray" }}
+        >
+          개발자에게 문의하기
+        </a>
       </div>
       <div className="button-box">
         {!isSponsorPage && (
           <>
             <button
               className="sponsor-button"
-              onClick={() => navigate("/sponsor")}
+              // onClick={() => navigate("/sponsor")}
+              onClick={() => alert("현재 테스트 단계입니다.")}
             >
               ☕️&nbsp;후원하기
             </button>

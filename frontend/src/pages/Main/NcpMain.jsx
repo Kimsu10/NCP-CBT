@@ -20,7 +20,7 @@ const NcaMain = () => {
 
   const getRankingData = async () => {
     const response = await axios
-      .post(`http://localhost:8080/ranking/v2`, {
+      .post(`${process.env.REACT_APP_BASE_URL}/ranking/v2`, {
         title: "NCP",
       })
       .catch(err => {
