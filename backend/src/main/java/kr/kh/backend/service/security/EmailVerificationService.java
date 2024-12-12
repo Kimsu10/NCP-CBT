@@ -3,6 +3,7 @@ package kr.kh.backend.service.security;
 import kr.kh.backend.domain.EmailVerification;
 import kr.kh.backend.domain.User;
 import kr.kh.backend.dto.EmailVerificationDTO;
+import kr.kh.backend.dto.PracticeComplaintsDTO;
 import kr.kh.backend.mapper.UserMapper;
 import kr.kh.backend.service.MailService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -145,6 +147,38 @@ public class EmailVerificationService {
         userMapper.insertEmailVerification(emailVerification);
 
         mailService.sendEmail(email, title, "인증번호: " + authCode);
+    }
+
+    public void sendComplaintsToAdmin(PracticeComplaintsDTO practiceComplaintsDTO) {
+
+        String title = "[NCBT] 문제 오류가 접수되었습니다.";
+
+        String content =
+                "제목 : " + practiceComplaintsDTO.getTitle()
+                + "내용 : " + practiceComplaintsDTO.getContent();
+
+        List<User> adminList = userMapper.findAdminUsers();
+
+        if(adminList.size() > 0) {
+            for (User user : adminList) {
+                String email = user.getEmail();
+                mailService.sendEmail(email, title, content);
+            }
+        }
+    }
+
+    public void sendSolvedMsgToUser(Long userId) {
+
+        try {
+            String email = userMapper.findEmailByUserId(userId);
+            String title = "[NCBT] 관리팀에서 연락드립니다.";
+            String content = "접수해주신 문제 오류가 해결되어 안내드립니다. 고객님의 관심에 감사드리며, 더욱더 발전하는 NCBT 서비스가 되겠습니다.";
+
+            mailService.sendEmail(email, title, content);
+
+        } catch (Exception e) {
+            log.info(e.getMessage());
+        }
     }
 
 }

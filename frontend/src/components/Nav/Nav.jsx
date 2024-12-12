@@ -9,6 +9,7 @@ const Nav = () => {
   const [isListOpen, setIsListOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [isToken, setIsToken] = useState(false);
   const [username, setUsername] = useState(
     sessionStorage.getItem("username") || "",
   );
@@ -18,16 +19,79 @@ const Nav = () => {
 
   const { name: subjectName } = useParams();
 
-  useEffect(() => {
-    const storedToken = sessionStorage.getItem("accessToken");
-    const storedUsername = sessionStorage.getItem("username");
-    if (storedToken) {
-      setIsToken(storedToken);
+  const getAccessToken = () => {
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) return null;
+
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      const exp = payload.exp * 1000;
+      const currentTime = new Date().getTime();
+
+      if (currentTime > exp) {
+        sessionStorage.removeItem("accessToken");
+        return null;
+      }
+
+      return token;
+    } catch (error) {
+      console.error("토큰 검증 중 오류:", error);
+      sessionStorage.removeItem("accessToken");
+      return null;
     }
+  };
+
+  const handleUpdateToken = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/refreshToken", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const newAccessToken = response.headers.get("Authorization");
+        if (newAccessToken) {
+          const accessToken = newAccessToken.split(" ")[1];
+
+          sessionStorage.setItem("accessToken", accessToken);
+          response.headers.get("Set-Cookie");
+
+          setIsToken(true);
+          window.location.reload();
+        }
+      }
+
+      if (response.status === 401) {
+        setIsToken(false);
+        // alert("사용자 정보가 만료되었습니다. 다시 로그인 해주세요.");
+        // navigate("/");
+      }
+    } catch (error) {
+      console.error("토큰 갱신 중 오류 발생", error);
+      setIsToken(false);
+      // navigate("/");
+    }
+  };
+
+  // 로그인 유지를 위한 토큰 검증
+  useEffect(() => {
+    const token = getAccessToken();
+    const storedUsername = sessionStorage.getItem("username");
+
+    if (token) {
+      setIsToken(true);
+    } else {
+      handleUpdateToken();
+    }
+
     if (storedUsername) {
       setUsername(storedUsername);
     }
-  }, [token]);
+
+  }, []);
 
   const openModal = type => {
     setModalType(type);
@@ -48,9 +112,29 @@ const Nav = () => {
   };
 
   const logout = () => {
+    setIsToken(false);
     sessionStorage.removeItem("accessToken");
     sessionStorage.removeItem("username", username);
-    window.location.reload();
+    deleteCookie();
+    navigate("/");
+  };
+
+  const deleteCookie = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/form/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        console.log("로그아웃 성공");
+        sessionStorage.removeItem("accessToken");
+        window.location.reload();
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("로그아웃 실패", error);
+    }
   };
 
   useEffect(() => {
@@ -78,7 +162,7 @@ const Nav = () => {
       <ControllerBox>
         {windowWidth > 720 && (
           <>
-            {!token ? (
+            {!isToken ? (
               <>
                 <Login onClick={() => openModal("login")}>로그인</Login>
                 <Register onClick={() => openModal("register")}>
@@ -106,7 +190,7 @@ const Nav = () => {
         )}
         {windowWidth <= 720 && (
           <>
-            {!token ? (
+            {!isToken ? (
               <>
                 <ListIcon className="bi bi-list" onClick={openList} />
                 {isListOpen && (

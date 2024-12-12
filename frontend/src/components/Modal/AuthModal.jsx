@@ -7,12 +7,12 @@ import axios from "axios";
 const AuthModal = ({ type, closeModal }) => {
   const navigate = useNavigate();
   const [showLoginForm, setShowLoginForm] = useState(false);
-  const [isEmailAvailable, setIsEmailAvailable] = useState(null); // 이메일 중복확인 및 인증코드 요청
-  const [isRequestBlocked, setIsRequestBlocked] = useState(false); // 이메일 인증 코드 버튼 막기
-  const [remainingTime, setRemainingTime] = useState(0); // 이메일 인증시 시간 제한
-  const [showCheckCode, setShowCheckCode] = useState(false); // 이메일 인증시 코드 입력칸 활성화
-  const [isEmailVerified, setIsEmailVerified] = useState(null); // 이메일 인증 여부
-  const [isUsernameAvailable, setIsUsernameAvailable] = useState(null); // 닉네임 중복확인
+  const [isEmailAvailable, setIsEmailAvailable] = useState(null);
+  const [isRequestBlocked, setIsRequestBlocked] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(0);
+  const [showCheckCode, setShowCheckCode] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(null);
+  const [isUsernameAvailable, setIsUsernameAvailable] = useState(null);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -108,12 +108,21 @@ const AuthModal = ({ type, closeModal }) => {
         },
       );
 
-      const { accessToken } = response.data;
+      if (response.status === 400) {
+        navigate("/");
+        alert("사용자 정보가 없습니다. 로그인을 다시 시도해주세요.");
+      }
 
-      sessionStorage.setItem("accessToken", accessToken);
-      sessionStorage.setItem("username", username);
-      closeModal();
-      navigate("/");
+      if (response.status === 200) {
+        const data = await response.headers.get("Authorization");
+        const accessToken = data.split(" ")[1];
+        sessionStorage.setItem("accessToken", accessToken);
+        response.headers.get("Set-Cookie");
+
+        window.location.reload();
+        navigate("/");
+        closeModal();
+      }
     } catch (err) {
       console.error(
         "login error:",
@@ -242,8 +251,15 @@ const AuthModal = ({ type, closeModal }) => {
 
   // 네이버 로그인
   const doNaverLogin = () => {
-    console.log("Naver login function called.");
-    window.location.href = "http://localhost:8080";
+    let state = encodeURI(process.env.REACT_APP_NAVER_REDIRECT_URI);
+    window.location.href =
+      "https://nid.naver.com/oauth2.0/authorize?response_type=code" +
+      "&client_id=" +
+      process.env.REACT_APP_NAVER_CLIENT_ID +
+      "&redirect_uri=" +
+      process.env.REACT_APP_NAVER_REDIRECT_URI +
+      "&state=" +
+      state;
   };
 
   // 깃허브 로그인 페이지로 전송
@@ -282,7 +298,6 @@ const AuthModal = ({ type, closeModal }) => {
                 type="submit"
                 className="login-btn"
                 disabled={!isLoginValid}
-                onClick={() => navigate("/")}
               >
                 로그인
               </button>

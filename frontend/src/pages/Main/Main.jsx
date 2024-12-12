@@ -6,8 +6,7 @@ import styled from "styled-components";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import useResponsive from "../../hooks/useResponsive";
-import useTokenFunction from "../../hooks/useTokenFunction";
-import { fullSize } from "../../styles/Variables";
+
 const Main = () => {
   const navigate = useNavigate();
 

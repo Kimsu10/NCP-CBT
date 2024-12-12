@@ -197,9 +197,7 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
         String role = "USER";
 
         // 해당 유저가 디비에 있는지 확인
-        log.info("mybatis 전");
         User user = userMapper.findByUsername(username);
-        log.info("mybatis 후");
 
         if(user == null) {
             log.info("등록되지 않은 oauth 사용자 입니다. 디비에 사용자 정보를 저장합니다.");
