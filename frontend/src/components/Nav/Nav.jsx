@@ -3,7 +3,7 @@ import styled from "styled-components";
 import AuthModal from "../Modal/AuthModal";
 import { useNavigate, useParams } from "react-router-dom";
 
-const Nav = () => {
+const Nav = ({ nick }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
   const [isListOpen, setIsListOpen] = useState(false);
@@ -14,7 +14,7 @@ const Nav = () => {
     sessionStorage.getItem("username") || "",
   );
 
-  console.log(username);
+  console.log(nick);
   const navigate = useNavigate();
 
   const { name: subjectName } = useParams();
@@ -175,7 +175,7 @@ const Nav = () => {
                   onClick={openProfile}
                 ></ProfileIcon>
                 <Username onClick={openProfile}>
-                  <b>{username}</b>
+                  <b>{nick}</b>
                 </Username>
                 {isProfileOpen && (
                   <ProfileMenu>
@@ -209,9 +209,12 @@ const Nav = () => {
                   className="bi bi-person-circle"
                   onClick={openProfile}
                 />
+                <Username onClick={openProfile}>
+                  <b>{nick}</b>
+                </Username>
                 {isProfileOpen && (
                   <MobileList>
-                    <UserProfile>내 정보</UserProfile>
+                    {/* <UserProfile>내 정보</UserProfile> */}
                     <MobileLogout onClick={logout}>로그아웃</MobileLogout>
                   </MobileList>
                 )}

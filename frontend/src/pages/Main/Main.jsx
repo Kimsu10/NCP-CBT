@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
@@ -60,14 +59,17 @@ const Main = () => {
 
   // 깃허브 로그인 핸들러
   const handleGithubLogin = async code => {
-    const response = await fetch("http://localhost:8080/login/github", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${process.env.REACT_APP_BASE_URL}/login/github`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ code }),
       },
-      credentials: "include",
-      body: JSON.stringify({ code }),
-    });
+    );
 
     if (response.status === 400) {
       navigate("/");

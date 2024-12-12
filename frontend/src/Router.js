@@ -59,7 +59,7 @@ const Router = () => {
             path="/"
             element={
               <>
-                <Nav username={username} />
+                <Nav nick={username} />
                 <Main />
               </>
             }

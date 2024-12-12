@@ -12,8 +12,7 @@ const Sponsor = ({ username }) => {
   const amounts = [1, 500, 1000];
   const canRenderWidget = price && isAgreed;
 
-  const baseUrl = process.env.REACT_APP_BASE_URL;
-  console.log(baseUrl);
+  const baseUrl = process.env.REACT_APP_BASE_URL; // 어디서 쓰고 있는거야
 
   // 테스트용키
   const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
@@ -24,7 +23,7 @@ const Sponsor = ({ username }) => {
     const fetchCustomerKey = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/sponsor/create-customer-key",
+          `${process.env.REACT_APP_BASE_URL}/sponsor/create-customer-key`,
           {
             method: "POST",
             headers: {
