@@ -118,7 +118,7 @@ const AuthModal = ({ type, closeModal }) => {
         const accessToken = data.split(" ")[1];
         sessionStorage.setItem("accessToken", accessToken);
         response.headers.get("Set-Cookie");
-
+        sessionStorage.setItem("username", username);
         window.location.reload();
         navigate("/");
         closeModal();

@@ -231,6 +231,7 @@ const DesktopContainer = styled.div`
   display: flex;
   justify-content: center;
   margin: 3rem 0;
+  min-height: 25vh;
 
   .button-box {
     min-width: 20rem;

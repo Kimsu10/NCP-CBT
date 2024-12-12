@@ -48,6 +48,7 @@ const Main = () => {
       const data = await response.headers.get("Authorization");
       const accessToken = data.split(" ")[1];
       sessionStorage.setItem("accessToken", accessToken);
+
       // 쿠키도 추가해야해 !!!!!
       response.headers.get("Set-Cookie");
       navigate("/");
@@ -87,16 +88,6 @@ const Main = () => {
       console.error("Failed to fetch token");
     }
   };
-
-  // useEffect(() => {
-  //   const corsTest = () => {
-  //     axios
-  //       .get("http://localhost:8080")
-  //       .then(res => console.log(res))
-  //       .catch(err => console.log(err));
-  //   };
-  //   corsTest();
-  // }, []);
 
   // Slider 세팅 (lazyload)
   const settings = {
@@ -226,7 +217,7 @@ const Main = () => {
 export default Main;
 
 const MainContainer = styled.div`
-  min-height: 70.9vh;
+  min-height: 77vh;
 `;
 
 const SlideContainer = styled.div`

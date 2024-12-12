@@ -13,8 +13,8 @@ const Nav = () => {
   const [username, setUsername] = useState(
     sessionStorage.getItem("username") || "",
   );
-  const [isToken, setIsToken] = useState(null);
-  const token = sessionStorage.getItem("accessToken");
+
+  console.log(username);
   const navigate = useNavigate();
 
   const { name: subjectName } = useParams();
@@ -90,7 +90,6 @@ const Nav = () => {
     if (storedUsername) {
       setUsername(storedUsername);
     }
-
   }, []);
 
   const openModal = type => {

@@ -11,7 +11,6 @@ import ComplaintModal from "../../components/Modal/ComplaintModal";
 import KeyboardController from "../../hooks/KeyboardController";
 import axiosConfig from "../../utils/axiosConfig";
 import WrongMark from "../../components/Marks/WrongMark";
-import useTokenFunction from "../../hooks/useTokenFunction";
 
 const Practice = () => {
   const param = useParams();
@@ -28,7 +27,6 @@ const Practice = () => {
   const [isTokenValid, setIsTokenValid] = useState(true);
 
   const token = sessionStorage.getItem("accessToken");
-  console.log(currentIdx);
 
   useEffect(() => {
     AOS.init({
@@ -204,7 +202,7 @@ const Practice = () => {
         handleBookmark={handleBookmark}
         isComplaintModal={isComplaintModal}
       />
-      {currentIdx > 2 ? (
+      {currentIdx > 2 && !token ? (
         <NotFound />
       ) : currentQuestion ? (
         <>
@@ -329,7 +327,7 @@ const Practice = () => {
       ) : (
         <span>문제가 없습니다.</span>
       )}
-      {currentIdx > 2 ? (
+      {currentIdx > 2 && !token ? (
         ""
       ) : (
         <ButtonContainer>

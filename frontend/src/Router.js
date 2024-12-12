@@ -107,72 +107,22 @@ const Router = () => {
             path="/find-account"
             element={<PageWrapper Component={FindUserPage} />}
           />
+          {/* 이 아래는 후원기능용 테스트 겸 사이즈 확인용  */}
+          <Route
+            path="/sponsor"
+            username={username}
+            element={<PageWrapper Component={Sponsor} />}
+          />
+          <Route
+            path="/sponsor/success"
+            element={<PageWrapper Component={SponsorSuccess} />}
+          />
+          <Route
+            path="/sponsor/fail"
+            element={<PageWrapper Component={SponsorFail} />}
+          />
         </Routes>
       )}
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <Nav username={username} />
-              <Main />
-            </>
-          }
-        />
-        <Route path="/:name" element={<PageSwitch username={username} />} />
-        <Route
-          path="/:name/practice"
-          element={<PageWrapper username={username} Component={Practice} />}
-        />
-        <Route
-          path="/:name/exam"
-          element={<PageWrapper username={username} Component={Exam} />}
-        />
-        <Route
-          path="/:name/practice/finish"
-          element={<PageWrapper username={username} Component={FinishPage} />}
-        />
-        <Route
-          path="/:name/exam/finish"
-          element={
-            <PageWrapper username={username} Component={ExamFinishPage} />
-          }
-        />
-        <Route
-          path="/:name/who-are-you"
-          element={<PageWrapper username={username} Component={NotFound} />}
-        />
-        <Route
-          path="/quiz"
-          element={<PageWrapper username={username} Component={Quiz} />}
-        />
-        <Route
-          path="/quiz/:selectedName/:roomName"
-          element={<PageWrapper username={username} Component={MatchWaiting} />}
-        />
-        <Route
-          path="/quiz/:selectedName/:roomName/result"
-          element={<PageWrapper username={username} Component={MatchResult} />}
-        />
-        <Route
-          path="/find-account"
-          element={<PageWrapper Component={FindUserPage} />}
-        />
-        {/* 이 아래는 후원기능용 테스트 겸 사이즈 확인용  */}
-        <Route
-          path="/sponsor"
-          username={username}
-          element={<PageWrapper Component={Sponsor} />}
-        />
-        <Route
-          path="/sponsor/success"
-          element={<PageWrapper Component={SponsorSuccess} />}
-        />
-        <Route
-          path="/sponsor/fail"
-          element={<PageWrapper Component={SponsorFail} />}
-        />
-      </Routes>
       <Footer />
     </BrowserRouter>
   );

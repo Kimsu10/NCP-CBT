@@ -125,6 +125,7 @@ const MainContainer = styled.div`
   align-items: center;
   justify-content: center;
   margin: 5rem 0;
+  min-height: 19vh;
 `;
 
 const ButtonBox = styled.div`
